@@ -54,3 +54,10 @@ export const buyersData = [
     socials: { facebook: true, instagram: true }
   },
 ]
+
+export const typeOptions = [
+    { value: "retailer", label: "Retailer (Name of the retailer )" },
+    { value: "e-commerce", label: "E-commerce" },
+    { value: "interior-designer", label: "Interior Designer" },
+    { value: "hospitality", label: "Hospitality" }
+  ]

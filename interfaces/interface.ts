@@ -9,3 +9,12 @@ export interface User {
     accessToken: string;
     refreshToken?: string;
 }
+
+export interface Buyer {
+  id: number
+  name: string
+  context: string
+  website: string
+  type: string
+  logo?: string
+}
