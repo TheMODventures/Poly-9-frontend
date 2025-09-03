@@ -2,19 +2,12 @@
 
 import React from 'react'
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Filter } from 'lucide-react'
 import { MdAddBox } from "react-icons/md";
 import { BsThreeDots } from "react-icons/bs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import AddBuyerModal from "@/components/forms/buyers/add-modal/add.form"
-import { SearchForm } from '../forms/search/search.form'
+import SearchFilterBar from "@/components/helper/search-filter-bar"
 
 export default function BuyersInfo() {
   return (
@@ -48,28 +41,7 @@ export default function BuyersInfo() {
           }
         />
       </div>
-      
-      <div className="flex items-center justify-between gap-4 scale-94">
-        <SearchForm />
-        
-        <div className="flex items-center gap-1">
-          <Button variant="outline" className="text-gray-600 border-gray-200">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
-          
-          <Select defaultValue="latest">
-            <SelectTrigger className="w-40 border-gray-200 focus:no-ring focus:ring-0">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="latest">Order By Latest</SelectItem>
-              <SelectItem value="oldest">Order By Oldest</SelectItem>
-              <SelectItem value="name">Order By Name</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <SearchFilterBar />
     </div>
   )
 }

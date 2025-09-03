@@ -1,5 +1,7 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
+import { ProfileData } from "@/interfaces/interface";
 import { setCookie } from "cookies-next/client";
+import { useCallback, useState } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 export const getAccessToken = () => {
@@ -26,3 +28,24 @@ export const toggleSocial = (
       : [...(field.value || []), social]
   )
 }
+  const [editingField, setEditingField] = useState<keyof ProfileData | null>(null)
+  const [tempValue, setTempValue] = useState<string>("")
+
+  export const handleEdit = useCallback((field: keyof ProfileData, value: string): void => {
+    setEditingField(field)
+    setTempValue(field === "password" ? "" : value)
+  }, [])
+
+  export const handleCancel = useCallback((): void => {
+    setEditingField(null)
+    setTempValue("")
+  }, [])
+
+
+  export const getInitials = (name: string): string => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("")
+      .toUpperCase()
+  }

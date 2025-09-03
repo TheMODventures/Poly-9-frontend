@@ -1,0 +1,18 @@
+import ChatHeader from "@/components/chats/chat-header"
+import ChatSection from "@/components/chats/chat-section"
+import CategorySection from "@/components/categories/category-section"
+import { ProductProvider } from "@/context/product-context"
+
+export default function ChatPage() {
+  return (
+    <ProductProvider>
+      <div className="h-screen bg-gray-50 flex flex-col p-16 gap-6">
+        <ChatHeader />
+        <div className="flex-1 flex">
+          <ChatSection />
+          <CategorySection />
+        </div>
+      </div>
+    </ProductProvider>
+  )
+}
