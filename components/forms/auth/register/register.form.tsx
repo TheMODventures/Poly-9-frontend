@@ -32,7 +32,7 @@ export default function RegisterForm(): React.ReactNode {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
           <p className="mt-2 text-sm text-gray-500">
-            Let's Create An Account Together
+            Let&apos;s Create An Account Together
           </p>
         </div>
         <Form {...form}>

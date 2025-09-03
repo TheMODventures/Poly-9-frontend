@@ -7,7 +7,7 @@ import { Resolver, useForm } from "react-hook-form";
 import { searchValidation } from "./search.validation";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useEffect, Suspense } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SearchFormValues {
   search: string;

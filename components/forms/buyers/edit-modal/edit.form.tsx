@@ -186,14 +186,12 @@ export default function EditModalForm({
                     Cancel
                   </Button>
                 </DialogClose>
-                <DialogClose asChild>
                   <Button
                     type="submit"
                     className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white"
                   >
                     Save Changes
                   </Button>
-                </DialogClose>
               </div>
             </form>
           </Form>

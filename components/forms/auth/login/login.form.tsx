@@ -110,7 +110,7 @@ export default function LoginForm(): React.ReactNode {
               Sign Up With Google
             </Button>
             <p className="mt-4 text-center text-sm text-gray-500">
-              Don't Have An Account?{" "}
+              Don&apos;t Have An Account?{" "}
               <Link href="/register" className="font-semibold leading-6 text-blue-500 hover:underline">
                 Sign Up For Free
               </Link>

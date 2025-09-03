@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, } from "@/components/ui/dialog"
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import { addBuyerSchema, AddBuyerFormValues } from "@/components/forms/buyers/ad
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa"
 import { Upload } from "lucide-react"
 import { typeOptions } from "@/data/mock-data"
+import { toggleSocial } from "@/utils/helper"
 
 interface AddBuyerModalProps {
   trigger: React.ReactNode
@@ -21,13 +22,6 @@ interface AddBuyerModalProps {
 export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
   const form = useForm<AddBuyerFormValues>({
     resolver: yupResolver(addBuyerSchema) as Resolver<AddBuyerFormValues>,
-    defaultValues: {
-      companyName: "",
-      website: "",
-      socials: [],
-      type: "",
-      note: "",
-    },
   })
 
   const { control, handleSubmit, reset } = form
@@ -39,14 +33,6 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
     } catch (error) {
       console.error("Error adding buyer:", error)
     }
-  }
-
-  const toggleSocial = (field: any, social: string) => {
-    field.onChange(
-      field.value?.includes(social)
-        ? field.value.filter((s: string) => s !== social)
-        : [...(field.value || []), social]
-    )
   }
 
   return (
@@ -232,14 +218,12 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
                 )}
               />
             
-              <DialogClose asChild>
                 <Button 
                   type="submit" 
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg"
                 >
                   Submit
                 </Button>
-              </DialogClose>
             </form>
           </Form>
         </div>

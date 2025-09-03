@@ -3,10 +3,8 @@
 import React from 'react'
 import Sidebar from '@/components/shared/sidebar'
 import Navbar from '@/components/shared/navbar'
-import { usePathname } from 'next/navigation'
 
 function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
 
   return (
     <div className="min-h-screen font-sans bg-[#00000021]/13">
