@@ -1,4 +1,6 @@
+import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
 import { setCookie } from "cookies-next/client";
+import { ControllerRenderProps } from "react-hook-form";
 
 export const getAccessToken = () => {
   const accessToken = localStorage.getItem("access-token");
@@ -13,3 +15,14 @@ export const setAccessToken = (token: string) => {
 export const removeAccessToken = () => {
   localStorage.removeItem("access-token");
 };
+
+export const toggleSocial = (
+  field: ControllerRenderProps<AddBuyerFormValues, "socials">,
+  social: string
+) => {
+  field.onChange(
+    field.value?.includes(social)
+      ? field.value.filter((s) => s !== social)
+      : [...(field.value || []), social]
+  )
+}
