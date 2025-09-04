@@ -1,13 +1,31 @@
-import { Phone, Mail, FileText, MoreHorizontal } from "lucide-react"
+import { Phone, Mail, FileText } from "lucide-react"
+import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button"
+import { BsThreeDots } from "react-icons/bs"
+import Link from "next/link"
 
 export default function ProfileHeader() {
   return (
     <div className="bg-white rounded-md p-6 shadow-sm border">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Buyers profile</h1>
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <MoreHorizontal className="w-5 h-5 text-gray-500" />
-        </button>
+        <div className="absolute top-14 right-10">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <BsThreeDots className="w-6 h-6 text-gray-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/chat">Chat</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/context-file">Context Files</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="mt-6 space-y-4">

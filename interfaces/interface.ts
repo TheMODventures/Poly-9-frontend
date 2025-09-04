@@ -39,3 +39,20 @@ export interface Product {
   likes?: number
   colors?: string[]
 }
+
+export interface FormContentConfig {
+  title: string
+  subtitle: string
+  nameLabel: string
+  seasonLabel: string
+  styleLabel: string
+  countLabel: string
+}
+
+export interface NotificationItem {
+  id: string
+  type: string
+  name: string
+  timeAgo: string
+  avatarColor: string
+}

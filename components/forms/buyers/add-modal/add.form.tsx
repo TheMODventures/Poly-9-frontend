@@ -11,9 +11,9 @@ import { useForm, Resolver } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { addBuyerSchema, AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation"
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa"
-import { Upload } from "lucide-react"
 import { typeOptions } from "@/data/mock-data"
 import { toggleSocial } from "@/utils/helper"
+import { UploadFile } from "@/components/shared/upload"
 
 interface AddBuyerModalProps {
   trigger: React.ReactNode
@@ -192,11 +192,7 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
                 <FormLabel className="text-sm font-medium text-gray-700 mb-2 block">
                   File <span className="text-xs text-gray-500">(Must be equal or less )</span>
                 </FormLabel>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600 mb-1">Drag your file here</p>
-                  <p className="text-xs text-gray-500">file must be .csv or .xlsx</p>
-                </div>
+                <UploadFile />
               </div>
 
               <FormField

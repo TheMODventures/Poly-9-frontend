@@ -38,7 +38,7 @@ export default function FeaturedProduct() {
           <div className=" min-w-0 space-y-2">
             <h2 className="font-semibold text-gray-900 text-xl mb-4">Description</h2>
             <p className="text-sm text-gray-600 leading-relaxed mb-10">
-              The Swedish Designer Monica Forstar's Style Is Characterised By Her Enternal Love For New Materials And
+              The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And
               Beautiful Pure Shapes.
             </p>
             <div className="flex items-center justify-between">

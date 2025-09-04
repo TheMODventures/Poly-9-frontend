@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,} from "@/components/ui/dialog"
-import {Form,FormControl,FormField,FormItem,FormLabel,FormMessage,} from "@/components/ui/form"
+import React, { useState, useMemo } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -11,15 +11,16 @@ import { X } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { createProductSchema, CreateProductFormValues } from "./create.validation"
+import { createStyleHandlers, getFormContent, isCollectionTrigger } from "@/utils/helper"
 
 interface CreateProductProps {
   trigger: React.ReactNode
 }
 
-const availableStyles = ["Modern", "Minimalistic", "Vintage", "Contemporary", "Classic", "Bohemian"]
-
 export default function CreateProduct({ trigger }: CreateProductProps) {
   const [newStyle, setNewStyle] = useState("")
+  const isCollection = useMemo(() => isCollectionTrigger(trigger), [trigger])
+  const content = useMemo(() => getFormContent(isCollection), [isCollection])
 
   const form = useForm<CreateProductFormValues>({
     resolver: yupResolver(createProductSchema),
@@ -34,24 +35,15 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
   const { control, handleSubmit, watch, setValue, reset } = form
   const watchedStyles = watch("styles")
 
+  const { addStyle, removeStyle } = createStyleHandlers(watchedStyles, setValue, setNewStyle)
+
   const onSubmit = async (values: CreateProductFormValues) => {
     try {
-      console.log("Creating collection:", values)
+      console.log(`Creating ${isCollection ? 'collection' : 'product'}:`, values)
       reset()
     } catch (error) {
-      console.error("Error creating collection:", error)
+      console.error(`Error creating ${isCollection ? 'collection' : 'product'}:`, error)
     }
-  }
-
-  const addStyle = (style: string) => {
-    if (style && !watchedStyles.includes(style)) {
-      setValue("styles", [...watchedStyles, style])
-    }
-    setNewStyle("")
-  }
-
-  const removeStyle = (styleToRemove: string) => {
-    setValue("styles", watchedStyles.filter(style => style !== styleToRemove))
   }
 
   return (
@@ -62,28 +54,26 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
       <DialogContent className="max-w-lg p-0 gap-0 scale-78">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle className="text-xl font-semibold text-gray-900">
-            Create Collection Concept
+            {content.title}
           </DialogTitle>
         </DialogHeader>
 
-        {/* Blue info box */}
         <div className="mx-6 mb-6 p-4 bg-blue-500 text-white rounded-lg">
           <p className="text-sm">
-            Lets create a new product collection. I've prepared a few questions to help get started
+            {content.subtitle}
           </p>
         </div>
 
         <div className="px-6 pb-6">
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Collection Name */}
               <FormField
                 control={control}
                 name="collectionName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
-                      Whats your collection name?
+                      {content.nameLabel}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -97,14 +87,13 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                 )}
               />
 
-              {/* Season */}
               <FormField
                 control={control}
                 name="season"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
-                      Which season is the collection for?
+                      {content.seasonLabel}
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -118,27 +107,24 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                 )}
               />
 
-              {/* Styles */}
               <FormField
                 control={control}
                 name="styles"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
-                      What style should it include?
+                      {content.styleLabel}
                     </FormLabel>
-                    
-                    {/* Selected styles */}
+
                     <div className="flex flex-wrap gap-2 mb-3">
                       {watchedStyles.map((style) => (
                         <Badge
                           key={style}
                           variant="secondary"
-                          className={`px-3 py-1 text-sm ${
-                            style === "Modern" ? "bg-blue-100 text-blue-700" :
-                            style === "Minimalistic" ? "bg-cyan-100 text-cyan-700" :
-                            "bg-gray-100 text-gray-700"
-                          }`}
+                          className={`px-3 py-1 text-sm ${style === "Modern" ? "bg-blue-100 text-blue-700" :
+                              style === "Minimalistic" ? "bg-cyan-100 text-cyan-700" :
+                                "bg-gray-100 text-gray-700"
+                            }`}
                         >
                           {style}
                           <X
@@ -147,8 +133,7 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                           />
                         </Badge>
                       ))}
-                      
-                      {/* Add tag button */}
+
                       <div className="relative">
                         <input
                           type="text"
@@ -170,14 +155,13 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                 )}
               />
 
-              {/* Product Count */}
               <FormField
                 control={control}
                 name="productCount"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
-                      How many products should be in the collection?
+                      {content.countLabel}
                     </FormLabel>
                     <FormControl>
                       <Textarea
@@ -191,14 +175,13 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                 )}
               />
 
-              {/* Submit Button */}
               <div className="flex justify-end pt-4">
-                  <Button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-lg"
-                  >
-                    Submit
-                  </Button>
+                <Button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-lg"
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </Form>
