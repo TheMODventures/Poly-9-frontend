@@ -12,7 +12,10 @@ export default function Sidebar() {
     <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-6">
       <div className="flex flex-col space-y-4">
         {links.map(({ href, icon: Icon }) => {
-          const isActive = pathname === href
+          let isActive = pathname === href
+          if (href === "/profile" && (pathname === "/profile" || pathname === "/context-file")) {
+            isActive = true
+          }
 
           return (
             <Link key={href} href={href}>

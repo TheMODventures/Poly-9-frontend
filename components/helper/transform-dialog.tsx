@@ -5,7 +5,8 @@ import { useState, useRef, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { MoreHorizontal, ChevronDown, MoreVertical } from "lucide-react"
+import { ChevronDown, MoreVertical } from "lucide-react"
+import { colors, bases, brands } from "@/utils/constant"
 
 interface TransformDialogProps {
   children: React.ReactNode
@@ -22,22 +23,6 @@ export default function TransformDialog({ children }: TransformDialogProps) {
   const minPrice = 0
   const maxPrice = 26000
 
-  const colors = [
-    { name: "Green", value: "#22c55e" },
-    { name: "Yellow", value: "#eab308" },
-    { name: "Black", value: "#000000" },
-    { name: "Gray", value: "#6b7280" },
-  ]
-
-  const bases = [
-    { name: "Brushed Brass", color: "#b8860b" },
-    { name: "Polished Chrome", color: "#c0c0c0" },
-    { name: "Matte Black", color: "#2d2d2d" },
-    { name: "Dark Bronze", color: "#4a4a4a" },
-    { name: "Dark Bronze", color: "#1a1a1a" },
-  ]
-
-  const brands = ["Partex", "Regal Furniture", "Hatil"]
 
   const toggleColor = (colorName: string) => {
     setSelectedColors((prev) => (prev.includes(colorName) ? prev.filter((c) => c !== colorName) : [...prev, colorName]))

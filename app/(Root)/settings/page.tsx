@@ -1,11 +1,10 @@
 "use client"
 
-import type React from "react"
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import ProfilePhoto from "@/components/helper/profile-photo"
 import ProfileField from "@/components/helper/profile-field"
 import type { ProfileData } from "@/interfaces/interface"
-import { getInitials, handleCancel, handleEdit } from "@/utils/helper"
+import { getInitials } from "@/utils/helper"
 
 export default function SettingsPage() {
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -15,39 +14,17 @@ export default function SettingsPage() {
     email: "john@traderisk.fi",
     password: "••••••••••",
   })
-  const [editingField, setEditingField] = useState<keyof ProfileData | null>(null)
-  const [tempValue, setTempValue] = useState<string>("")
 
-const handleSave = useCallback(
-    (field: keyof ProfileData): void => {
-      if (tempValue.trim()) {
-        setProfileData((prev) => ({
-          ...prev,
-          [field]: field === "password" ? "••••••••••" : tempValue,
-        }))
-      }
-      setEditingField(null)
-      setTempValue("")
-    },
-    [tempValue],
-  )
-
-
-const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>, field: keyof ProfileData): void => {
-      if (e.key === "Enter") {
-        handleSave(field)
-      } else if (e.key === "Escape") {
-        handleCancel()
-      }
-    },
-    [handleSave, handleCancel],
-  )
-
+  const handleValueChange = (field: keyof ProfileData, newValue: string) => {
+    setProfileData((prev) => ({
+      ...prev,
+      [field]: newValue,
+    }))
+  }
 
   return (
     <div className="h-screen w-11/12 mt-10 p-12">
-      <div className=" mx-auto">
+      <div className="mx-auto">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <div className="mb-8">
             <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
@@ -66,13 +43,7 @@ const handleKeyPress = useCallback(
                 label="Name"
                 value={profileData.name}
                 field="name"
-                editingField={editingField}
-                tempValue={tempValue}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onKeyPress={handleKeyPress}
-                onTempValueChange={setTempValue}
+                onValueChange={handleValueChange}
               />
 
               <ProfileField
@@ -80,26 +51,14 @@ const handleKeyPress = useCallback(
                 value={profileData.phone}
                 field="phone"
                 type="tel"
-                editingField={editingField}
-                tempValue={tempValue}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onKeyPress={handleKeyPress}
-                onTempValueChange={setTempValue}
+                onValueChange={handleValueChange}
               />
 
               <ProfileField
                 label="Designation"
                 value={profileData.designation}
                 field="designation"
-                editingField={editingField}
-                tempValue={tempValue}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onKeyPress={handleKeyPress}
-                onTempValueChange={setTempValue}
+                onValueChange={handleValueChange}
               />
             </div>
           </div>
@@ -113,13 +72,7 @@ const handleKeyPress = useCallback(
                 value={profileData.email}
                 field="email"
                 type="email"
-                editingField={editingField}
-                tempValue={tempValue}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onKeyPress={handleKeyPress}
-                onTempValueChange={setTempValue}
+                onValueChange={handleValueChange}
               />
 
               <ProfileField
@@ -127,13 +80,7 @@ const handleKeyPress = useCallback(
                 value={profileData.password}
                 field="password"
                 type="password"
-                editingField={editingField}
-                tempValue={tempValue}
-                onEdit={handleEdit}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                onKeyPress={handleKeyPress}
-                onTempValueChange={setTempValue}
+                onValueChange={handleValueChange}
               />
             </div>
           </div>
