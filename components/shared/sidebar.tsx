@@ -1,30 +1,34 @@
 "use client"
 
-import React from 'react'
-import { LuLayoutGrid } from "react-icons/lu";
-import { IoPersonOutline, IoSettingsOutline  } from "react-icons/io5";
-import { BiSolidMessageRounded } from "react-icons/bi";
-import { MdLogout } from "react-icons/md";
+import React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { links } from "@/utils/links"
 
 export default function Sidebar() {
+  const pathname = usePathname()
+
   return (
     <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-6">
-      <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-        <LuLayoutGrid className="w-6 h-6 text-black" />
-      </div>
       <div className="flex flex-col space-y-4">
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
-          <IoPersonOutline className="w-6 h-6 text-black" />
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
-          <BiSolidMessageRounded className="w-6 h-6 text-black fill-current" />
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
-          <IoSettingsOutline className="w-6 h-6 text-black" />
-        </button>
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
-          <MdLogout className="w-6 h-6 text-black" />
-        </button>
+        {links.map(({ href, icon: Icon }) => {
+          let isActive = pathname === href
+          if (href === "/profile" && (pathname === "/profile" || pathname === "/context-file")) {
+            isActive = true
+          }
+
+          return (
+            <Link key={href} href={href}>
+              <button
+                className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors ${
+                  isActive ? "bg-blue-500 text-black" : "hover:bg-gray-100 text-black"
+                }`}
+              >
+                <Icon className="w-6 h-6" />
+              </button>
+            </Link>
+          )
+        })}
       </div>
     </div>
   )
