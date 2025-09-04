@@ -23,10 +23,11 @@ export default function TabsSection() {
       <TabsContent value="collections" className="space-y-8 mt-6 bg-white">
         <div className="flex items-center justify-between p-3">
           <h2 className="text-xl font-semibold">Collections</h2>
-          <CreateProduct trigger={
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600">
-            + Add Collection
-          </button>}/>
+      <CreateProduct trigger={
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600">
+          + Add Collection  {/* Contains "collection" - will show collection UI */}
+        </button>
+      }/>
         </div>
         <div className="p-2"><SearchFilterBar /></div>
         <TopCustomers />

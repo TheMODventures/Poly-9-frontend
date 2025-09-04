@@ -90,7 +90,7 @@ export default function TransformDialog({ children }: TransformDialogProps) {
                 <span className="text-sm font-medium text-gray-700">Product Specification</span>
               </AccordionTrigger>
               <AccordionContent className="px-4 py-3 text-sm text-gray-600 leading-relaxed">
-                The Swedish Designer Monica Forstar's Style Is Characterised By Her Enternal Love For New Materials And
+                The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And
                 Beautiful Pure Shapes.
               </AccordionContent>
             </AccordionItem>

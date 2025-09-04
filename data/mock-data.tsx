@@ -1,5 +1,5 @@
 import ProductCard from "@/components/helper/product-card"
-import { Product } from "@/interfaces/interface"
+import { NotificationItem, Product } from "@/interfaces/interface"
 
 export const buyersData = [
   {
@@ -161,4 +161,35 @@ export const customers = [
   { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 40 },
   { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 20 },
   { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 80 },
+]
+
+export const notifications: NotificationItem[] = [
+  {
+    id: '1',
+    type: 'New Buyer Created',
+    name: 'Name',
+    timeAgo: 'about 13 hours ago',
+    avatarColor: 'bg-orange-400'
+  },
+  {
+    id: '2',
+    type: 'New Buyer Created',
+    name: 'Name',
+    timeAgo: 'about 13 hours ago',
+    avatarColor: 'bg-orange-400'
+  },
+  {
+    id: '3',
+    type: 'New Buyer Created',
+    name: 'Name',
+    timeAgo: 'about 13 hours ago',
+    avatarColor: 'bg-orange-400'
+  },
+  {
+    id: '4',
+    type: 'New Buyer Created',
+    name: 'Name',
+    timeAgo: 'about 13 hours ago',
+    avatarColor: 'bg-teal-500'
+  }
 ]

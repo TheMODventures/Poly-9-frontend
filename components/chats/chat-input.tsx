@@ -10,9 +10,10 @@ export default function ChatInput() {
                         <Button className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 h-8">
                             ✓ Create product
                         </Button>}/>
-                <Button variant="secondary" className="bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 py-2 h-8">
-                    ✓ Create Collection
-                </Button>
+                <CreateProduct trigger={ 
+                    <Button variant="secondary" className="bg-gray-500 hover:bg-blue-500 text-white text-sm px-4 py-2 h-8">
+                        ✓ Create Collection
+                    </Button>}/>
             </div>
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-4">
                 <textarea placeholder="How can I help you?"
