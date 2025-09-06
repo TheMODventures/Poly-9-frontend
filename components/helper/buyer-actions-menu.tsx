@@ -15,7 +15,7 @@ interface BuyerActionsMenuProps {
   buyer: Buyer
 }
 
-export default function BuyerActionsMenu({ buyer }: BuyerActionsMenuProps) {
+export default function BuyerActionsMenu({ }: BuyerActionsMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

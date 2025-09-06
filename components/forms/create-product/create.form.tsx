@@ -110,7 +110,7 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
               <FormField
                 control={control}
                 name="styles"
-                render={({ field }) => (
+                render={({ }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
                       {content.styleLabel}
