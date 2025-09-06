@@ -39,19 +39,19 @@ export default function Navbar() {
       </div>
       
       <div className="flex items-center space-x-4">
-        <button className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
+        <button className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
           <Search className="w-5 h-5 text-gray-600" />
         </button> 
         
         <Link href="/settings">
-          <button className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors">
+          <button className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
             <Settings className="w-5 h-5 text-gray-600" />
           </button>
         </Link>
         
         <div className="relative" ref={notificationRef}>
           <button 
-            className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+            className="w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
             onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
           >
             <Bell className="w-5 h-5 text-gray-600" />

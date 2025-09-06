@@ -62,13 +62,13 @@ export default function ProfileField({label,value,field,type = "text",onValueCha
             />
             <button
               onClick={handleSave}
-              className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+              className="px-2 py-1 bg-blue-500 text-white cursor-pointer rounded text-xs hover:bg-blue-600"
             >
               Save
             </button>
             <button
               onClick={handleCancel}
-              className="px-2 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
+              className="px-2 py-1 bg-gray-500 text-white cursor-pointer rounded text-xs hover:bg-gray-600"
             >
               Cancel
             </button>
@@ -78,7 +78,7 @@ export default function ProfileField({label,value,field,type = "text",onValueCha
             <span className="text-sm text-gray-900 text-right min-w-[180px]">{value}</span>
             <button
               onClick={handleEdit}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
             >
               <Edit3 size={16} />
             </button>

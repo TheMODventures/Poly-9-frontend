@@ -30,9 +30,9 @@ export default function LoginForm(): React.ReactNode {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-100 to-white">
-      <div className="relative w-[380px] p-8 space-y-6 bg-white rounded-xl shadow-lg">
+      <div className="relative w-[380px] p-12 space-y-6 bg-white rounded-xl shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome Back</h1>
+          <h1 className="text-2xl text-gray-800" style={{fontFamily: 'var(--font-poppins)'}}>Welcome Back</h1>
           <p className="mt-2 text-sm text-gray-500">
             Welcome Back! Please Enter Your Details.
           </p>
@@ -87,7 +87,7 @@ export default function LoginForm(): React.ReactNode {
                 Forgot Password?
               </a>
             </div>
-            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 rounded-lg">
+            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 rounded-md">
               Sign In
             </Button>
             <div className="flex items-center justify-center space-x-2">
@@ -98,7 +98,7 @@ export default function LoginForm(): React.ReactNode {
             <Button
               type="button"
               variant="outline"
-              className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-lg"
+              className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-md"
             >
               <Image
                 src="/assets/google-icon.svg"

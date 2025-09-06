@@ -50,7 +50,7 @@ export default function BuyersTable() {
                     <span className="font-medium text-gray-900">{buyer.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-gray-600">{buyer.context}</TableCell>
+                <TableCell className="text-gray-900 font-medium">{buyer.context}</TableCell>
                 <TableCell className="text-gray-900 font-medium">{buyer.website}</TableCell>
                 <TableCell><span className="text-gray-600">{buyer.type}</span></TableCell>
 
@@ -62,7 +62,7 @@ export default function BuyersTable() {
                 </TableCell>
 
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0">
                     <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
                       <Eye className="w-4 h-4 text-gray-400" />
                     </Button>

@@ -116,6 +116,16 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
                         </Select>
 
                         <div className="flex items-center gap-2">
+                            <svg
+                            className="w-6 h-6 bg-[#2F80ED] rounded-lg"
+                            viewBox="0 0 48 48"
+                            xmlns="http://www.w3.org/2000/svg"
+                            >
+                            <path
+                              fill="white"
+                              d="M22 14H26V22H34V26H26V34H22V26H14V22H22V14Z"
+                              />
+                            </svg>
                           <Button
                             type="button"
                             size="sm"

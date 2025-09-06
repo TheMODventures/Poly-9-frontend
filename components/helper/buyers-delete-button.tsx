@@ -1,5 +1,5 @@
 import React from "react"
-import { Clipboard } from "lucide-react"
+import { PiBagBold } from "react-icons/pi";
 import { Button } from "@/components/ui/button"
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,DialogClose,} from "@/components/ui/dialog"
 
@@ -26,9 +26,9 @@ export default function DeleteModal({ trigger, buyerName }: DeleteModalProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-              <Clipboard className="w-4 h-4 text-gray-600" />
+          <DialogTitle className="flex items-center gap-3 font-inter">
+            <div className="w-10 h-10 rounded-lg border flex items-center justify-center">
+              <PiBagBold className="w-6 h-6 text-gray-600" />
             </div>
             Buyer Information
           </DialogTitle>
@@ -44,7 +44,7 @@ export default function DeleteModal({ trigger, buyerName }: DeleteModalProps) {
           <DialogClose asChild>
             <Button
               variant="secondary"
-              className="px-6 py-2 bg-gray-300 text-gray-700 hover:bg-gray-400 rounded-md font-medium"
+              className="px-6 py-2 bg-gray-400 text-white hover:bg-gray-400 rounded-md font-medium"
             >
               Cancel
             </Button>

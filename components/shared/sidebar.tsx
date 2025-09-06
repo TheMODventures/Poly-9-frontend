@@ -20,7 +20,7 @@ export default function Sidebar() {
           return (
             <Link key={href} href={href}>
               <button
-                className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors ${
+                className={`w-10 h-10 flex items-center cursor-pointer justify-center rounded-lg transition-colors ${
                   isActive ? "bg-blue-500 text-black" : "hover:bg-gray-100 text-black"
                 }`}
               >
