@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { Button } from "@/components/ui/button"
-import { MdAddBox } from "react-icons/md"
 import { BsThreeDots } from "react-icons/bs"
 import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
@@ -14,7 +13,7 @@ export default function BuyersInfo() {
   const pathname = usePathname()
 
   return (
-    <div className="w-full space-y-4 p-8 bg-white rounded-lg mb-4 relative">
+    <div className="w-full space-y-4 p-8 bg-white rounded-xs mb-4 relative">
       {pathname !== "/context-file" && (
         <div className="absolute top-4 right-4">
           <DropdownMenu>
@@ -39,10 +38,19 @@ export default function BuyersInfo() {
         <h1 className="text-2xl font-semibold text-gray-900">Buyer Directory</h1>
         <AddBuyerModal
           trigger={
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
-              <MdAddBox className="w-12 h-12 rounded-xl" />
-              Add Buyer
-            </Button>
+          <button className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white font-bold py-2 px-4 rounded-sm flex items-center gap-2 transition-colors">
+          <svg
+            className="w-6 h-6 bg-white rounded-lg"
+            viewBox="0 0 48 48"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill="#2F80ED"
+              d="M22 14H26V22H34V26H26V34H22V26H14V22H22V14Z"
+            />
+          </svg>
+            Add Buyer
+          </button>
           }
         />
       </div>

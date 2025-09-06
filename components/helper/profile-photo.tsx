@@ -15,7 +15,7 @@ export default function ProfilePhoto({ initials, onPhotoChange }: ProfilePhotoPr
         <div className="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
           <span className="text-white font-medium text-sm">{initials}</span>
         </div>
-        <button onClick={onPhotoChange} className="text-sm text-gray-600 hover:text-gray-800 transition-colors">
+        <button onClick={onPhotoChange} className="text-sm text-gray-600 cursor-pointer hover:text-gray-800 transition-colors">
           Change photo
         </button>
         <Edit3 size={16} />

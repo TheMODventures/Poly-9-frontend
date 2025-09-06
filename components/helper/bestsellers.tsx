@@ -12,7 +12,7 @@ export default function Bestsellers({ type }: BestsellersProps) {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold">Bestsellers</h3>
-        <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">View all</button>
+        <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">View all</button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">

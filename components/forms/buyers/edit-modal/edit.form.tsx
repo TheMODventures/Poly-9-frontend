@@ -71,7 +71,7 @@ export default function EditModalForm({
         <DialogHeader className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              <Briefcase className="w-5 h-5" />
+              <Briefcase className="w-8 h-8 p-1 border rounded-md border-gray-300" />
               Buyer Information
             </DialogTitle>
             <DialogClose asChild>
@@ -88,13 +88,13 @@ export default function EditModalForm({
                   name="companyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                      <FormLabel className="text-sm font-medium text-gray-600">
                         Company Name
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="NovaWave LLC"
-                          className="bg-gray-50 border-gray-200 focus:bg-white"
+                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
                           {...field}
                         />
                       </FormControl>
@@ -107,13 +107,13 @@ export default function EditModalForm({
                   name="context"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                      <FormLabel className="text-sm font-medium text-gray-600">
                         Context
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="5 files"
-                          className="bg-gray-50 border-gray-200 focus:bg-white"
+                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
                           {...field}
                         />
                       </FormControl>
@@ -128,13 +128,13 @@ export default function EditModalForm({
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                      <FormLabel className="text-sm font-medium text-gray-600">
                         Websites
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Novwave.com"
-                          className="bg-gray-50 border-gray-200 focus:bg-white"
+                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
                           {...field}
                         />
                       </FormControl>
@@ -147,13 +147,13 @@ export default function EditModalForm({
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                      <FormLabel className="text-sm font-medium text-gray-600">
                         Type
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Retailer"
-                          className="bg-gray-50 border-gray-200 focus:bg-white"
+                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
                           {...field}
                         />
                       </FormControl>
@@ -166,12 +166,12 @@ export default function EditModalForm({
                 <FormLabel className="text-sm font-medium text-gray-700 mb-3 block">
                   Socials
                 </FormLabel>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2">
-                    <FaFacebook className="w-6 h-6 text-blue-600" />
+                    <FaFacebook className="w-6 h-6 text-gray-600" />
                   </div>
                   <div className="flex items-center gap-2">
-                    <IoLogoInstagram className="w-6 h-6 text-pink-600" />
+                    <IoLogoInstagram className="w-6 h-6 text-gray-600" />
                   </div>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function EditModalForm({
                   <Button
                     type="button"
                     variant="outline"
-                    className="px-6 py-2 bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+                    className="px-6 py-2 bg-gray-400 text-white border-gray-300 hover:bg-gray-200"
                   >
                     Cancel
                   </Button>

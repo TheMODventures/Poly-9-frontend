@@ -28,9 +28,9 @@ export default function RegisterForm(): React.ReactNode {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-100 to-white">
-      <div className="relative w-[380px] p-7 space-y-4 bg-white rounded-xl shadow-lg scale-94">
+      <div className="relative w-[380px] p-7 space-y-8 bg-white rounded-xl shadow-lg scale-94">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
+          <h1 className="text-3xl text-gray-800 font-inter">Create Account</h1>
           <p className="mt-2 text-sm text-gray-500">
             Let&apos;s Create An Account Together
           </p>
@@ -42,7 +42,7 @@ export default function RegisterForm(): React.ReactNode {
               name="companyName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Representator Name</FormLabel>
+                  <FormLabel className="font-inter text-gray-700">Company Representator Name</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -60,7 +60,7 @@ export default function RegisterForm(): React.ReactNode {
               name="companyEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company Representator Email</FormLabel>
+                  <FormLabel className="font-inter text-gray-700">Company Representator Email</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -78,7 +78,7 @@ export default function RegisterForm(): React.ReactNode {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="font-inter text-gray-700">Password</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
