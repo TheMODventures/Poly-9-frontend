@@ -9,8 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { BsThreeDotsVertical } from "react-icons/bs"
-import EditModalForm from "@/components/forms/buyers/edit-modal/edit.form"
-import DeleteModal from "@/components/helper/buyers-delete-button"
 import { Buyer } from "@/interfaces/interface"
 
 interface BuyerActionsMenuProps {
@@ -27,27 +25,6 @@ export default function BuyerActionsMenu({ buyer }: BuyerActionsMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem>View Details</DropdownMenuItem>
-        <EditModalForm
-        trigger={
-            <DropdownMenuItem
-            className="cursor-pointer"
-            onSelect={(e) => e.preventDefault()} 
-            >
-            Edit
-            </DropdownMenuItem>
-        }
-        buyerData={buyer}/>
-
-        <DeleteModal
-        trigger={
-            <DropdownMenuItem
-            className="text-red-600 cursor-pointer"
-            onSelect={(e) => e.preventDefault()}
-            >
-            Delete
-            </DropdownMenuItem>
-        }
-        buyerName={buyer.name}/>
       </DropdownMenuContent>
     </DropdownMenu>
   )

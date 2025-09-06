@@ -24,7 +24,7 @@ export default function TabsSection() {
         <div className="flex items-center justify-between p-3">
           <h2 className="text-xl font-semibold">Collections</h2>
       <CreateProduct trigger={
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600">
+        <button className="bg-blue-500 text-white px-4 py-2 cursor-pointer rounded-lg text-sm font-medium hover:bg-blue-600">
           + Add Collection  {/* Contains "collection" - will show collection UI */}
         </button>
       }/>
@@ -38,7 +38,7 @@ export default function TabsSection() {
         <div className="flex items-center justify-between p-3">
           <h2 className="text-xl font-semibold">Products</h2>
           <CreateProduct trigger={
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600">
+          <button className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600">
             + Add Product
           </button>}/>
         </div>

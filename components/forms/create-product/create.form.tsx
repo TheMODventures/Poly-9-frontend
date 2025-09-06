@@ -178,7 +178,7 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
               <div className="flex justify-end pt-4">
                 <Button
                   type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2 rounded-lg"
+                  className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer px-8 py-2 rounded-lg"
                 >
                   Submit
                 </Button>

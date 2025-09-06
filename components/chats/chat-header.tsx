@@ -7,7 +7,7 @@ export default function ChatHeader() {
       <div className="flex items-center gap-3">
         <Button 
           size="sm" 
-          className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-1"
+          className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-1"
         >
           + New chat
         </Button>
