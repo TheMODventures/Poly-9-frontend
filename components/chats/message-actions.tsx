@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Copy, RotateCcw, Share, Bookmark, MoreHorizontal } from "lucide-react"
+import { Copy, RotateCcw, Share, Bookmark, MoreVertical} from "lucide-react"
 
 interface MessageActionsProps {
   tokens?: string
@@ -22,7 +22,7 @@ export default function MessageActions({ tokens }: MessageActionsProps) {
           <Bookmark className="w-3 h-3 text-gray-500" />
         </Button>
         <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-          <MoreHorizontal className="w-3 h-3 text-gray-500" />
+          <MoreVertical className="w-3 h-3 text-gray-500" />
         </Button>
       </div>
       {tokens && <span className="text-xs text-gray-700 font-semibold bg-gray-100 p-1 rounded-md">{tokens}</span>}

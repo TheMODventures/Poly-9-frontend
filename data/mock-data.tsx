@@ -156,11 +156,31 @@ export const featuredProduct: Product = {
 
   
 export const customers = [
-  { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 75 },
-  { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 75 },
-  { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 40 },
-  { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 20 },
-  { name: "Customer name here", memberSince: 2004, items: 120, totalSpent: 2000, returnRate: 80 },
+  {
+    title: "Summer Chairs",
+    image: "/assets/table.jpg",
+    altImage: "/assets/table.jpg",
+  },
+  {
+    title: "Modern Chair",
+    image: "/assets/table.jpg",
+    altImage: "/assets/table.jpg",
+  },
+  {
+    title: "Office Chair",
+    image: "/assets/table.jpg",
+    altImage: "/assets/table.jpg",
+  },
+  {
+    title: "Dining Chair",
+    image: "/assets/table.jpg",
+    altImage: "/assets/table.jpg",
+  },
+  {
+    title: "Classic Chair",
+    image: "/assets/table.jpg",
+    altImage: "/assets/table.jpg",
+  },
 ]
 
 export const notifications: NotificationItem[] = [

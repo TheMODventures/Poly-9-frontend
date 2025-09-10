@@ -8,7 +8,7 @@ export default function NotificationsDropdown() {
   return (
     <div className="w-80 bg-white border border-gray-200 rounded-lg shadow-lg py-4">
       <div className="px-4 pb-3 border-b border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+        <h3 className="text-xl font-inter text-gray-900" style={{fontWeight:"700"}}>Notifications</h3>
       </div>
       
       {/* Notifications List */}
@@ -19,7 +19,7 @@ export default function NotificationsDropdown() {
               <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 mb-2">
+                <p className="text-sm font-medium text-gray-600 mb-2">
                   {notification.type}
                 </p>
                 

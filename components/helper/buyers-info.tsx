@@ -18,8 +18,8 @@ export default function BuyersInfo() {
         <div className="absolute top-4 right-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <BsThreeDots className="w-5 h-5 text-gray-600" />
+              <Button variant="ghost" size="icon" className="rounded-full -translate-y-4">
+                <BsThreeDots className="w-8 h-8 text-gray-700" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -34,11 +34,11 @@ export default function BuyersInfo() {
         </div>
       )}
 
-      <div className="flex items-center justify-between scale-94">
+      <div className="flex items-center justify-between scale-99">
         <h1 className="text-2xl font-semibold text-gray-900">Buyer Directory</h1>
         <AddBuyerModal
           trigger={
-          <button className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white font-bold py-2 px-4 rounded-sm flex items-center gap-2 transition-colors">
+          <button className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white font-bold py-2 px-2 rounded-sm flex items-center gap-2 transition-colors">
           <svg
             className="w-6 h-6 bg-white rounded-lg"
             viewBox="0 0 48 48"

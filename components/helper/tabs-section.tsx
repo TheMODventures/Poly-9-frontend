@@ -20,7 +20,7 @@ export default function TabsSection() {
         </TabsList>
       </div>
 
-      <TabsContent value="collections" className="space-y-8 mt-6 bg-white">
+      <TabsContent value="collections" className="space-y-8 mt-4 bg-white">
         <div className="flex items-center justify-between p-3">
           <h2 className="text-xl font-semibold">Collections</h2>
       <CreateProduct trigger={
@@ -30,7 +30,7 @@ export default function TabsSection() {
       }/>
         </div>
         <div className="p-2"><SearchFilterBar /></div>
-        <TopCustomers />
+        <TopCustomers type="collections"/>
         <Bestsellers type="collections" />
       </TabsContent>
 
@@ -43,7 +43,7 @@ export default function TabsSection() {
           </button>}/>
         </div>
         <div className="p-2"><SearchFilterBar /></div>
-        <TopCustomers />
+        <TopCustomers  type="products" />
         <Bestsellers type="products" />
       </TabsContent>
     </Tabs>
