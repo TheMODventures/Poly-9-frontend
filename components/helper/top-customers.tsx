@@ -9,12 +9,12 @@ interface RecentProductsProps {
 
 export default function TopCustomers({ type }: RecentProductsProps) {
   return (
-    <div className="bg-gradient-to-tr from-white via-purple-50 to-blue-100 p-6">
+    <div className="bg-gradient-to-tr from-purple-50 to-white p-6">
       <h4 className="text-xl font-poppins text-center mb-6" style={{fontWeight:"700"}}>
         Recent {type.charAt(0).toUpperCase() + type.slice(1)}
       </h4>
 
-      <Carousel className="w-full">
+      <Carousel className="w-full scale-95">
       <CarouselContent className="-ml-2">
         {customers.map((customer, index) => (
           <CarouselItem key={index} className="p-0 scale-86 basis-1/2 md:basis-1/3 lg:basis-1/4">
@@ -23,8 +23,8 @@ export default function TopCustomers({ type }: RecentProductsProps) {
         ))}
       </CarouselContent>
 
-        <CarouselPrevious className="-left-8" />
-        <CarouselNext className="-right-4" />
+        <CarouselPrevious className="-left-12" />
+        <CarouselNext className="-right-8" />
       </Carousel>
     </div>
   )

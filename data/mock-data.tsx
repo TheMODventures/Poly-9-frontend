@@ -126,33 +126,34 @@ export const featuredProduct: Product = {
 }
 
   
-  export const collectionsProducts: Array<React.ComponentProps<typeof ProductCard>> = [
-    { name: "Modern Chair", price: 350, image: "/assets/chair.png", badge: null },
-    { name: "Modern Chair", price: 350, image: "/assets/chair.png", badge: null },
-    { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/chair.png", badge: "NEW" },
-    { name: "Folding Table", price: 210, image: "/assets/chair.png", badge: "SALE" },
-    { name: "Classic Armchair", price: 350, image: "/assets/chair.png", badge: null },
-    { name: "Papasan Chair", price: 350, image: "/assets/chair.png", badge: null },
-    { name: "Modern Chair", price: 250, image: "/assets/chair.png", badge: null },
-    { name: "Coffee Table", price: 350, image: "/assets/chair.png", badge: null },
-    { name: "Folding Table", price: 250, image: "/assets/chair.png", badge: "SALE" },
-    { name: "Modern Chair", price: 250, image: "/assets/chair.png", badge: null },
-    { name: "Modern Chair", price: 250, image: "/assets/chair.png", badge: null },
-    { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/chair.png", badge: "NEW" },
-  ]
-  
-  export  const productsItems: Array<React.ComponentProps<typeof ProductCard>> = [
-    { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Coffee Table", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Folding Table", price: 250, image: "/assets/table.jpg", badge: null },
-    { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/table.jpg", badge: null },
-    { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Coffee Table", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Folding Table", price: 250, image: "/assets/table.jpg", badge: null },
-    { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null },
-    { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/table.jpg", badge: null },
-  ]
+export const collectionsProducts = [
+  { name: "Modern Chair", price: 350, image: "/assets/chair.png", badge: null, variants: ["#c0c0c0", "#8b8b8b", "#444"] },
+  { name: "Modern Chair", price: 350, image: "/assets/chair.png", badge: null },
+  { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/chair.png", badge: "NEW", variants: ["#000", "#fff"] },
+  { name: "Folding Table", price: 210, image: "/assets/chair.png", badge: "SALE" },
+  { name: "Classic Armchair", price: 350, image: "/assets/chair.png", badge: null, variants: ["#ddd", "#999"] },
+  { name: "Papasan Chair", price: 350, image: "/assets/chair.png", badge: null },
+  { name: "Rocking Chair", price: 400, image: "/assets/chair.png", badge: null, variants: ["#444", "#222"] },
+  { name: "Study Desk", price: 500, originalPrice: 650, image: "/assets/chair.png", badge: "SALE" },
+  { name: "Recliner Sofa", price: 900, image: "/assets/chair.png", badge: "NEW", variants: ["#aaa", "#666"] },
+  { name: "Dining Table", price: 750, image: "/assets/chair.png", badge: null },
+  { name: "Side Table", price: 150, image: "/assets/chair.png", badge: null, variants: ["#999", "#ccc", "#000"] },
+  { name: "Office Chair", price: 320, image: "/assets/chair.png", badge: null },
+]
+
+export const productsItems = [
+  { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null, variants: ["#aaa", "#555", "#222"] },
+  { name: "Coffee Table", price: 350, image: "/assets/table.jpg", badge: null },
+  { name: "Folding Table", price: 250, image: "/assets/table.jpg", badge: null, variants: ["#ddd", "#666"] },
+  { name: "Modern Chair", price: 350, image: "/assets/table.jpg", badge: null },
+  { name: "Coffee Table", price: 200, originalPrice: 300, image: "/assets/table.jpg", badge: null },
+  { name: "Bookshelf", price: 450, image: "/assets/table.jpg", badge: "NEW", variants: ["#222", "#444"] },
+  { name: "Nightstand", price: 180, image: "/assets/table.jpg", badge: null },
+  { name: "Lounge Chair", price: 600, image: "/assets/table.jpg", badge: "SALE", variants: ["#ccc", "#888"] },
+  { name: "Wardrobe", price: 1200, image: "/assets/table.jpg", badge: null },
+  { name: "Shoe Rack", price: 220, image: "/assets/table.jpg", badge: null },
+]
+
 
   
 export const customers = [
