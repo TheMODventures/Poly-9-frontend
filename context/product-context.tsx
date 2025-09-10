@@ -1,6 +1,6 @@
 "use client"
 
-import type { Product } from "@/interfaces/interface"
+import { Product } from "@/interfaces/interface"
 import { createContext, useContext, useState, type ReactNode } from "react"
 
 interface ProductContextType {
@@ -9,11 +9,15 @@ interface ProductContextType {
   isPreviewMode: boolean
   openPreview: (product: Product) => void
   closePreview: () => void
+  isChatOpen: boolean
+  setIsChatOpen: (value: boolean) => void
+  toggleChat: () => void
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined)
 
 export function ProductProvider({ children }: { children: ReactNode }) {
+  const [isChatOpen, setIsChatOpen] = useState(true)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isPreviewMode, setIsPreviewMode] = useState(false)
 
@@ -21,10 +25,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     setSelectedProduct(product)
     setIsPreviewMode(true)
   }
-
-  const closePreview = () => {
+    const closePreview = () => {
     setSelectedProduct(null)
     setIsPreviewMode(false)
+  }
+  const toggleChat = () => {
+    setIsChatOpen((prev) => !prev)
   }
 
   return (
@@ -35,6 +41,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         isPreviewMode,
         openPreview,
         closePreview,
+        isChatOpen,
+        setIsChatOpen,
+        toggleChat,
       }}
     >
       {children}

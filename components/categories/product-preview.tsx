@@ -1,102 +1,69 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Check, Download } from "lucide-react"
 import Image from "next/image"
 import { useProduct } from "@/context/product-context"
-import TransformDialog from "@/components/helper/transform-dialog"
+import ProductVariants from "./product-variants"
 
 export default function ProductPreview() {
-  const { selectedProduct, closePreview } = useProduct()
+  const { selectedProduct } = useProduct()
 
   if (!selectedProduct) return null
 
   return (
-    <div className="w-1/2 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={closePreview} className="p-2 hover:bg-gray-100">
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h2 className="font-semibold text-gray-900">Collections</h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100">
-            <Check className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="p-2 hover:bg-gray-100">
-            <Download className="w-4 h-4" />
-          </Button>
-        </div>
+    <div className="flex-1 bg-white flex flex-col">
+      <div className="p-4 border-b border-gray-100">
+        <h1 className="text-2xl font-inter text-gray-900 mb-1" style={{ fontWeight: "500" }}>
+          Modern Glam Coffee Table
+        </h1>
       </div>
 
-      <div className="flex items-center justify-between p-4">
-        <h3 className="font-medium text-gray-900">Live Customization</h3>
-        <div className="flex gap-2">
-          <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
-            Preview
-          </Button>
-          <TransformDialog>
-            <Button size="sm" variant="outline">
-              Transform
-            </Button>
-          </TransformDialog>
-        </div>
-      </div>
-
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="w-80 h-80 flex items-center justify-center mb-8">
+      <div className="flex-1 p-6">
+        <div className="bg-gray-50 rounded-2xl p-8 mb-6 flex items-center justify-center min-h-80">
           <Image
-            src={selectedProduct.image || "/placeholder.svg"}
-            width={320}
-            height={320}
-            alt={selectedProduct.name}
-            className="w-full h-full object-contain"
+            src="/assets/chair1.svg"
+            width={400}
+            height={300}
+            alt="Modern Glam Coffee Table"
+            className="w-full max-w-md h-auto object-contain"
           />
         </div>
 
-        {selectedProduct.colors && (
-          <div className="flex gap-3 mb-8">
-            {selectedProduct.colors.map((color, index) => (
-              <div
-                key={index}
-                className="w-8 h-8 rounded-full border-2 border-white shadow-md cursor-pointer"
-                style={{ backgroundColor: color }}
-              />
-            ))}
-            <Button size="sm" className="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 text-white p-0">
-              +
+        {/* Variants */}
+        <ProductVariants
+          variants={[
+            { src: "/assets/chair2.svg", alt: "Table view 1" },
+            { src: "/assets/chair1.svg", alt: "Table view 2" },
+            { src: "/assets/chair.svg", alt: "Table view 3" },
+          ]}
+          onAdd={() => console.log("Add new variant clicked")}
+        />
+
+        <div className="mb-6">
+          <h2 className="text-lg font-inter text-[#0E004D] mb-2" style={{ fontWeight: "600" }}>
+            Round coffee table
+          </h2>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-inter text-gray-900" style={{ fontWeight: "600" }}>
+              Description
+            </h3>
+            <Button variant="ghost" size="sm" className="p-1">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
             </Button>
           </div>
-        )}
-      </div>
-
-      <div className="p-6 bg-white/50">
-        <h4 className="font-semibold text-gray-900 mb-3">Description</h4>
-        <p className="text-sm text-gray-600 leading-relaxed mb-4">{selectedProduct.description}</p>
-
-        <div className="flex gap-3">
-          <div className="w-12 h-12 bg-gray-100 rounded-lg flex-shrink-0">
-            <Image
-              src="/assets/chair1.svg"
-              width={48}
-              height={48}
-              alt="Related product"
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
-          <div className="w-12 h-12 bg-gray-100 rounded-lg flex-shrink-0">
-            <Image
-              src="/assets/chair2.svg"
-              width={48}
-              height={48}
-              alt="Related product"
-              className="w-full h-full object-cover rounded-lg"
-            />
-          </div>
-          <Button size="sm" className="w-12 h-12 rounded-lg bg-blue-500 hover:bg-blue-600 text-white p-0">
-            +
-          </Button>
+          <p className="text-gray-500 font-inter leading-relaxed">
+            The Swedish Designer Monica Forstar's Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.
+          </p>
         </div>
       </div>
     </div>

@@ -1,29 +1,34 @@
 "use client"
 
 import CollectionsHeader from "./category-header"
-import CategoryTabs from "./category-tabs"
-import TopCategories from "./top-category"
+import CollectionGrid from "./collection-grid"
 import FeaturedProduct from "./featured-product"
-import PopularProducts from "./popular-products"
 import ProductPreview from "./product-preview"
+import TransformProduct from "./transform-product"
 import { useProduct } from "@/context/product-context"
 
 export default function CategorySection() {
-  const { isPreviewMode } = useProduct()
-
-  if (isPreviewMode) {
-    return <ProductPreview />
-  }
+  const { isPreviewMode, isChatOpen } = useProduct()
 
   return (
-    <div className="w-1/2 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
+    <div
+      className={`bg-white flex flex-col transition-all duration-300 ease-in-out ${
+        isChatOpen ? "w-2/3" : "w-full"
+      }`}
+    >
       <CollectionsHeader />
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        <CategoryTabs />
-        <TopCategories />
-        <FeaturedProduct />
-        <PopularProducts />
-      </div>
+      
+      {isPreviewMode ? (
+        <div className="flex flex-1 overflow-hidden space-y-8">
+          <ProductPreview />
+          <TransformProduct />
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto space-y-8 p-6">
+          <CollectionGrid />
+          <FeaturedProduct />
+        </div>
+      )}
     </div>
   )
 }
