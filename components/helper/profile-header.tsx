@@ -7,7 +7,7 @@ import Link from "next/link"
 export default function ProfileHeader() {
   return (
     <div className="bg-white rounded-md p-6 shadow-sm border">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center ml-5 justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Buyers profile</h1>
         <div className="absolute top-14 right-10">
           <DropdownMenu>
@@ -28,7 +28,7 @@ export default function ProfileHeader() {
         </div>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-4 ml-5">
         <div className="flex items-center gap-3">
           <Phone className="w-5 h-5 text-blue-500" />
           <span className="text-sm text-gray-600">Contact</span>

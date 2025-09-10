@@ -59,7 +59,7 @@ const SearchFormInner = ({ onSearchChange }: SearchFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="relative">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="relative w-90">
         <FormField
           control={form.control}
           name="search"
