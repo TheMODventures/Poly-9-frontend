@@ -6,7 +6,7 @@ import { ProductProvider } from "@/context/product-context"
 export default function ChatPage() {
   return (
     <ProductProvider>
-      <div className="h-screen bg-gray-50 flex flex-col p-16 gap-6">
+      <div className="h-screen flex flex-col p-16 gap-6">
         <ChatHeader />
         <div className="flex-1 flex">
           <ChatSection />

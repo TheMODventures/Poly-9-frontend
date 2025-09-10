@@ -1,10 +1,10 @@
 "use client"
 
-import { Heart } from "lucide-react"
+import { Plus } from "lucide-react"
 import Image from "next/image"
-import { GoPeople } from "react-icons/go"
 import { useProduct } from "@/context/product-context"
 import { featuredProduct } from "@/data/mock-data"
+import { BsPencilFill } from "react-icons/bs"
 
 export default function FeaturedProduct() {
   const { openPreview } = useProduct()
@@ -14,60 +14,55 @@ export default function FeaturedProduct() {
   }
 
   return (
-    <div>
-      <div className="bg-gradient-to-b from-white to-blue-50 rounded-lg p-4 space-y-4">
-        <div className="flex gap-4">
-          <div
-            className="w-62 h-80 bg-white rounded-lg flex-shrink-0 overflow-hidden p-8 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-            onClick={handleProductClick}
-          >
-            <Image
-              src="/assets/chair.svg"
-              width={400}
-              height={400}
-              alt="Ox Maidens Chair"
-              className="w-full h-full object-cover -translate-y-10"
-            />
-            <div className="-translate-y-12 p-2">
-              <h4 className="font-medium text-gray-900">Ox Maidens Chair</h4>
-              <p className="text-sm text-gray-500">Hans J. Wegner</p>
-              <p className="text-lg font-semibold text-blue-500 mt-1">$9.99</p>
+    <div className="px-0 pb-6">
+      <div className="bg-white rounded-2xl p-8">
+        <div className="flex gap-8">
+          <div className="flex-shrink-0">
+            <div 
+              className="w-80 h-96 bg-gray-100 rounded-2xl p-8 cursor-pointer hover:shadow-lg transition-shadow relative"
+              onClick={handleProductClick}
+            >
+              <Image
+                src="/assets/chair1.svg"
+                width={300}
+                height={320}
+                alt="Ox Mathis Chair"
+                className="w-full h-64 object-contain"
+              />
+              
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold text-gray-900">Ox Mathis Chair</h3>
+                <p className="text-sm text-gray-500 mt-1">Hans j. wegner</p>
+              </div>
+              
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                  <Image
+                    src="/assets/chair1.svg"
+                    width={24}
+                    height={24}
+                    alt="Chair thumbnail"
+                    className="w-12 h-12 object-contain"
+                  />
+                </div>
+                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors">
+                  <Plus className="w-6 h-6 text-white" />
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className=" min-w-0 space-y-2">
-            <h2 className="font-semibold text-gray-900 text-xl mb-4">Description</h2>
-            <p className="text-sm text-gray-600 leading-relaxed mb-10">
-              The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And
-              Beautiful Pure Shapes.
-            </p>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <div className="flex items-center gap-1">
-                  <GoPeople className="w-4 h-4" />
-                  <span>341 Seen</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Heart className="w-4 h-4" />
-                  <span>294 Liked</span>
-                </div>
-              </div>
-              <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full bg-gray-400 border-2 border-white"></div>
-                <div className="w-6 h-6 rounded-full bg-gray-600 border-2 border-white"></div>
-                <div className="w-6 h-6 rounded-full bg-teal-500 border-2 border-white"></div>
-              </div>
+          
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-blue-900">Summer Chairs</h2>
+              <BsPencilFill className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
             </div>
-
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4].map((star) => (
-                <svg key={star} className="w-4 h-4 fill-yellow-400 text-yellow-400" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-              <svg className="w-4 h-4 fill-gray-300 text-gray-300" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
+            
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+              <p className="text-gray-600 leading-relaxed">
+                The Swedish Designer Monica Forstar's Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.
+              </p>
             </div>
           </div>
         </div>

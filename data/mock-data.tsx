@@ -1,4 +1,3 @@
-import ProductCard from "@/components/helper/product-card"
 import { NotificationItem, Product } from "@/interfaces/interface"
 
 export const buyersData = [
@@ -65,34 +64,36 @@ export const typeOptions = [
     { value: "hospitality", label: "Hospitality" }
   ]
 
-  export const messages = [
-    {
-      id: 1,
-      user: "Mauro Sicard",
-      time: "2:45 PM",
-      content:
-        "Lorem ipsum dolor sit amet consectetur tincidunt bibendum gravida phasellus sed dignissim id tempus ridiculus consectetur dolor sit amet",
-      avatar: "M",
-    },
-    {
-      id: 2,
-      user: "LanguageGUI",
-      time: "2:46 PM",
-      content:
-        "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip exea commodo consequat lorem ipsum dolor sit amet consectetur adipiscing",
-      avatar: "L",
-      isBot: true,
-      tokens: "50 tokens",
-    },
-    {
-      id: 3,
-      user: "Mauro Sicard",
-      time: "2:45 PM",
-      content:
-        "Lorem ipsum dolor sit amet consectetur tincidunt bibendum gravida phasellus sed dignissim id tempus ridiculus consectetur dolor sit amet",
-      avatar: "M",
-    },
-  ]
+export const messages = [
+  {
+    id: 1,
+    user: "Mauro Sicard",
+    time: "2:45 PM",
+    content:
+      "Lorem ipsum dolor sit amet consectetur tincidunt bibendum gravida phasellus sed dignissim id tempus ridiculus consectetur dolor sit amet",
+    avatar: "/assets/avatar.png",
+    isBot: false,
+  },
+  {
+    id: 2,
+    user: "LanguageGUI",
+    time: "2:46 PM",
+    content:
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip exea commodo consequat lorem ipsum dolor sit amet consectetur adipiscing",
+    avatar: "/assets/users/bot.png",
+    isBot: true,
+    tokens: "50 tokens",
+  },
+  {
+    id: 3,
+    user: "Mauro Sicard",
+    time: "2:47 PM",
+    content:
+      "Lorem ipsum dolor sit amet consectetur tincidunt bibendum gravida phasellus sed dignissim id tempus ridiculus consectetur dolor sit amet",
+    avatar: "/assets/avatar.png",
+    isBot: false,
+  },
+]
 
  export const products = [
     {

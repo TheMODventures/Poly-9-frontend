@@ -46,7 +46,7 @@ export default function TabsSection() {
         </div>
         <div className="p-0 mr-6 ml-6"><SearchFilterBar /></div>
         <div className="bg-gradient-to-bl from-white via-purple-50 to-blue-50">
-          <TopCustomers  type="products" />
+          {/* <TopCustomers  type="products" /> */}
           <Bestsellers type="products" />
         </div>
       </TabsContent>
