@@ -33,13 +33,13 @@ export default function DeleteModal({ trigger, buyerName }: DeleteModalProps) {
             Buyer Information
           </DialogTitle>
         </DialogHeader>
-        
+        <hr />
         <div className="py-6">
           <h3 className="text-lg font-medium text-gray-900 text-center">
             Are you sure you want to delete this entry?
           </h3>
         </div>
-
+        <hr />
         <div className="flex gap-3 justify-end">
           <DialogClose asChild>
             <Button

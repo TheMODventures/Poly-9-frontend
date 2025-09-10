@@ -11,7 +11,7 @@ export default function Bestsellers({ type }: BestsellersProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">Bestsellers</h3>
+        <h3 className="text-lg font-poppins" style={{fontWeight:"600"}}>All  {type.charAt(0).toUpperCase() + type.slice(1)}</h3>
         <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 cursor-pointer">View all</button>
       </div>
 

@@ -28,7 +28,7 @@ export default function BuyersTable() {
         <Table className="relative w-full border-collapse">
           <TableHeader className="sticky top-0 z-10 bg-blue-500">
             <TableRow>
-              <TableHead className="text-white font-medium">Company Name</TableHead>
+              <TableHead className="text-white font-medium translate-x-4">Company Name</TableHead>
               <TableHead className="text-white font-medium">Context</TableHead>
               <TableHead className="text-white font-medium">Websites</TableHead>
               <TableHead className="text-white font-medium">Type</TableHead>
@@ -43,7 +43,7 @@ export default function BuyersTable() {
             {buyersData.map((buyer: Buyer) => (
               <TableRow key={buyer.id} className="border-b hover:bg-gray-50">
                 <TableCell>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3  translate-x-4">
                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-lg">
                       {buyer.logo}
                     </div>

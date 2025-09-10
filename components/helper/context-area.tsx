@@ -6,7 +6,7 @@ export default function ContextArea() {
   return (
     <div className="w-1/2 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
       <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-6">Product Categories</h2>
+        <h2 className="text-lg font-inter text-gray-800 mb-6">Product Categories</h2>
         
         <Tabs defaultValue="top-selling" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">

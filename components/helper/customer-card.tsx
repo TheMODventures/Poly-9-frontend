@@ -1,46 +1,42 @@
+import { Pencil } from "lucide-react"
+import Image from "next/image"
+import { CgSoftwareUpload } from "react-icons/cg";
+
 interface CustomerCardProps {
-  name: string
-  memberSince: number
-  items: number
-  totalSpent: number
-  returnRate: number
+  title: string
+  image: string
 }
 
-export default function CustomerCard({ name, memberSince, items, totalSpent, returnRate }: CustomerCardProps) {
+export default function CustomerCard({ title, image }: CustomerCardProps) {
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border">
-      <div className="flex justify-center mb-4">
-        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
-          <div className="w-12 h-12 bg-gray-300 rounded-full opacity-50"></div>
-        </div>
+    <div className="relative bg-white rounded-2xl shadow-md overflow-hidden">
+      <h3 className="absolute top-3 left-3 text-lg font-semibold text-gray-800 z-10">
+        {title}
+      </h3>
+
+      <div className="absolute top-3 right-3 flex space-x-2 z-10">
+        <button className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
+          <CgSoftwareUpload  size={20} />
+        </button>
+        <button className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
+          <Pencil size={16} />
+        </button>
       </div>
 
-      <div className="text-center space-y-2">
-        <h4 className="font-medium text-gray-900">{name}</h4>
-        <p className="text-sm text-gray-500">Member since {memberSince}</p>
+      <div className="relative w-full h-64">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover"
+        />
+      </div>
 
-        <div className="flex justify-between text-sm mt-4">
-          <div>
-            <div className="font-semibold text-gray-900">{items}</div>
-            <div className="text-gray-500">Items purchased</div>
-          </div>
-          <div className="text-right">
-            <div className="font-semibold text-gray-900">${totalSpent}</div>
-            <div className="text-gray-500">Total spent</div>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-gray-500">Customer return rate</span>
-            <span className="font-semibold">{returnRate}%</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full relative" style={{ width: `${returnRate}%` }}>
-              <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-blue-500 rounded-full border-2 border-white"></div>
-            </div>
-          </div>
-        </div>
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center space-y-2 z-10">
+        <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+        <span className="w-3 h-3 rounded-full bg-gray-400"></span>
+        <span className="w-3 h-3 rounded-full bg-gray-400"></span>
+        <span className="w-3 h-3 rounded-full bg-gray-400"></span>
       </div>
     </div>
   )

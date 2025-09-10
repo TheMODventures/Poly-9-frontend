@@ -38,11 +38,6 @@ export default function ProductCard({ name, price, originalPrice, image, badge }
           {originalPrice && <span className="text-xs text-gray-400 line-through">${originalPrice}</span>}
           <span className="text-sm font-semibold text-gray-900">${price}</span>
         </div>
-        <div className="flex gap-1 mt-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <div key={star} className="w-3 h-3 bg-gray-200 rounded-full"></div>
-          ))}
-        </div>
       </div>
     </div>
   )

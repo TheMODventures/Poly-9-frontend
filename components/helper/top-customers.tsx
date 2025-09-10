@@ -3,29 +3,29 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import CustomerCard from "./customer-card"
 import { customers } from "@/data/mock-data"
 
-export default function TopCustomers() {
+interface RecentProductsProps {
+  type: "collections" | "products"
+}
+
+export default function TopCustomers({ type }: RecentProductsProps) {
   return (
     <div className="bg-gradient-to-tr from-white via-purple-50 to-blue-100 p-6">
-      <h3 className="text-lg font-semibold text-center mb-6">Top customers</h3>
+      <h4 className="text-xl font-poppins text-center mb-6" style={{fontWeight:"700"}}>
+        Recent {type.charAt(0).toUpperCase() + type.slice(1)}
+      </h4>
 
       <Carousel className="w-full">
-        <CarouselContent className="-ml-4">
-          {customers.map((customer, index) => (
-            <CarouselItem key={index} className="pl-4 basis-1/3 lg:basis-1/5">
-              <CustomerCard {...customer} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="-left-8" />
-        <CarouselNext className="-right-8" />
-      </Carousel>
+      <CarouselContent className="-ml-2">
+        {customers.map((customer, index) => (
+          <CarouselItem key={index} className="p-0 scale-86 basis-1/2 md:basis-1/3 lg:basis-1/4">
+            <CustomerCard {...customer} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
 
-      <div className="flex justify-center mt-4 gap-2">
-        <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-        <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-        <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-      </div>
+        <CarouselPrevious className="-left-8" />
+        <CarouselNext className="-right-4" />
+      </Carousel>
     </div>
   )
 }

@@ -46,8 +46,8 @@ export default function ProfileField({label,value,field,type = "text",onValueCha
   )
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
+    <div className="flex items-center justify-between py-3 scale-98 border-b border-gray-100">
+      <span className="text-sm font-semibold text-gray-800">{label}</span>
       <div className="flex items-center gap-3">
         {isEditing ? (
           <>
