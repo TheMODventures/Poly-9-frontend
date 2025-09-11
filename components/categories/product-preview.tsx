@@ -62,7 +62,7 @@ export default function ProductPreview() {
             </Button>
           </div>
           <p className="text-gray-500 font-inter leading-relaxed">
-            The Swedish Designer Monica Forstar's Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.
+            The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.
           </p>
         </div>
       </div>
