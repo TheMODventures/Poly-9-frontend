@@ -4,7 +4,7 @@ import FileItem from './file-item'
 
 export default function ContextArea() {
   return (
-    <div className="w-1/2 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
+    <div className="w-2/3 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
       <div className="p-6">
         <h2 className="text-lg font-inter text-gray-800 mb-6">Product Categories</h2>
         
@@ -15,18 +15,18 @@ export default function ContextArea() {
             <TabsTrigger value="latest-news" className="text-sm">Latest News</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="top-selling" className="space-y-3">
+          <TabsContent value="top-selling" className="space-y-3 w-90">
             <FileItem />
             <FileItem />
             <FileItem />
           </TabsContent>
           
-          <TabsContent value="revenue" className="space-y-3">
+          <TabsContent value="revenue" className="space-y-3 w-90">
             <FileItem />
             <FileItem />
           </TabsContent>
           
-          <TabsContent value="latest-news" className="space-y-3">
+          <TabsContent value="latest-news" className="space-y-3 w-90">
             <FileItem />
             <FileItem />
             <FileItem />

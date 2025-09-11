@@ -56,3 +56,12 @@ export interface NotificationItem {
   timeAgo: string
   avatarColor: string
 }
+
+
+export interface UploadFile {
+  id: number;
+  name: string;
+  size: number;
+  uploaded: number;
+  status: "uploading" | "completed";
+}

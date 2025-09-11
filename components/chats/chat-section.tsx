@@ -3,9 +3,10 @@
 import ChatMessages from "./chat-messages"
 import ChatInput from "./chat-input"
 import { useProduct } from "@/context/product-context"
-import { ChevronLeft, ChevronRight, MessageSquare, Triangle as Translate, Cable as Cube, Monitor } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { messages } from "@/data/mock-data"
+import Image from "next/image";import { FaAngleLeft } from "react-icons/fa6";
+import { FaAngleRight } from "react-icons/fa"
 
 export default function ChatSection() {
   const { isChatOpen, toggleChat } = useProduct()
@@ -32,26 +33,37 @@ export default function ChatSection() {
     >
       {isChatOpen ? (
         <>
-          <div className=" px-6 py-3">
-            <div className="flex items-center justify-between">
-              <h2 className="font-medium text-gray-900">Today 2:45 PM</h2>
-              <button onClick={toggleChat} className="p-3 bg-blue-100 rounded-full">
-                <ChevronLeft className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
+      <div className="px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center flex-1 translate-x-0">
+            <hr className="flex-1 border-gray-300 mr-4 w-40" />
+            <h2 className="font-inter text-gray-500 whitespace-nowrap">
+              Today 2:45 PM
+            </h2>
+            <hr className="flex-1 border-gray-300 ml-3  " />
           </div>
+
+          <button
+            onClick={toggleChat}
+            className="p-3 rounded-full -translate-x-3 whitespace-nowrap"
+          >
+            <FaAngleLeft className="w-12 h-12 border-2 border-gray-300 p-2 rounded-full bg-gray-100 text-blue-500" />
+          </button>
+        </div>
+      </div>
+
           <ChatMessages />
           <ChatInput />
         </>
       ) : (
-        <div className="flex flex-col h-full">
-          <div className="p-3">
-            <button
-              onClick={toggleChat}
-              className="w-full p-2 bg-blue-100 rounded-full flex items-center justify-center"
-            >
-              <ChevronRight className="w-5 h-5 text-gray-500" />
-            </button>
+        <div className="flex flex-col h-full border-r-8 border-gray-100">
+          <div className="p-2">
+          <button
+            onClick={toggleChat}
+            className="p-0 mt-1 rounded-full whitespace-nowrap"
+          >
+            <FaAngleRight className="w-12 h-12 border-2 border-gray-300 p-2 rounded-full bg-gray-100 text-blue-500" />
+          </button>
           </div>
 
           <div className="flex-1 p-3 space-y-3">
@@ -68,19 +80,22 @@ export default function ChatSection() {
           </div>
 
           <div className="p-3 space-y-3 border-t border-gray-200">
-            <button className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center hover:bg-blue-200 transition-colors">
-              <Cube className="w-5 h-5 text-blue-600" />
-            </button>
-            <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-              <Translate className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-              <MessageSquare className="w-5 h-5 text-gray-600" />
-            </button>
-            <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
-              <Monitor className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
+                <button className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center hover:bg-blue-200 transition-colors">
+                  <Image src="/assets/editbox.svg" alt="Edit Box" width={26} height={26} />
+                </button>
+
+                <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                  <Image src="/assets/fileadd.svg" alt="File Add" width={26} height={26} />
+                </button>
+
+                <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                  <Image src="/assets/qouta.svg" alt="Message" width={26} height={26} />
+                </button>
+
+                <button className="w-10 h-10 rounded-lg hover:bg-gray-100 flex items-center justify-center transition-colors">
+                  <Image src="/assets/chatroom.svg" alt="Monitor" width={26} height={26} />
+                </button>
+              </div>
         </div>
       )}
     </div>
