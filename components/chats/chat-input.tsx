@@ -15,7 +15,7 @@ export default function ChatInput() {
   return (
     <div className="p-4">
       {!isContextFile && (<>
-        <div className="mb-3 flex gap-1 items-center justify-center">
+        <div className="mb-3 flex gap-1 items-center justify-center scale-94">
           <CreateProduct
             trigger={
               <Button className="bg-[#8cd1ff] border border-blue-800 hover:bg-blue-400 text-black text-xs px-1 py-2 h-8">
