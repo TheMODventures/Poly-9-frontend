@@ -215,3 +215,10 @@ export const notifications: NotificationItem[] = [
     avatarColor: 'bg-teal-500'
   }
 ]
+
+  export const pricingItems = [
+    { category: "Top - Marble", partNo: "TM-123", materialNo: "TM-456", source: "Reference Page S-324", price: 230 },
+    { category: "Ring - Metal", partNo: "TM-123", materialNo: "TM-456", source: "Reference Page S-324", price: 100 },
+    { category: "Legs - Metal", partNo: "TM-123", materialNo: "TM-456", source: "Reference Page S-324", price: 250 },
+    { category: "Feet - Plastic", partNo: "TM-123", materialNo: "TM-456", source: "Reference Page S-324", price: 20 },
+  ];

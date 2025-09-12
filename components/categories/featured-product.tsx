@@ -4,7 +4,7 @@ import { Plus } from "lucide-react"
 import Image from "next/image"
 import { useProduct } from "@/context/product-context"
 import { featuredProduct } from "@/data/mock-data"
-import { BsPencilFill } from "react-icons/bs"
+import { MdEdit } from "react-icons/md"
 
 export default function FeaturedProduct() {
   const { openPreview } = useProduct()
@@ -55,11 +55,14 @@ export default function FeaturedProduct() {
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-blue-900">Summer Chairs</h2>
-              <BsPencilFill className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
             </div>
             
             <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Description</h3>
+              <MdEdit className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-600" />
+            </div>
+
               <p className="text-gray-600 leading-relaxed">
                 The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.
               </p>

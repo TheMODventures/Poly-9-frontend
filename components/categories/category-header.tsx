@@ -3,8 +3,12 @@ import { MdRefresh } from "react-icons/md";
 import { PiDownloadSimple } from "react-icons/pi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import ShareDialog from "../dialogs/share-dialog";
+import { BiSolidEdit } from "react-icons/bi";
+import { useProduct } from "@/context/product-context"
 
 export default function CollectionsHeader() {
+  const { isPreviewMode, isChatOpen } = useProduct()
+
   return (
     <div className="bg-white px-6 py-4 mt-8">
       <div className="flex items-center justify-between">
@@ -12,6 +16,9 @@ export default function CollectionsHeader() {
           <h1 className="text-4xl font-inter text-gray-900 font-bold">
             Living Room
           </h1>
+          {isPreviewMode && (
+          <BiSolidEdit className="h-7 w-7 text-gray-600" />
+          )}
         </div>
 
         <div className="flex items-center gap-2">

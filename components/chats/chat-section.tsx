@@ -7,9 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { messages } from "@/data/mock-data"
 import Image from "next/image";import { FaAngleLeft } from "react-icons/fa6";
 import { FaAngleRight } from "react-icons/fa"
+import { usePathname } from "next/navigation";
 
 export default function ChatSection() {
   const { isChatOpen, toggleChat } = useProduct()
+  const pathname = usePathname();
+  const isContextFile = pathname === "/context-file";
 
   const uniqueUsers = messages.reduce(
     (acc, message) => {
@@ -33,24 +36,26 @@ export default function ChatSection() {
     >
       {isChatOpen ? (
         <>
-      <div className="px-6 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center flex-1 translate-x-0">
-            <hr className="flex-1 border-gray-300 mr-4 w-40" />
-            <h2 className="font-inter text-gray-500 whitespace-nowrap">
-              Today 2:45 PM
-            </h2>
-            <hr className="flex-1 border-gray-300 ml-3  " />
+        <div className="relative px-6 py-8">
+          <div className="absolute inset-0 flex items-center justify-center px-6">
+            <div className="flex items-center w-full max-w-md">
+              <hr className="flex-1 border-gray-300 mr-4" />
+              <h2 className="font-inter text-gray-500 whitespace-nowrap">
+                Today 2:45 PM
+              </h2>
+              <hr className="flex-1 border-gray-300 ml-4" />
+            </div>
           </div>
 
-          <button
-            onClick={toggleChat}
-            className="p-3 rounded-full -translate-x-3 whitespace-nowrap"
-          >
-            <FaAngleLeft className="w-12 h-12 border-2 border-gray-300 p-2 rounded-full bg-gray-100 text-blue-500" />
-          </button>
+          {!isContextFile && (
+            <button
+              onClick={toggleChat}
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-3 rounded-full"
+            >
+              <FaAngleLeft className="w-12 h-12 border-2 border-gray-300 p-2 rounded-full bg-gray-100 text-blue-500" />
+            </button>
+          )}
         </div>
-      </div>
 
           <ChatMessages />
           <ChatInput />
