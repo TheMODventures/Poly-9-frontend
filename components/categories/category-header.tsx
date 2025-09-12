@@ -7,7 +7,7 @@ import { BiSolidEdit } from "react-icons/bi";
 import { useProduct } from "@/context/product-context"
 
 export default function CollectionsHeader() {
-  const { isPreviewMode, isChatOpen } = useProduct()
+  const { isPreviewMode } = useProduct()
 
   return (
     <div className="bg-white px-6 py-4 mt-8">
