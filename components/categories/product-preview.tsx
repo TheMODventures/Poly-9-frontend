@@ -1,9 +1,9 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useProduct } from "@/context/product-context"
 import ProductVariants from "./product-variants"
+import { MdEdit } from "react-icons/md"
 
 export default function ProductPreview() {
   const { selectedProduct } = useProduct()
@@ -50,16 +50,7 @@ export default function ProductPreview() {
             <h3 className="text-xl font-inter text-gray-900" style={{ fontWeight: "600" }}>
               Description
             </h3>
-            <Button variant="ghost" size="sm" className="p-1">
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                />
-              </svg>
-            </Button>
+            <MdEdit className="w-5 h-5 text-gray-700 cursor-pointer hover:text-gray-600" />
           </div>
           <p className="text-gray-500 font-inter leading-relaxed">
             The Swedish Designer Monica Forstar&apos;s Style Is Characterised By Her Enternal Love For New Materials And Beautiful Pure Shapes.

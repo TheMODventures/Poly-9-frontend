@@ -5,7 +5,7 @@ import BuyersTable from "@/components/tables/buyers.table";
 export default function Home() {
   return (
     <div className="w-full h-full">
-      <div className="px-6 mt-4">
+      <div className="px-6 mt-6">
         <BuyersInfo/>
       </div>
       <div className="px-6">

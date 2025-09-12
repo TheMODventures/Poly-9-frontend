@@ -5,10 +5,10 @@ import FileItem from './file-item'
 export default function ContextArea() {
   return (
     <div className="w-2/3 bg-gradient-to-b from-white to-blue-50 border-l shadow-2xl shadow-blue-100 border-gray-200 flex flex-col">
-      <div className="p-6">
+      <div className="p-12">
         <h2 className="text-lg font-inter text-gray-800 mb-6">Product Categories</h2>
         
-        <Tabs defaultValue="top-selling" className="w-full">
+        <Tabs defaultValue="top-selling" className="w-2/3">
           <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="top-selling" className="text-sm">Top selling</TabsTrigger>
             <TabsTrigger value="revenue" className="text-sm">Revenue</TabsTrigger>

@@ -43,7 +43,7 @@ export default function ShareDialog() {
         <hr className="border-gray-200" />
         </div>
 
-        <div className="px-6 py-4 flex items-center gap-2">
+        <div className="px-6 py-0 flex items-center gap-2">
           <BiSolidFolder className="w-6 h-6 text-blue-500" />
           <span className="text-sm font-medium text-gray-800">
             Modern coffee table
