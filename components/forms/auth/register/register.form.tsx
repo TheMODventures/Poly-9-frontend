@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema, RegisterFormValues } from "./register.validation";
 import Link from "next/link";
 import Image from "next/image";
+import { useRegister } from "@/services/mutation/auth.mutation";
 
 export default function RegisterForm(): React.ReactNode {
   const form = useForm<RegisterFormValues>({
@@ -18,9 +19,14 @@ export default function RegisterForm(): React.ReactNode {
       password: "",
     },
   });
+  const registerMutation = useRegister();
 
   const onSubmit = (values: RegisterFormValues) => {
-    console.log("Register form values:", values);
+    registerMutation.mutate({
+      name: values.companyName,
+      email: values.companyEmail,
+      password: values.password,
+    });
   };
 
 
@@ -90,8 +96,8 @@ export default function RegisterForm(): React.ReactNode {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 rounded-lg">
-              Sign Up
+            <Button type="submit" disabled={registerMutation.isPending} className="w-full bg-blue-500 hover:bg-blue-600 rounded-lg">
+              {registerMutation.isPending ? "Creating..." : "Sign Up"}
             </Button>
             <div className="flex items-center justify-center space-x-2">
               <div className="w-1/4 h-px bg-gray-300"></div>
