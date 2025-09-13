@@ -1,35 +1,49 @@
-"use client"
-
-import React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { links } from "@/utils/links"
+"use client";
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { links } from "@/utils/links";
+import { useLogout } from "@/services/mutation/auth.mutation";
+import { MdLogout } from "react-icons/md";
 
 export default function Sidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const logoutMutation = useLogout();
 
   return (
     <div className="w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-6">
       <div className="flex flex-col space-y-4">
         {links.map(({ href, icon: Icon }) => {
-          let isActive = pathname === href
-          if (href === "/profile" && (pathname === "/profile" || pathname === "/context-file")) {
-            isActive = true
+          let isActive = pathname === href;
+          if (
+            href === "/profile" &&
+            (pathname === "/profile" || pathname === "/context-file")
+          ) {
+            isActive = true;
           }
 
           return (
             <Link key={href} href={href}>
               <button
                 className={`w-10 h-10 flex items-center cursor-pointer justify-center rounded-lg transition-colors ${
-                  isActive ? "bg-blue-500 text-black" : "hover:bg-gray-100 text-black"
+                  isActive
+                    ? "bg-blue-500 text-black"
+                    : "hover:bg-gray-100 text-black"
                 }`}
               >
                 <Icon className="w-6 h-6" />
               </button>
             </Link>
-          )
+          );
         })}
+        <button
+          aria-label="Logout"
+          onClick={() => logoutMutation.mutate()}
+          className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-gray-100 text-black`}
+        >
+          <MdLogout className="w-6 h-6" />
+        </button>
       </div>
     </div>
-  )
+  );
 }

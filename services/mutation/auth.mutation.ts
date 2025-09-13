@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../api/auth.api";
-import { setAccessToken } from "@/utils/helper";
+import { removeAccessToken, setAccessToken } from "@/utils/helper";
 import {
   AuthUser,
   LoginPayload,
@@ -40,8 +40,24 @@ export function useRegister() {
 }
 
 export function useLogout() {
-  return useMutation<void, Error, void>({
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  return useMutation({
     mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      removeAccessToken();
+      try {
+        useAuthStore.getState().clearAuth();
+      } catch {}
+      try {
+        queryClient.clear();
+      } catch {}
+      toast.success("Logged out");
+      router.push("/login");
+    },
+    onError: (err) => {
+      toast.error(err?.message || "Logout failed, session cleared locally");
+    },
   });
 }
 
