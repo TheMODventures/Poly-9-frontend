@@ -9,7 +9,7 @@ import axiosService from "../middleware/axios.middleware";
 // Local endpoints to simplify structure (removed services/routes)
 const AUTH_ENDPOINTS = {
   login: "/v1/auth/login",
-  register: "/auth/register",
+  register: "/v1/auth/register",
   logout: "/v1/auth/logout",
   refreshToken: "/auth/refresh",
   me: "/auth/me",
@@ -17,19 +17,20 @@ const AUTH_ENDPOINTS = {
 
 class AuthApiService {
   async login(credentials: LoginPayload): Promise<ApiResponse<LoginResponse>> {
-    const { data } = await axiosService.post<ApiResponse<LoginResponse>>(
+    const response = await axiosService.post<LoginResponse>(
       AUTH_ENDPOINTS.login,
       credentials
     );
-    return data;
+    return response;
   }
 
-  async register(payload: RegisterPayload): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.post<ApiResponse<AuthUser>>(
+  async register(payload: RegisterPayload): Promise<ApiResponse<LoginResponse>> {
+    const body = { ...payload, role: "admin" } as const;
+    const response = await axiosService.post<LoginResponse>(
       AUTH_ENDPOINTS.register,
-      payload
+      body
     );
-    return data;
+    return response;
   }
 
   async logout(): Promise<void> {
@@ -37,17 +38,15 @@ class AuthApiService {
   }
 
   async refreshToken(): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.post<ApiResponse<AuthUser>>(
+    const response = await axiosService.post<AuthUser>(
       AUTH_ENDPOINTS.refreshToken
     );
-    return data;
+    return response;
   }
 
   async getCurrentUser(): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.get<ApiResponse<AuthUser>>(
-      AUTH_ENDPOINTS.me
-    );
-    return data;
+    const response = await axiosService.get<AuthUser>(AUTH_ENDPOINTS.me);
+    return response;
   }
 }
 

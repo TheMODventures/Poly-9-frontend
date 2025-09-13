@@ -15,8 +15,8 @@ export function useLogin() {
   const router = useRouter();
   return useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: async (credentials: LoginPayload) => {
-      const response: any = await authService.login(credentials);
-      return response;
+      const response = await authService.login(credentials);
+      return response.data;
     },
     onSuccess: ({ access_token, user }) => {
       setAccessToken(access_token);
@@ -31,10 +31,20 @@ export function useLogin() {
 }
 
 export function useRegister() {
-  return useMutation<AuthUser, Error, RegisterPayload>({
+  const router = useRouter();
+  return useMutation<LoginResponse, Error, RegisterPayload>({
     mutationFn: async (data: RegisterPayload) => {
       const response = await authService.register(data);
       return response.data;
+    },
+    onSuccess: ({ access_token, user }) => {
+      setAccessToken(access_token);
+      useAuthStore.getState().setAuth(user, access_token);
+      toast.success("Account created");
+      router.push("/dashboard");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Registration failed");
     },
   });
 }
