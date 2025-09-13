@@ -1,6 +1,13 @@
 "use client";
 
-import {Form,FormControl,FormField,FormItem,FormLabel,FormMessage,} from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -9,7 +16,7 @@ import { loginSchema, LoginFormValues } from "./login.validation";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useLogin } from "@/services/mutation/auth.mutation";
 
 export default function LoginForm(): React.ReactNode {
   const form = useForm<LoginFormValues>({
@@ -20,19 +27,28 @@ export default function LoginForm(): React.ReactNode {
       rememberMe: false,
     },
   });
-
+  const loginMutation = useLogin();
 
   const onSubmit = (values: LoginFormValues) => {
-    console.log("Login form values:", values);
+    loginMutation.mutate({ email: values.email, password: values.password });
   };
 
-  const { control, handleSubmit, formState: { errors } } = form;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-blue-100 to-white">
       <div className="relative w-[380px] p-12 space-y-6 bg-white rounded-xl shadow-lg">
         <div className="text-center">
-          <h1 className="text-2xl text-gray-800" style={{fontFamily: 'var(--font-poppins)'}}>Welcome Back</h1>
+          <h1
+            className="text-2xl text-gray-800"
+            style={{ fontFamily: "var(--font-poppins)" }}
+          >
+            Welcome Back
+          </h1>
           <p className="mt-2 text-sm text-gray-500">
             Welcome Back! Please Enter Your Details.
           </p>
@@ -46,7 +62,11 @@ export default function LoginForm(): React.ReactNode {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Enter your email" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage>{errors.email?.message}</FormMessage>
                 </FormItem>
@@ -59,7 +79,11 @@ export default function LoginForm(): React.ReactNode {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Enter your password" {...field} />
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage>{errors.password?.message}</FormMessage>
                 </FormItem>
@@ -83,12 +107,19 @@ export default function LoginForm(): React.ReactNode {
                   </FormItem>
                 )}
               />
-              <a href="#" className="text-sm font-medium text-blue-500 hover:underline">
+              <a
+                href="#"
+                className="text-sm font-medium text-blue-500 hover:underline"
+              >
                 Forgot Password?
               </a>
             </div>
-            <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 rounded-md">
-              Sign In
+            <Button
+              type="submit"
+              disabled={loginMutation.isPending}
+              className="w-full bg-blue-500 hover:bg-blue-600 rounded-md"
+            >
+              {loginMutation.isPending ? "Signing in..." : "Sign In"}
             </Button>
             <div className="flex items-center justify-center space-x-2">
               <div className="w-1/4 h-px bg-gray-300"></div>
@@ -111,7 +142,10 @@ export default function LoginForm(): React.ReactNode {
             </Button>
             <p className="mt-4 text-center text-sm text-gray-500">
               Don&apos;t Have An Account?{" "}
-              <Link href="/register" className="font-semibold leading-6 text-blue-500 hover:underline">
+              <Link
+                href="/register"
+                className="font-semibold leading-6 text-blue-500 hover:underline"
+              >
                 Sign Up For Free
               </Link>
             </p>

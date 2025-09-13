@@ -1,32 +1,54 @@
 import { ApiResponse } from "../interface";
-import { AuthUser, LoginPayload, RegisterPayload } from "../interface/auth/auth.interface";
+import {
+  AuthUser,
+  LoginPayload,
+  RegisterPayload,
+  LoginResponse,
+} from "../interface/auth/auth.interface";
 import axiosService from "../middleware/axios.middleware";
-import Routes from "../routes/routes";
+// Local endpoints to simplify structure (removed services/routes)
+const AUTH_ENDPOINTS = {
+  login: "/v1/auth/login",
+  register: "/auth/register",
+  logout: "/auth/logout",
+  refreshToken: "/auth/refresh",
+  me: "/auth/me",
+} as const;
 
-class AuthApiService  {
-
-  async login(credentials: LoginPayload): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.post<ApiResponse<AuthUser>>(Routes.Auth.login, credentials);
+class AuthApiService {
+  async login(credentials: LoginPayload): Promise<ApiResponse<LoginResponse>> {
+    const { data } = await axiosService.post<ApiResponse<LoginResponse>>(
+      AUTH_ENDPOINTS.login,
+      credentials
+    );
+    console.log(data, "Data");
     return data;
   }
 
   async register(payload: RegisterPayload): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.post<ApiResponse<AuthUser>>(Routes.Auth.register, payload);
+    const { data } = await axiosService.post<ApiResponse<AuthUser>>(
+      AUTH_ENDPOINTS.register,
+      payload
+    );
     return data;
   }
 
   async logout(): Promise<void> {
-    await axiosService.post<void>(Routes.Auth.logout);
+    await axiosService.post<void>(AUTH_ENDPOINTS.logout);
   }
 
   async refreshToken(): Promise<ApiResponse<AuthUser>> {
-    const { data } = await axiosService.post<ApiResponse<AuthUser>>(Routes.Auth.refreshToken);
+    const { data } = await axiosService.post<ApiResponse<AuthUser>>(
+      AUTH_ENDPOINTS.refreshToken
+    );
     return data;
   }
 
   async getCurrentUser(): Promise<ApiResponse<AuthUser>> {
-      const { data } = await axiosService.get<ApiResponse<AuthUser>>(Routes.Auth.me);
-      return data;
+    const { data } = await axiosService.get<ApiResponse<AuthUser>>(
+      AUTH_ENDPOINTS.me
+    );
+    return data;
   }
 }
 

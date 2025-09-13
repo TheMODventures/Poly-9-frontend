@@ -11,6 +11,22 @@ export interface RegisterPayload {
     name: string;
 }
 
+// Response shape for /auth/login
+export interface LoginUser {
+  email: string;
+  name: string;
+  role: string;
+  auth_provider: string;
+  last_login: string; // ISO timestamp
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: string; // typically 'bearer'
+  user: LoginUser;
+}
+
+// Legacy type used elsewhere in app for /auth/me etc.
 export interface AuthUser extends User {
     accessToken: string;
     refreshToken?: string;
