@@ -1,57 +1,55 @@
-import { useMutation } from '@tanstack/react-query';
-import { authService } from '../api/auth.api';
-import { AuthUser, LoginPayload, RegisterPayload } from '../interface/auth/auth.interface';
+import { useMutation } from "@tanstack/react-query";
+import { authService } from "../api/auth.api";
+import { setAccessToken } from "@/utils/helper";
+import {
+  AuthUser,
+  LoginPayload,
+  RegisterPayload,
+  LoginResponse,
+} from "../interface/auth/auth.interface";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-function useLogin() {
-  return useMutation<AuthUser, Error, LoginPayload>({
+export function useLogin() {
+  const router = useRouter();
+  return useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: async (credentials: LoginPayload) => {
-      const response = await authService.login(credentials);
-      return response.data;
+      const response: any = await authService.login(credentials);
+      return response;
     },
-    onSuccess: (user: AuthUser) => {
-      console.log(user);
+    onSuccess: ({ access_token, user }) => {
+      setAccessToken(access_token);
+      useAuthStore.getState().setAuth(user, access_token);
+      toast.success("Logged in successfully");
+      router.push("/dashboard");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Login failed");
     },
   });
 }
 
-function useRegister() {
+export function useRegister() {
   return useMutation<AuthUser, Error, RegisterPayload>({
     mutationFn: async (data: RegisterPayload) => {
       const response = await authService.register(data);
       return response.data;
     },
-    onSuccess: (user: AuthUser) => {
-      console.log(user);
-    },
   });
 }
 
-function useLogout() {
+export function useLogout() {
   return useMutation<void, Error, void>({
     mutationFn: () => authService.logout(),
-    onSuccess: () => {
-      console.log('logout');
-    },
   });
 }
 
-function useRefreshToken() {
+export function useRefreshToken() {
   return useMutation<AuthUser, Error, void>({
     mutationFn: async () => {
       const response = await authService.refreshToken();
       return response.data;
     },
-    onSuccess: (user: AuthUser) => {
-      console.log(user);
-    },
   });
 }
-
-class AuthMutation {
-  static useLogin = useLogin;
-  static useRegister = useRegister;
-  static useLogout = useLogout;
-  static useRefreshToken = useRefreshToken;
-}
-
-export default new AuthMutation();
