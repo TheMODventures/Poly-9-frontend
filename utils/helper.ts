@@ -1,5 +1,5 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
-import { setCookie } from "cookies-next/client";
+import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
 import React from "react"
 import { FormContentConfig } from "@/interfaces/interface";
@@ -15,7 +15,12 @@ export const setAccessToken = (token: string) => {
 };
 
 export const removeAccessToken = () => {
-  localStorage.removeItem("access-token");
+  try {
+    localStorage.removeItem("access-token");
+  } catch {}
+  try {
+    deleteCookie("access-token");
+  } catch {}
 };
 
 export const toggleSocial = (

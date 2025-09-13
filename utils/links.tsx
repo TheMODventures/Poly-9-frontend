@@ -1,7 +1,6 @@
 import { LuLayoutGrid } from "react-icons/lu"
 import { IoPersonOutline, IoSettingsOutline } from "react-icons/io5"
 import { BiSolidMessageRounded } from "react-icons/bi"
-import { MdLogout } from "react-icons/md"
 import { RiSofaLine } from "react-icons/ri"
 import { LuSofa } from "react-icons/lu"
 import { IoBedOutline } from "react-icons/io5"
@@ -13,7 +12,6 @@ export  const links = [
     { href: "/profile", icon: IoPersonOutline },
     { href: "/chat", icon: BiSolidMessageRounded },
     { href: "/settings", icon: IoSettingsOutline },
-    { href: "#", icon: MdLogout },
   ]
 
 export const categories = [

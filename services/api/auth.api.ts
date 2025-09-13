@@ -10,7 +10,7 @@ import axiosService from "../middleware/axios.middleware";
 const AUTH_ENDPOINTS = {
   login: "/v1/auth/login",
   register: "/auth/register",
-  logout: "/auth/logout",
+  logout: "/v1/auth/logout",
   refreshToken: "/auth/refresh",
   me: "/auth/me",
 } as const;
@@ -21,7 +21,6 @@ class AuthApiService {
       AUTH_ENDPOINTS.login,
       credentials
     );
-    console.log(data, "Data");
     return data;
   }
 
