@@ -1,7 +1,7 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
 import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
-import React from "react"
+import React from "react";
 import { FormContentConfig } from "@/interfaces/interface";
 
 export const getAccessToken = () => {
@@ -31,62 +31,66 @@ export const toggleSocial = (
     field.value?.includes(social)
       ? field.value.filter((s) => s !== social)
       : [...(field.value || []), social]
-  )
-}
+  );
+};
 
-  export const getInitials = (name: string): string => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0))
-      .join("")
-      .toUpperCase()
-  }
+export const getInitials = (name: string): string => {
+  return name
+    .split(" ")
+    .map((word) => word.charAt(0))
+    .join("")
+    .toUpperCase();
+};
 
 export const getFormContent = (isCollection: boolean): FormContentConfig => {
   if (isCollection) {
     return {
       title: "Create New Collection",
-      subtitle: "Lets create a new product collection. I've prepared a few questions to help get started",
+      subtitle:
+        "Lets create a new product collection. I've prepared a few questions to help get started",
       nameLabel: "Whats your collection name?",
       seasonLabel: "Which season is the collection for?",
       styleLabel: "What style should it include?",
-      countLabel: "How many products should be in the collection?"
-    }
+      countLabel: "How many products should be in the collection?",
+    };
   } else {
     return {
       title: "Create New Product",
-      subtitle: "Lets create a new product. I've prepared a few questions to help get started",
+      subtitle:
+        "Lets create a new product. I've prepared a few questions to help get started",
       nameLabel: "Whats your product name?",
       seasonLabel: "Which season is the product for?",
       styleLabel: "What style should it include?",
-      countLabel: "How many products should be in the collection?"
-    }
+      countLabel: "How many products should be in the collection?",
+    };
   }
-}
+};
 
 export const isCollectionTrigger = (trigger: React.ReactNode): boolean => {
   if (React.isValidElement(trigger)) {
-    const element = trigger as React.ReactElement<any>
-    
+    const element = trigger as React.ReactElement<any>;
+
     if (element.props?.children) {
-      const children = element.props.children
-      
-      if (typeof children === 'string') {
-        return children.toLowerCase().includes('collection')
+      const children = element.props.children;
+
+      if (typeof children === "string") {
+        return children.toLowerCase().includes("collection");
       }
-      
+
       if (Array.isArray(children)) {
-        return children.some(child => 
-          typeof child === 'string' && child.toLowerCase().includes('collection')
-        )
+        return children.some(
+          (child) =>
+            typeof child === "string" &&
+            child.toLowerCase().includes("collection")
+        );
       }
     }
   }
-  return false
-}
+  return false;
+};
 
-import { UseFormSetValue } from "react-hook-form"
-import { CreateProductFormValues } from "@/components/forms/create-product/create.validation"
+import { UseFormSetValue } from "react-hook-form";
+import { CreateProductFormValues } from "@/components/forms/create-product/create.validation";
 
 export function createStyleHandlers(
   watchedStyles: string[],
@@ -95,14 +99,38 @@ export function createStyleHandlers(
 ) {
   const addStyle = (style: string) => {
     if (style && !watchedStyles.includes(style)) {
-      setValue("styles", [...watchedStyles, style])
-      setNewStyle("")
+      setValue("styles", [...watchedStyles, style]);
+      setNewStyle("");
     }
-  }
+  };
 
   const removeStyle = (style: string) => {
-    setValue("styles", watchedStyles.filter((s) => s !== style))
-  }
+    setValue(
+      "styles",
+      watchedStyles.filter((s) => s !== style)
+    );
+  };
 
-  return { addStyle, removeStyle }
+  return { addStyle, removeStyle };
+}
+
+export function formatTime(timestamp: string) {
+  try {
+    return new Date(timestamp).toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  } catch {
+    return "2:45 PM";
+  }
+}
+
+export function getChatWidthClasses(isOpen: boolean, hasVariations: boolean) {
+  if (!isOpen) {
+    return "w-16 shrink-0 flex-none";
+  }
+  if (hasVariations) {
+    return "w-full lg:w-[42%] xl:w-[38%] 2xl:w-[33%] min-w-[320px] shrink-0 flex-none";
+  }
+  return "w-full grow";
 }
