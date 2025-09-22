@@ -22,7 +22,7 @@ export function useLogin() {
       setAccessToken(access_token);
       useAuthStore.getState().setAuth(user, access_token);
       toast.success("Logged in successfully");
-      router.push("/dashboard");
+      router.push("/");
     },
   });
 }
@@ -38,7 +38,7 @@ export function useRegister() {
       setAccessToken(access_token);
       useAuthStore.getState().setAuth(user, access_token);
       toast.success("Account created");
-      router.push("/dashboard");
+      router.push("/");
     },
   });
 }
