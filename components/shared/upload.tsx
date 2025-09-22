@@ -1,6 +1,6 @@
-'use client'
-import { useRef, useState } from "react";
-import { FileText, X } from "lucide-react";
+"use client";
+import { useRef } from "react";
+import { X } from "lucide-react";
 import { useUploadFile } from "@/services/mutation/buyer.mutation";
 import { FileUploadResponse } from "@/interfaces/interface";
 
@@ -10,18 +10,22 @@ interface UploadFileProps {
   uploadedFiles?: FileUploadResponse[];
 }
 
-export function UploadFile({ onFileUploaded, onFileRemoved, uploadedFiles = [] }: UploadFileProps) {
+export function UploadFile({
+  onFileUploaded,
+  onFileRemoved,
+  uploadedFiles = [],
+}: UploadFileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadFileMutation = useUploadFile();
-  
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     uploadFileMutation.mutate(file, {
       onSuccess: (data) => {
         onFileUploaded?.(data);
-      }
+      },
     });
   };
 
@@ -35,13 +39,20 @@ export function UploadFile({ onFileUploaded, onFileRemoved, uploadedFiles = [] }
       {uploadedFiles.length > 0 && (
         <div className="mb-4 space-y-2">
           {uploadedFiles.map((file) => (
-            <div key={file.file_id} className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between">
+            <div
+              key={file.file_id}
+              className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-red-100 rounded flex items-center justify-center">
-                  <span className="text-red-600 font-semibold text-xs">PDF</span>
+                  <span className="text-red-600 font-semibold text-xs">
+                    PDF
+                  </span>
                 </div>
                 <div>
-                  <p className="text-gray-800 font-medium text-sm">{file.filename}</p>
+                  <p className="text-gray-800 font-medium text-sm">
+                    {file.filename}
+                  </p>
                   <p className="text-gray-500 text-xs">File</p>
                 </div>
               </div>
@@ -73,17 +84,17 @@ export function UploadFile({ onFileUploaded, onFileRemoved, uploadedFiles = [] }
               <div className="w-4 h-0.5 bg-white rounded mb-1"></div>
               <div className="w-6 h-0.5 bg-white rounded"></div>
             </div>
-            
+
             <p className="text-gray-700 font-medium text-sm">
               Drag your file here or Select from your Device
             </p>
-            
+
             <p className="text-gray-500 text-xs">
               File must be .csv, ppt, pdf or xlsx
             </p>
           </>
         )}
-        
+
         <input
           ref={inputRef}
           type="file"
