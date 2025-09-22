@@ -1,100 +1,210 @@
 "use client"
 
-import React from "react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form"
+import React, { useState } from "react"
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useForm } from "react-hook-form"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useForm, Resolver } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { editBuyerSchema, EditBuyerFormValues } from "@/components/forms/buyers/edit-modal/edit.validation"
-import { FaFacebook } from "react-icons/fa"
-import { IoLogoInstagram } from "react-icons/io5"
-import { Briefcase} from "lucide-react"
+import { typeOptions } from "@/data/mock-data"
+import { UploadFile } from "@/components/shared/upload"
+import { X } from "lucide-react"
+import { useUpdateBuyer, useListBuyers } from "@/services/mutation/buyer.mutation"
+import { FileUploadResponse, Buyer } from "@/interfaces/interface"
+import { SOCIAL_OPTIONS } from "@/utils/social.constants"
+import SocialLinkModal from "@/components/dialogs/social-link-modal"
 
-interface EditModalFormProps {
+interface EditBuyerModalProps {
   trigger: React.ReactNode
-  buyerData: {
-    id: number
-    name: string
-    context: string
-    website: string
-    type: string
-  }
+  buyerData: Buyer
 }
 
-export default function EditModalForm({
-  trigger,
-  buyerData
-}: EditModalFormProps) {
+
+export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalProps) {
+  const updateBuyerMutation = useUpdateBuyer()
+  const listBuyersMutation = useListBuyers()
+  
   const form = useForm<EditBuyerFormValues>({
-    resolver: yupResolver(editBuyerSchema),
+    resolver: yupResolver(editBuyerSchema) as Resolver<EditBuyerFormValues>,
     defaultValues: {
-      companyName: buyerData.name,
-      context: buyerData.context,
-      website: buyerData.website,
-      type: buyerData.type,
-      hasFacebook: true,
-      hasInstagram: true,
-    },
+      companyName: buyerData.company,
+      website: buyerData.website || "",
+      socials: buyerData.socials || [],
+      type: buyerData.type || "",
+      note: buyerData.note || ""
+    }
   })
 
-  const onSubmit = async (values: EditBuyerFormValues) => {
-    try {
-      console.log("Saving buyer data:", values)
-    } catch (error) {
-      console.error("Error updating buyer:", error)
+  const { control, handleSubmit, reset, setValue, watch } = form
+  const socials = watch("socials") || []
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // Social management state
+  const [selectedSocial, setSelectedSocial] = useState<string>("")
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false)
+  const [editingSocial, setEditingSocial] = useState<{name: string, url: string} | null>(null)
+  
+  // File upload state - initialize with existing files
+  const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>(() => {
+    // Convert existing file URLs to FileUploadResponse format
+    return buyerData.files.map((fileUrl, index) => ({
+      file_id: `existing-${index}`,
+      filename: fileUrl.split('/').pop() || `file-${index}`,
+      content_type: 'application/octet-stream',
+      s3_key: fileUrl,
+      url: fileUrl,
+      uploaded_at: buyerData.updated_at
+    }))
+  })
+
+  // Update uploadedFiles when modal opens to ensure files are displayed
+  React.useEffect(() => {
+    if (isModalOpen) {
+      const existingFiles = buyerData.files.map((fileUrl, index) => ({
+        file_id: `existing-${index}`,
+        filename: fileUrl.split('/').pop() || `file-${index}`,
+        content_type: 'application/octet-stream',
+        s3_key: fileUrl,
+        url: fileUrl,
+        uploaded_at: buyerData.updated_at
+      }))
+      setUploadedFiles(existingFiles)
+    }
+  }, [isModalOpen, buyerData.files, buyerData.updated_at])
+
+  const handleAddSocial = (url: string) => {
+    if (selectedSocial) {
+      // Check if this social platform is already added
+      const existingSocial = socials.find(s => s.name === selectedSocial)
+      if (existingSocial) {
+        // Update existing social instead of adding duplicate
+        const updatedSocials = socials.map(s => 
+          s.name === selectedSocial ? { ...s, url } : s
+        )
+        setValue("socials", updatedSocials)
+      } else {
+        // Add new social
+        const newSocial = { name: selectedSocial, url }
+        setValue("socials", [...socials, newSocial])
+      }
+      setSelectedSocial("")
     }
   }
 
-  const { control, handleSubmit } = form
+  const handleEditSocial = (social: {name: string, url: string}) => {
+    setEditingSocial(social)
+    setIsSocialModalOpen(true)
+  }
+
+  const handleUpdateSocial = (url: string) => {
+    if (editingSocial) {
+      const updatedSocials = socials.map(s => 
+        s.name === editingSocial.name && s.url === editingSocial.url 
+          ? { ...s, url } 
+          : s
+      )
+      setValue("socials", updatedSocials)
+      setEditingSocial(null)
+    }
+  }
+
+  const handleRemoveSocial = (socialToRemove: {name: string, url: string}) => {
+    const updatedSocials = socials.filter(s => 
+      !(s.name === socialToRemove.name && s.url === socialToRemove.url)
+    )
+    setValue("socials", updatedSocials)
+  }
+
+  // File upload handlers
+  const handleFileUploaded = (fileData: FileUploadResponse) => {
+    setUploadedFiles(prev => [...prev, fileData])
+  }
+
+  const handleFileRemoved = (fileToRemove: FileUploadResponse) => {
+    setUploadedFiles(prev => prev.filter(file => file.file_id !== fileToRemove.file_id))
+  }
+
+  const onSubmit = async (values: EditBuyerFormValues) => {
+    // Helper function to add protocol to URLs if missing
+    const addProtocolToUrl = (url: string) => {
+      if (!url) return url;
+      return url.startsWith('http://') || url.startsWith('https://') 
+        ? url 
+        : `https://${url}`;
+    };
+
+    // Prepare the request body according to UpdateBuyerPayload interface
+    const updateBuyerPayload = {
+      company: values.companyName,
+      website: values.website ? addProtocolToUrl(values.website) : undefined,
+      socials: values.socials?.map(social => ({
+        ...social,
+        url: addProtocolToUrl(social.url)
+      })) || [],
+      type: values.type || undefined,
+      note: values.note || undefined,
+      files: uploadedFiles.map(file => file.url)
+    }
+
+    updateBuyerMutation.mutate({ 
+      buyer_id: buyerData.buyer_id, 
+      payload: updateBuyerPayload 
+    }, {
+      onSuccess: () => {
+        // Reset form
+        reset({
+          companyName: values.companyName,
+          website: values.website,
+          socials: values.socials,
+          type: values.type,
+          note: values.note
+        })
+        setUploadedFiles([])
+        setSelectedSocial("")
+        setEditingSocial(null)
+        
+        // Close modal
+        setIsModalOpen(false)
+        
+        // Refresh buyers list by calling listAllBuyers
+        listBuyersMutation.mutate({ page: 1, limit: 10 })
+      }
+    })
+  }
 
   return (
-    <Dialog>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl p-0 gap-0">
-        <DialogHeader className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              <Briefcase className="w-8 h-8 p-1 border rounded-md border-gray-300" />
-              Buyer Information
+      <DialogContent className="max-w-md p-0 gap-0 max-h-[90vh] overflow-hidden">
+        <DialogHeader className="px-6 py-4 border-b border-gray-200 flex-shrink-0">
+          <DialogTitle className="text-lg font-medium text-blue-500">
+            Edit Buyer
             </DialogTitle>
-            <DialogClose asChild>
-            </DialogClose>
-          </div>
         </DialogHeader>
 
-        <div className="px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-6 py-4 max-h-[calc(90vh-120px)]">
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={control}
                   name="companyName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-600">
-                        Company Name
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Buyer Company Name
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="NovaWave LLC"
-                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
+                        placeholder="Shahzad Asam"
+                        className="bg-gray-50 border-gray-200 focus:bg-white"
                           {...field}
                         />
                       </FormControl>
@@ -104,40 +214,102 @@ export default function EditModalForm({
 
                 <FormField
                   control={control}
-                  name="context"
+                name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-600">
-                        Context
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Website
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="5 files"
-                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
+                        placeholder="Example@gmail.com"
+                        className="bg-gray-50 border-gray-200 focus:bg-white"
                           {...field}
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={control}
-                  name="website"
-                  render={({ field }) => (
+                name="socials"
+                render={() => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-600">
-                        Websites
+                    <FormLabel className="text-sm font-medium text-gray-700 mb-3 block">
+                      Socials
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Novwave.com"
-                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
-                          {...field}
-                        />
-                      </FormControl>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={selectedSocial}
+                          onValueChange={setSelectedSocial}
+                        >
+                          <SelectTrigger className="w-40 bg-gray-50 border-gray-200 text-sm">
+                            <SelectValue placeholder="Select Socials" />
+                          </SelectTrigger>
+                          <SelectContent>
+                          {SOCIAL_OPTIONS
+                            .filter(option => !socials.some(social => social.name === option.value))
+                            .map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  <div className="flex items-center gap-2">
+                                    <option.icon className="w-4 h-4" />
+                                    {option.label}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="w-8 h-8 p-0 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                          disabled={!selectedSocial}
+                          onClick={() => setIsSocialModalOpen(true)}
+                        >
+                          <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M12 5v14M5 12h14"/>
+                          </svg>
+                        </Button>
+                      </div>
+
+                      {/* Display added socials */}
+                      {socials.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {socials.map((social, index) => {
+                            const socialOption = SOCIAL_OPTIONS.find(s => s.value === social.name)
+                            const IconComponent = socialOption?.icon || SOCIAL_OPTIONS[0].icon
+                            return (
+                              <div
+                                key={`${social.name}-${index}`}
+                                className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2 cursor-pointer hover:bg-gray-200"
+                                onClick={() => handleEditSocial(social)}
+                              >
+                                <div className={`w-6 h-6 rounded-full ${socialOption?.color} flex items-center justify-center`}>
+                                  <IconComponent className="w-3 h-3 text-white" />
+                                </div>
+                                <span className="text-sm text-gray-700 truncate max-w-32">
+                                  {social.url}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleRemoveSocial(social)
+                                  }}
+                                  className="text-gray-400 hover:text-red-500"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -147,56 +319,81 @@ export default function EditModalForm({
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-600">
+                    <FormLabel className="text-sm font-medium text-gray-700">
                         Type
                       </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <Input
-                          placeholder="Retailer"
-                          className="bg-gray-50 border-gray-200 focus:bg-white text-gray-600"
-                          {...field}
-                        />
+                        <SelectTrigger className="bg-gray-50 border-gray-200">
+                          <SelectValue placeholder="Select Type" />
+                        </SelectTrigger>
                       </FormControl>
+                      <SelectContent>
+                        {typeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     </FormItem>
                   )}
                 />
-              </div>
 
               <div>
-                <FormLabel className="text-sm font-medium text-gray-700 mb-3 block">
-                  Socials
+                <FormLabel className="text-sm font-medium text-gray-700 mb-2 block">
+                  File <span className="text-xs text-gray-500">(Must be equal or less )</span>
                 </FormLabel>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-2">
-                    <FaFacebook className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <IoLogoInstagram className="w-6 h-6 text-gray-600" />
-                  </div>
-                </div>
+                <UploadFile 
+                  uploadedFiles={uploadedFiles}
+                  onFileUploaded={handleFileUploaded}
+                  onFileRemoved={handleFileRemoved}
+                />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4">
-                <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="px-6 py-2 bg-gray-400 text-white border-gray-300 hover:bg-gray-200"
-                  >
-                    Cancel
-                  </Button>
-                </DialogClose>
+              <FormField
+                control={control}
+                name="note"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700">
+                      Note
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Note lorem ipsum"
+                        className="bg-gray-50 border-gray-200 focus:bg-white min-h-[80px] resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            
                   <Button
                     type="submit"
-                    className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  disabled={updateBuyerMutation.isPending}
                   >
-                    Save Changes
+                  {updateBuyerMutation.isPending ? "Updating..." : "Update Buyer"}
                   </Button>
-              </div>
             </form>
           </Form>
         </div>
       </DialogContent>
+
+      {/* Social Link Modal */}
+      <SocialLinkModal
+        isOpen={isSocialModalOpen}
+        onClose={() => {
+          setIsSocialModalOpen(false)
+          setEditingSocial(null)
+        }}
+        onSave={editingSocial ? handleUpdateSocial : handleAddSocial}
+        socialName={editingSocial?.name || selectedSocial}
+        initialUrl={editingSocial?.url || ""}
+        isEditing={!!editingSocial}
+      />
     </Dialog>
   )
 }
