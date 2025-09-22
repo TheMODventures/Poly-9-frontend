@@ -1,38 +1,40 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-const protectedRoutes = ['/dashboard']
-const publicRoutes = ['/login']
+const protectedRoutes = [
+  "/",
+  "/chat",
+  "/context-file",
+  "/profile",
+  "/settings",
+];
+const publicRoutes = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  
-  const token = request.cookies.get('access-token')?.value
-  
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname.startsWith(route)
-  )
-  
-  const isPublicRoute = publicRoutes.some(route => 
-    pathname === route
-  )
+  const { pathname } = request.nextUrl;
 
-  console.log('Token:', token)
-  
+  const token = request.cookies.get("access-token")?.value;
+
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  const isPublicRoute = publicRoutes.some((route) => pathname === route);
+
+  console.log("Token:", token);
+
   if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/login', request.url)
-    return NextResponse.redirect(loginUrl)
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   if (isPublicRoute && token) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
-  ],
-}
+  matcher: ["/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)"],
+};
