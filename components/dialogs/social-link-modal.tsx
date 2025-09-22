@@ -1,47 +1,52 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { SOCIAL_OPTIONS, type SocialOption } from "@/utils/social.constants"
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SOCIAL_OPTIONS } from "@/utils/social.constants";
 
 interface SocialLinkModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (url: string) => void
-  socialName: string
-  initialUrl?: string
-  isEditing?: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (url: string) => void;
+  socialName: string;
+  initialUrl?: string;
+  isEditing?: boolean;
 }
 
-export default function SocialLinkModal({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  socialName, 
-  initialUrl = "", 
-  isEditing = false 
+export default function SocialLinkModal({
+  isOpen,
+  onClose,
+  onSave,
+  socialName,
+  initialUrl = "",
+  isEditing = false,
 }: SocialLinkModalProps) {
-  const [url, setUrl] = useState(initialUrl)
-  const socialOption = SOCIAL_OPTIONS.find(s => s.value === socialName)
-  const IconComponent = socialOption?.icon || SOCIAL_OPTIONS[0].icon
+  const [url, setUrl] = useState(initialUrl);
+  const socialOption = SOCIAL_OPTIONS.find((s) => s.value === socialName);
+  const IconComponent = socialOption?.icon || SOCIAL_OPTIONS[0].icon;
 
   // Reset URL when modal opens/closes or when editing changes
   useEffect(() => {
     if (isOpen) {
-      setUrl(initialUrl)
+      setUrl(initialUrl);
     } else {
-      setUrl("")
+      setUrl("");
     }
-  }, [isOpen, initialUrl])
+  }, [isOpen, initialUrl]);
 
   const handleSave = () => {
     if (url.trim()) {
-      onSave(url.trim())
-      onClose()
+      onSave(url.trim());
+      onClose();
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -49,10 +54,12 @@ export default function SocialLinkModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <IconComponent className="w-5 h-5" />
-            {isEditing ? `Edit ${socialOption?.label} Link` : `Add ${socialOption?.label} Link`}
+            {isEditing
+              ? `Edit ${socialOption?.label} Link`
+              : `Add ${socialOption?.label} Link`}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -65,7 +72,7 @@ export default function SocialLinkModal({
               className="bg-gray-50 border-gray-200 focus:bg-white"
             />
           </div>
-          
+
           <div className="flex gap-2 justify-end">
             <Button
               type="button"
@@ -86,5 +93,5 @@ export default function SocialLinkModal({
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -63,7 +63,7 @@ export default function ProductPreview() {
         </div>
 
         <ProductVariants
-          variants={normalizedVariations.map((variant, index) => ({
+          variants={normalizedVariations?.map((variant, index) => ({
             ...variant,
             isSelected:
               variant.isSelected || (!variations.length && index === 0),

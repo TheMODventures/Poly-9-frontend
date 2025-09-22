@@ -1,41 +1,45 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import { PiBagBold } from "react-icons/pi";
-import { Button } from "@/components/ui/button"
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,DialogClose,} from "@/components/ui/dialog"
-import { useDeleteBuyer } from "@/services/mutation/buyer.mutation"
-import { useQueryClient } from "@tanstack/react-query"
-import { Buyer } from "@/interfaces/interface"
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useDeleteBuyer } from "@/services/mutation/buyer.mutation";
+import { useQueryClient } from "@tanstack/react-query";
+import { Buyer } from "@/interfaces/interface";
 
 interface DeleteModalProps {
-  trigger: React.ReactNode
-  buyerData: Buyer
+  trigger: React.ReactNode;
+  buyerData: Buyer;
 }
 
 export default function DeleteModal({ trigger, buyerData }: DeleteModalProps) {
-  const deleteBuyerMutation = useDeleteBuyer()
-  const queryClient = useQueryClient()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  
+  const deleteBuyerMutation = useDeleteBuyer();
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleDelete = async () => {
     deleteBuyerMutation.mutate(
       { buyer_id: buyerData.buyer_id },
       {
         onSuccess: () => {
           // Close modal
-          setIsModalOpen(false)
-          
+          setIsModalOpen(false);
+
           // Refresh buyers list by invalidating the query
-          queryClient.invalidateQueries({ queryKey: ["buyers"] })
-        }
+          queryClient.invalidateQueries({ queryKey: ["buyers"] });
+        },
       }
-    )
-  }
+    );
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 font-inter">
@@ -48,7 +52,8 @@ export default function DeleteModal({ trigger, buyerData }: DeleteModalProps) {
         <hr />
         <div className="py-6">
           <h3 className="text-lg font-medium text-gray-900 text-center">
-            Are you sure you want to delete <strong>{buyerData.company}</strong>?
+            Are you sure you want to delete <strong>{buyerData.company}</strong>
+            ?
           </h3>
           <p className="text-sm text-gray-500 text-center mt-2">
             This action cannot be undone.
@@ -73,5 +78,5 @@ export default function DeleteModal({ trigger, buyerData }: DeleteModalProps) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
