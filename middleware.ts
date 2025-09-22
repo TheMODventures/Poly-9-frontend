@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedRoutes = [
-  "/",
-  "/chat",
-  "/context-file",
-  "/profile",
-  "/settings",
-];
+const protectedRoutes = ["/", "/chat", "/context-file", "/profile", "/settings"];
 const publicRoutes = ["/login", "/register"];
 
 export function middleware(request: NextRequest) {
@@ -16,7 +10,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("access-token")?.value;
 
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    route === "/" ? pathname === "/" : pathname.startsWith(route)
   );
 
   const isPublicRoute = publicRoutes.some((route) => pathname === route);
