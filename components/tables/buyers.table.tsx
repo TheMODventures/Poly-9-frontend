@@ -7,14 +7,15 @@ import { Eye, Edit, Trash2 } from "lucide-react"
 import { FaFacebook } from "react-icons/fa"
 import { IoLogoInstagram } from "react-icons/io5"
 import { Checkbox } from "../ui/checkbox"
-import { buyersData } from "@/data/mock-data"
-import EditModalForm from "@/components/forms/buyers/edit-modal/edit.form"
+import EditBuyerModal from "@/components/forms/buyers/edit-modal/edit.form"
 import DeleteModal from "@/components/helper/buyers-delete-button"
 import { Buyer } from "@/interfaces/interface"
 import BuyerActionsMenu from "../helper/buyer-actions-menu"
+import { useBuyers } from "@/store/buyer.store"
 
 export default function BuyersTable() {
   const [selected, setSelected] = useState<(string | number)[]>([])
+  const buyers = useBuyers()
 
   const toggleSelect = (id: string | number) => {
     setSelected((prev) =>
@@ -40,24 +41,28 @@ export default function BuyersTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {buyersData.map((buyer: Buyer) => (
-              <TableRow key={buyer.id} className="border-b hover:bg-gray-50">
+            {buyers.map((buyer: Buyer) => (
+              <TableRow key={buyer.buyer_id} className="border-b hover:bg-gray-50">
                 <TableCell>
                   <div className="flex items-center gap-3  translate-x-4">
                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-lg">
-                      {buyer.logo}
+                      {buyer.company.charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-medium text-gray-900">{buyer.name}</span>
+                    <span className="font-medium text-gray-900">{buyer.company}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-gray-900 font-medium">{buyer.context}</TableCell>
-                <TableCell className="text-gray-900 font-medium">{buyer.website}</TableCell>
-                <TableCell><span className="text-gray-600">{buyer.type}</span></TableCell>
+                <TableCell className="text-gray-900 font-medium">{buyer.files.length} files</TableCell>
+                <TableCell className="text-gray-900 font-medium">{buyer.website || 'N/A'}</TableCell>
+                <TableCell><span className="text-gray-600">{buyer.type || 'N/A'}</span></TableCell>
 
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <FaFacebook className="w-5 h-5 text-gray-600" />
-                    <IoLogoInstagram className="w-5 h-5 text-gray-600" />
+                    {buyer.socials.map((social, index) => (
+                      <div key={index} className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+                        <span className="text-xs">{social.name.charAt(0).toUpperCase()}</span>
+                      </div>
+                    ))}
+                    {buyer.socials.length === 0 && <span className="text-gray-400 text-sm">No socials</span>}
                   </div>
                 </TableCell>
 
@@ -66,7 +71,7 @@ export default function BuyersTable() {
                     <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
                       <Eye className="w-4 h-4 text-gray-400" />
                     </Button>
-                    <EditModalForm trigger={
+                    <EditBuyerModal trigger={
                         <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
                           <Edit className="w-4 h-4 text-gray-400" />
                         </Button>}
@@ -76,7 +81,7 @@ export default function BuyersTable() {
                         <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </Button>}
-                      buyerName={buyer.name}
+                      buyerData={buyer}
                     />
                   </div>
                 </TableCell>
@@ -85,8 +90,8 @@ export default function BuyersTable() {
                   <div className="-translate-y-1">
                     <BuyerActionsMenu buyer={buyer} />
                     <Checkbox
-                      checked={selected.includes(buyer.id)}
-                      onCheckedChange={() => toggleSelect(buyer.id)}
+                      checked={selected.includes(buyer.buyer_id)}
+                      onCheckedChange={() => toggleSelect(buyer.buyer_id)}
                     />  
                   </div>
                   

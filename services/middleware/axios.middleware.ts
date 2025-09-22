@@ -48,6 +48,8 @@ class AxiosService {
           window.location.href = "/login";
           return Promise.reject(error);
         } else {
+          // Global error handling for all API errors
+          this.handleApiError(error);
           return Promise.reject(error);
         }
       }
@@ -67,6 +69,36 @@ class AxiosService {
     };
   }
 
+  private handleApiError(error: any): void {
+    // Extract error message from API response
+    const errorMessage = this.extractErrorMessage(error);
+    
+    // Show toast error
+    toast.error(errorMessage);
+  }
+
+  private extractErrorMessage(error: any): string {
+    // Priority order for error message extraction
+    if (error?.response?.data?.detail) {
+      return error.response.data.detail;
+    }
+    
+    if (error?.response?.data?.message) {
+      return error.response.data.message;
+    }
+    
+    if (error?.response?.data?.error) {
+      return error.response.data.error;
+    }
+    
+    if (error?.message) {
+      return error.message;
+    }
+    
+    // Fallback error message
+    return "An unexpected error occurred";
+  }
+
   async get<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>> {
     const response = await this.client.get<T>(url, this.transformConfig(config));
     return this.transformResponse(response);
@@ -84,6 +116,10 @@ class AxiosService {
 
   async delete<T>(url: string, config?: RequestConfig): Promise<ApiResponse<T>> {
     const response = await this.client.delete<T>(url, this.transformConfig(config));
+    return this.transformResponse(response);
+  }
+  async patch<T>(url: string, data?: unknown, config?: RequestConfig): Promise<ApiResponse<T>> {
+    const response = await this.client.patch<T>(url, data, this.transformConfig(config));
     return this.transformResponse(response);
   }
 

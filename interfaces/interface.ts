@@ -10,13 +10,96 @@ export interface User {
     refreshToken?: string;
 }
 
+export interface BuyerSocial {
+  name: string;
+  url: string;
+}
+
 export interface Buyer {
-  id: number
-  name: string
-  context: string
-  website: string
-  type: string
-  logo?: string
+  buyer_id: string;
+  company: string;
+  name: string | null;
+  website: string | null;
+  socials: BuyerSocial[];
+  type: string | null;
+  note: string | null;
+  files: string[];
+  created_at: string;
+  updated_at: string;
+  total_generations: number;
+  total_documents: number;
+}
+
+export interface Pagination {
+  totalItems: number;
+  perPage: number;
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  nextPage: number | null;
+  prevPage: number | null;
+}
+
+export interface BuyersResponse {
+  data: Buyer[];
+  pagination: Pagination;
+}
+
+export interface BuyersApiResponse {
+  statusCode: number;
+  message: string;
+  data: BuyersResponse;
+}
+
+export interface ListBuyersParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface CreateBuyerPayload {
+  company: string;
+  website?: string;
+  socials?: BuyerSocial[];
+  type?: string;
+  note?: string;
+  files?: string[];
+}
+
+export interface UpdateBuyerPayload extends Partial<CreateBuyerPayload> {
+  // buyer_id is passed in URL, not in payload
+}
+
+export interface DeleteBuyerParams {
+  buyer_id: string;
+}
+
+export interface DeletionReport {
+  buyer_deleted: boolean;
+  documents_deleted: number;
+  sessions_deleted: number;
+  s3_files_deleted: number;
+  opensearch_index_deleted: boolean;
+  errors: string[];
+  buyer_company: string;
+  buyer_website: string;
+  buyer_type: string;
+  buyer_note: string;
+}
+
+export interface DeleteBuyerResponse {
+  message: string;
+  deletion_report: DeletionReport;
+}
+
+// File Upload interfaces
+export interface FileUploadResponse {
+  file_id: string;
+  filename: string;
+  content_type: string;
+  s3_key: string;
+  url: string;
+  uploaded_at: string;
 }
 
 export interface ProfileData {
