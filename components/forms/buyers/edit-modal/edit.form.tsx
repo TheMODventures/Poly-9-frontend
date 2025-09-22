@@ -13,7 +13,8 @@ import { editBuyerSchema, EditBuyerFormValues } from "@/components/forms/buyers/
 import { typeOptions } from "@/data/mock-data"
 import { UploadFile } from "@/components/shared/upload"
 import { X } from "lucide-react"
-import { useUpdateBuyer, useListBuyers } from "@/services/mutation/buyer.mutation"
+import { useUpdateBuyer } from "@/services/mutation/buyer.mutation"
+import { useQueryClient } from "@tanstack/react-query"
 import { FileUploadResponse, Buyer } from "@/interfaces/interface"
 import { SOCIAL_OPTIONS } from "@/utils/social.constants"
 import SocialLinkModal from "@/components/dialogs/social-link-modal"
@@ -26,7 +27,7 @@ interface EditBuyerModalProps {
 
 export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalProps) {
   const updateBuyerMutation = useUpdateBuyer()
-  const listBuyersMutation = useListBuyers()
+  const queryClient = useQueryClient()
   
   const form = useForm<EditBuyerFormValues>({
     resolver: yupResolver(editBuyerSchema) as Resolver<EditBuyerFormValues>,
@@ -172,8 +173,8 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
         // Close modal
         setIsModalOpen(false)
         
-        // Refresh buyers list by calling listAllBuyers
-        listBuyersMutation.mutate({ page: 1, limit: 10 })
+        // Refresh buyers list by invalidating the query
+        queryClient.invalidateQueries({ queryKey: ["buyers"] })
       }
     })
   }

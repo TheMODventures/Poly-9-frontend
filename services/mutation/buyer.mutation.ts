@@ -3,8 +3,6 @@ import { buyerService } from "../api/buyer.api";
 import { uploadService } from "../api/upload.api";
 import {
   Buyer,
-  BuyersResponse,
-  ListBuyersParams,
   CreateBuyerPayload,
   UpdateBuyerPayload,
   DeleteBuyerParams,
@@ -12,22 +10,6 @@ import {
   FileUploadResponse,
 } from "@/interfaces/interface";
 import { toast } from "sonner";
-import { useBuyerStore } from "@/store/buyer.store";
-
-export function useListBuyers() {
-  const setBuyers = useBuyerStore((state) => state.setBuyers);
-  
-  return useMutation<BuyersResponse, Error, ListBuyersParams | undefined>({
-    mutationFn: async (params?: ListBuyersParams) => {
-      const response = await buyerService.listAllBuyers(params);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      console.log("data", data);
-      setBuyers(data);
-    },
-  });
-}
 
 export function useCreateBuyer() {
   const queryClient = useQueryClient();
