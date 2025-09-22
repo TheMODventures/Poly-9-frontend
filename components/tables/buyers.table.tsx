@@ -11,11 +11,45 @@ import EditBuyerModal from "@/components/forms/buyers/edit-modal/edit.form"
 import DeleteModal from "@/components/helper/buyers-delete-button"
 import { Buyer } from "@/interfaces/interface"
 import BuyerActionsMenu from "../helper/buyer-actions-menu"
-import { useBuyers } from "@/store/buyer.store"
+import { useListBuyers } from "@/services/query"
+import { ErrorState } from "@/components/ui/error-state"
+import { EmptyState } from "@/components/ui/empty-state"
+import { TableSkeleton } from "@/components/ui/skeleton"
 
 export default function BuyersTable() {
   const [selected, setSelected] = useState<(string | number)[]>([])
-  const buyers = useBuyers()
+  const { data, isLoading, isError, error, refetch } = useListBuyers({ page: 1, limit: 10 })
+  const buyers = data?.data || []
+
+  if (isLoading) {
+    return <TableSkeleton />
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full bg-white rounded-lg overflow-hidden">
+        <ErrorState 
+          title="Failed to load buyers"
+          message={error?.message || "Something went wrong while loading the buyers list."}
+          onRetry={refetch}
+          className="h-64"
+        />
+      </div>
+    )
+  }
+
+  if (!buyers || buyers.length === 0) {
+    return (
+      <div className="w-full bg-white rounded-lg overflow-hidden">
+        <EmptyState 
+          title="No buyers found"
+          message="You haven't added any buyers yet. Create your first buyer to get started."
+          actionLabel="Add Buyer"
+          className="h-64"
+        />
+      </div>
+    )
+  }
 
   const toggleSelect = (id: string | number) => {
     setSelected((prev) =>
