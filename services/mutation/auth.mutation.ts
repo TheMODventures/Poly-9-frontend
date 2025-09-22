@@ -24,9 +24,6 @@ export function useLogin() {
       toast.success("Logged in successfully");
       router.push("/dashboard");
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Login failed");
-    },
   });
 }
 
@@ -42,9 +39,6 @@ export function useRegister() {
       useAuthStore.getState().setAuth(user, access_token);
       toast.success("Account created");
       router.push("/dashboard");
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Registration failed");
     },
   });
 }
@@ -64,9 +58,6 @@ export function useLogout() {
       } catch {}
       toast.success("Logged out");
       router.push("/login");
-    },
-    onError: (err) => {
-      toast.error(err?.message || "Logout failed, session cleared locally");
     },
   });
 }

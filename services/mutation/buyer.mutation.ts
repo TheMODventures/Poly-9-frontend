@@ -26,9 +26,6 @@ export function useListBuyers() {
       console.log("data", data);
       setBuyers(data);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to fetch buyers");
-    },
   });
 }
 

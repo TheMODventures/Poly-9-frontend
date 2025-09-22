@@ -10,7 +10,7 @@ import axiosService from "../middleware/axios.middleware";
 const AUTH_ENDPOINTS = {
   login: "/v1/auth/login",
   register: "/v1/auth/register",
-  logout: "/v1/auth/logout",
+  logout: "/v1/auth/logout/",
   refreshToken: "/auth/refresh",
   me: "/auth/me",
 } as const;
