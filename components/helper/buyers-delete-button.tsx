@@ -2,7 +2,8 @@ import React, { useState } from "react"
 import { PiBagBold } from "react-icons/pi";
 import { Button } from "@/components/ui/button"
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,DialogClose,} from "@/components/ui/dialog"
-import { useDeleteBuyer, useListBuyers } from "@/services/mutation/buyer.mutation"
+import { useDeleteBuyer } from "@/services/mutation/buyer.mutation"
+import { useQueryClient } from "@tanstack/react-query"
 import { Buyer } from "@/interfaces/interface"
 
 interface DeleteModalProps {
@@ -12,7 +13,7 @@ interface DeleteModalProps {
 
 export default function DeleteModal({ trigger, buyerData }: DeleteModalProps) {
   const deleteBuyerMutation = useDeleteBuyer()
-  const listBuyersMutation = useListBuyers()
+  const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   
   const handleDelete = async () => {
@@ -23,8 +24,8 @@ export default function DeleteModal({ trigger, buyerData }: DeleteModalProps) {
           // Close modal
           setIsModalOpen(false)
           
-          // Refresh buyers list
-          listBuyersMutation.mutate({ page: 1, limit: 10 })
+          // Refresh buyers list by invalidating the query
+          queryClient.invalidateQueries({ queryKey: ["buyers"] })
         }
       }
     )
