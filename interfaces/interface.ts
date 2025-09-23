@@ -10,6 +10,45 @@ export interface User {
     refreshToken?: string;
 }
 
+export interface UserProfile {
+    email: string;
+    name: string;
+    password_hash: string;
+    role: string;
+    social_auth_id: string | null;
+    auth_provider: string;
+    profilePhoto: string | null;
+    phone: string | null;
+    designation: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    last_login: string;
+}
+
+export interface UpdateUserPayload {
+    name?: string;
+    phone?: string;
+    designation?: string;
+    profilePhoto?: string;
+}
+
+export interface ChangePasswordPayload {
+    current_password: string;
+    new_password: string;
+}
+
+export interface ChangePasswordResponse {
+    message: string;
+    user: UserProfile;
+}
+
+export interface PasswordData {
+    oldPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
 export interface BuyerSocial {
   name: string;
   url: string;
