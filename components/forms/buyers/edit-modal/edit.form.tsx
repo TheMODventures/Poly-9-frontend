@@ -215,7 +215,7 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
 
                 <FormField
                   control={control}
-                name="website"
+                  name="website"
                   render={({ field }) => (
                     <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
@@ -359,17 +359,17 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
                       Note
-                    </FormLabel>
-                    <FormControl>
+                      </FormLabel>
+                      <FormControl>
                       <Textarea
                         placeholder="Note lorem ipsum"
                         className="bg-gray-50 border-gray-200 focus:bg-white min-h-[80px] resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
             
                   <Button
                     type="submit"

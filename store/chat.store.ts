@@ -30,7 +30,7 @@ interface ChatStoreState {
   selectVariation: (variationKey: string) => void;
 }
 
-const DEFAULT_BUYER_ID = "470aa3df-a7be-4631-a426-fead8ef53201";
+const DEFAULT_BUYER_ID = "6ec4a004-5b4c-42e6-b50c-a1592c9725ba";
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
   buyerId: null,
