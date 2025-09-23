@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import ChatMessages from "./chat-messages";
 import ChatInput from "./chat-input";
 import { useProduct } from "@/context/product-context";
@@ -9,15 +9,41 @@ import { FaAngleRight } from "react-icons/fa";
 import { useChatMessages, useChatStore } from "@/store/chat.store";
 import { formatTime, getChatWidthClasses, getInitials } from "@/utils/helper";
 import { useAuthUser } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
-export default function ChatSection() {
+interface ChatSectionProps {
+  initialBuyerId?: string;
+  initialItemId?: string;
+  autoQuery?: string;
+}
+
+export default function ChatSection({
+  initialBuyerId,
+  initialItemId,
+  autoQuery,
+}: ChatSectionProps) {
   const { isChatOpen, toggleChat } = useProduct();
   const authUser = useAuthUser();
   const chatMessages = useChatMessages();
   const variations = useChatStore((state) => state.imageVariations);
+  const sendMessage = useChatStore((state) => state.sendMessage);
+  const setContext = useChatStore((state) => state.setContext);
+  const resetSession = useChatStore((state) => state.resetSession);
+  const buyerId = useChatStore((state) => state.buyerId);
+  const itemId = useChatStore((state) => state.itemId);
+  const router = useRouter();
 
   const hasMessages = chatMessages.length > 0;
   const hasVariations = variations.length > 0;
+
+  const normalizeParam = (value?: string) =>
+    value && value.trim().length > 0 ? value.trim() : null;
+
+  const normalizedBuyerParam = normalizeParam(initialBuyerId);
+  const normalizedItemParam = normalizeParam(initialItemId);
+
+  const previousItemIdRef = useRef<string | null>(null);
+  const autoQuerySentRef = useRef(false);
 
   const defaultUsers = useMemo(
     () => [
@@ -67,6 +93,80 @@ export default function ChatSection() {
       toggleChat();
     }
   }, [hasMessages, isChatOpen, toggleChat]);
+
+  useEffect(() => {
+    const buyerChanged = normalizedBuyerParam !== buyerId;
+    const itemChanged = normalizedItemParam !== previousItemIdRef.current;
+
+    if (!buyerChanged && !itemChanged) {
+      return;
+    }
+
+    resetSession();
+
+    setContext({
+      buyerId: normalizedBuyerParam,
+      itemId: normalizedItemParam,
+    });
+
+    previousItemIdRef.current = normalizedItemParam;
+  }, [
+    normalizedBuyerParam,
+    normalizedItemParam,
+    setContext,
+    resetSession,
+    buyerId,
+  ]);
+
+  useEffect(() => {
+    if (!autoQuery || autoQuerySentRef.current) {
+      return;
+    }
+
+    const trimmedAutoQuery = autoQuery.trim();
+    if (!trimmedAutoQuery) {
+      autoQuerySentRef.current = true;
+      return;
+    }
+
+    if (normalizedBuyerParam && buyerId !== normalizedBuyerParam) {
+      return;
+    }
+
+    if (normalizedItemParam && itemId !== normalizedItemParam) {
+      return;
+    }
+
+    autoQuerySentRef.current = true;
+
+    const sendAutoMessage = async () => {
+      try {
+        await sendMessage(trimmedAutoQuery);
+      } finally {
+        const params = new URLSearchParams();
+        if (normalizedBuyerParam) {
+          params.set("buyerId", normalizedBuyerParam);
+        }
+        if (normalizedItemParam) {
+          params.set("itemId", normalizedItemParam);
+        }
+        const queryString = params.toString();
+        router.replace(queryString ? `/chat?${queryString}` : "/chat", {
+          scroll: false,
+        });
+      }
+    };
+
+    void sendAutoMessage();
+  }, [
+    autoQuery,
+    sendMessage,
+    router,
+    normalizedBuyerParam,
+    normalizedItemParam,
+    buyerId,
+    itemId,
+  ]);
 
   return (
     <div

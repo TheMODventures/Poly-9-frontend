@@ -113,3 +113,43 @@ export function getChatWidthClasses(isOpen: boolean, hasVariations: boolean) {
   }
   return "w-full grow";
 }
+
+export function buildItemGenerationPrompt({
+  type,
+  name,
+  season,
+  styles,
+  targetImageCount,
+}: {
+  type: "collection" | "product";
+  name: string;
+  season: string;
+  styles: string[];
+  targetImageCount?: number;
+}) {
+  const trimmedName = name.trim();
+  const trimmedSeason = season.trim();
+  const normalizedStyles = styles.map((style) => style.trim()).filter(Boolean);
+  const styleSentence = normalizedStyles.length
+    ? `The ${normalizedStyles.length > 1 ? "styles are" : "style is"} ${normalizedStyles.join(", ")}.`
+    : "";
+
+  const baseSentence =
+    type === "collection"
+      ? `Generate images for the collection "${trimmedName}".`
+      : `Generate images for the product "${trimmedName}".`;
+
+  const seasonSentence = trimmedSeason
+    ? `The season is ${trimmedSeason}.`
+    : "";
+
+  const targetSentence =
+    type === "collection" && targetImageCount
+      ? `Create ${targetImageCount} concept images.`
+      : "";
+
+  return [baseSentence, seasonSentence, styleSentence, targetSentence]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+}

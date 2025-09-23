@@ -17,8 +17,8 @@ import axiosService from "../middleware/axios.middleware";
 
 // Buyer endpoints
 const BUYER_ENDPOINTS = {
-  list: "/v1/buyers",
-  create: "/v1/buyers",
+  list: "/v1/buyers/",
+  create: "/v1/buyers/",
   update: "/v1/buyers",
   delete: "/v1/buyers",
   getById: "/v1/buyers",

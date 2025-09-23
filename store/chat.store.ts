@@ -16,6 +16,7 @@ interface ChatMessageState {
 
 interface ChatStoreState {
   buyerId: string | null;
+  itemId: string | null;
   messages: ChatMessageState[];
   imageVariations: ChatImageVariation[];
   selectedVariationKey: string | null;
@@ -24,7 +25,10 @@ interface ChatStoreState {
   lastAssistantMessage: string | null;
   isLoading: boolean;
   error: string | null;
-  setBuyerId: (buyerId: string) => void;
+  setBuyerId: (buyerId: string | null) => void;
+  setItemId: (itemId: string | null) => void;
+  setContext: (context: { buyerId: string | null; itemId: string | null }) => void;
+  resetSession: () => void;
   clearError: () => void;
   sendMessage: (query: string, authorName?: string) => Promise<void>;
   selectVariation: (variationKey: string) => void;
@@ -34,6 +38,7 @@ const DEFAULT_BUYER_ID = "6ec4a004-5b4c-42e6-b50c-a1592c9725ba";
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
   buyerId: null,
+  itemId: null,
   messages: [],
   imageVariations: [],
   selectedVariationKey: null,
@@ -43,6 +48,19 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   isLoading: false,
   error: null,
   setBuyerId: (buyerId) => set({ buyerId }),
+  setItemId: (itemId) => set({ itemId }),
+  setContext: ({ buyerId, itemId }) => set({ buyerId, itemId }),
+  resetSession: () =>
+    set({
+      messages: [],
+      imageVariations: [],
+      selectedVariationKey: null,
+      selectedStyle: "",
+      lastUserMessage: null,
+      lastAssistantMessage: null,
+      isLoading: false,
+      error: null,
+    }),
   clearError: () => set({ error: null }),
   selectVariation: (variationKey) =>
     set((state) => {
@@ -104,6 +122,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         query: trimmedQuery,
         buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
         chat_history: chatHistory,
+        item_id: state.itemId ?? undefined,
       });
 
       const payload = response.data;

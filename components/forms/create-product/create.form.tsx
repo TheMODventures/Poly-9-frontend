@@ -19,18 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   createProductSchema,
   CreateProductFormValues,
 } from "./create.validation";
-import { createStyleHandlers, getFormContent } from "@/utils/helper";
+import { buildItemGenerationPrompt, getFormContent } from "@/utils/helper";
 import { useCreateBuyerItem } from "@/services/mutation/buyer.mutation";
 import { toast } from "sonner";
 import { TagInput } from "@/components/shared/tag-input";
+import { useRouter } from "next/navigation";
+import { useChatStore } from "@/store/chat.store";
 
 interface CreateProductProps {
   trigger: React.ReactNode;
@@ -47,6 +47,9 @@ export default function CreateProduct({
   const isCollection = variant === "collection";
   const content = useMemo(() => getFormContent(variant), [variant]);
   const createItemMutation = useCreateBuyerItem();
+  const router = useRouter();
+  const setContext = useChatStore((state) => state.setContext);
+  const resetSession = useChatStore((state) => state.resetSession);
 
   const form = useForm<CreateProductFormValues>({
     resolver: yupResolver(createProductSchema, {
@@ -76,20 +79,47 @@ export default function CreateProduct({
     }
 
     try {
+      const rawTargetCount = isCollection
+        ? Number.parseInt(values.targetImageCount, 10)
+        : undefined;
+      const parsedTargetCount = Number.isNaN(rawTargetCount)
+        ? undefined
+        : rawTargetCount;
+
       const payload = {
         buyer_id: buyerId,
         type: isCollection ? "collection" : "product",
         name: values.collectionName.trim(),
         season: values.season.trim(),
         style: values.styles.map((style) => style.trim()).filter(Boolean),
-        target_image_count: isCollection
-          ? Number(values.targetImageCount)
-          : undefined,
+        target_image_count: parsedTargetCount,
       };
 
-      await createItemMutation.mutateAsync(payload);
+      const result = await createItemMutation.mutateAsync(payload);
       reset();
       setOpen(false);
+
+      const autoPrompt = buildItemGenerationPrompt({
+        type: variant,
+        name: payload.name,
+        season: payload.season,
+        styles: payload.style,
+        targetImageCount: parsedTargetCount,
+      });
+
+      const newItemId = result.item_id;
+
+      setContext({ buyerId, itemId: newItemId });
+      resetSession();
+
+      const params = new URLSearchParams();
+      params.set("buyerId", buyerId);
+      params.set("itemId", newItemId);
+      if (autoPrompt) {
+        params.set("autoQuery", autoPrompt);
+      }
+
+      router.push(`/chat?${params.toString()}`);
     } catch (error) {
       console.error(
         `Error creating ${isCollection ? "collection" : "product"}:`,
