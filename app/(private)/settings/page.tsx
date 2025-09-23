@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronDown, Upload } from "lucide-react";
 import {
@@ -20,6 +19,7 @@ import { useUploadFile } from "@/services/mutation/buyer.mutation";
 import { useUpdateUser, useChangePassword } from "@/services/mutation/user.mutation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resolveImageUrl } from "@/utils/image";
+import ChangePasswordForm from "@/components/forms/settings/change-password.form";
 
 export default function SettingsPage() {
   const { data: userResponse, isLoading, isError, error } = useGetUser();
@@ -27,13 +27,6 @@ export default function SettingsPage() {
   
   const uploadFileMutation = useUploadFile();
   const updateUserMutation = useUpdateUser();
-  const changePasswordMutation = useChangePassword();
-
-  const [passwordData, setPasswordData] = useState<PasswordData>({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
 
   const [isPasswordExpanded, setIsPasswordExpanded] = useState(false);
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
@@ -63,13 +56,6 @@ export default function SettingsPage() {
     updateUserMutation.mutate(updatePayload);
   };
 
-  const handlePasswordChange = (field: keyof PasswordData, value: string) => {
-    setPasswordData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -86,31 +72,6 @@ export default function SettingsPage() {
         }
       });
     }
-  };
-
-  const handleSaveChanges = () => {
-    if (!passwordData.oldPassword || !passwordData.newPassword) {
-      return;
-    }
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      return;
-    }
-
-    changePasswordMutation.mutate({
-      current_password: passwordData.oldPassword,
-      new_password: passwordData.newPassword
-    }, {
-      onSuccess: () => {
-        // Clear password fields after successful change
-        setPasswordData({
-          oldPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        setIsPasswordExpanded(false);
-      }
-    });
   };
 
   // Loading state
@@ -284,59 +245,10 @@ export default function SettingsPage() {
               </div>
 
                     {isPasswordExpanded && (
-                      <div className="space-y-4 mt-4">
-                  {/* Old Password */}
-                  <div>
-                          <Label className="text-xs font-semibold text-gray-700 mb-2 block">
-                      Enter Old Password
-                    </Label>
-                      <Input
-                            type="password"
-                            value={passwordData.oldPassword}
-                            onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full"
-                          />
-                  </div>
-
-                  {/* New Password */}
-                  <div>
-                          <Label className="text-xs font-semibold text-gray-700 mb-2 block">
-                      Enter New Password
-                    </Label>
-                      <Input
-                            type="password"
-                            value={passwordData.newPassword}
-                            onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full"
-                          />
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div>
-                          <Label className="text-xs font-semibold text-gray-700 mb-2 block">
-                      Confirm Password
-                    </Label>
-                      <Input
-                            type="password"
-                            value={passwordData.confirmPassword}
-                            onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full"
-                          />
-                        </div>
-
-                        {/* Save Changes Button */}
-                        <div className="pt-4">
-                      <Button
-                            onClick={handleSaveChanges}
-                            disabled={changePasswordMutation.isPending || !passwordData.oldPassword || !passwordData.newPassword || passwordData.newPassword !== passwordData.confirmPassword}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {changePasswordMutation.isPending ? "Changing..." : "Save Changes"}
-                      </Button>
-                    </div>
+                      <div className="mt-4">
+                        <ChangePasswordForm 
+                          onSuccess={() => setIsPasswordExpanded(false)}
+                        />
                       </div>
                     )}
                   </div>
