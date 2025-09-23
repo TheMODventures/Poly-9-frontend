@@ -1,14 +1,35 @@
-import { Phone, Mail, FileText } from "lucide-react"
+"use client"
+
+import { User, Globe, Layers } from "lucide-react"
 import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { BsThreeDots } from "react-icons/bs"
 import Link from "next/link"
+import { Buyer } from "@/interfaces/interface"
+import { Skeleton } from "../ui/skeleton"
 
-export default function ProfileHeader() {
+interface ProfileHeaderProps {
+  buyer?: Buyer;
+  isLoading?: boolean;
+}
+
+export default function ProfileHeader({ buyer, isLoading }: ProfileHeaderProps) {
+  const contactName = buyer?.name || "Not provided";
+  const website = buyer?.website || "Not provided";
+  const buyerType = buyer?.type || "Not provided";
+  const totalGenerations = buyer?.total_generations ?? 0;
+  const totalDocuments = buyer?.total_documents ?? 0;
+
   return (
     <div className="bg-white rounded-md p-6 shadow-sm border">
       <div className="flex items-center ml-5 justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Buyers profile</h1>
+        {isLoading ? (
+          <Skeleton className="h-8 w-56" />
+        ) : (
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {buyer?.company || "Buyer profile"}
+          </h1>
+        )}
         <div className="absolute top-14 right-10">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -30,22 +51,57 @@ export default function ProfileHeader() {
 
       <div className="mt-6 space-y-4 ml-5">
         <div className="flex items-center gap-3">
-          <Phone className="w-5 h-5 text-blue-500" />
+          <User className="w-5 h-5 text-blue-500" />
           <span className="text-sm text-gray-600">Contact</span>
-          <span className="text-sm font-medium text-gray-900">+84 037346950</span>
+          {isLoading ? (
+            <Skeleton className="h-4 w-40" />
+          ) : (
+            <span className="text-sm font-medium text-gray-900">
+              {contactName}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5 text-blue-500" />
-          <span className="text-sm text-gray-600">Email</span>
-          <span className="text-sm font-medium text-gray-900">giangbanganh@gmail.com</span>
+          <Globe className="w-5 h-5 text-blue-500" />
+          <span className="text-sm text-gray-600">Website</span>
+          {isLoading ? (
+            <Skeleton className="h-4 w-48" />
+          ) : (
+            <span className="text-sm font-medium text-gray-900 break-all">
+              {website}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
-          <FileText className="w-5 h-5 text-blue-500" />
-          <span className="text-sm text-gray-600">Details</span>
-          <span className="text-sm font-medium text-gray-900">Company address</span>
+          <Layers className="w-5 h-5 text-blue-500" />
+          <span className="text-sm text-gray-600">Buyer Type</span>
+          {isLoading ? (
+            <Skeleton className="h-4 w-32" />
+          ) : (
+            <span className="text-sm font-medium text-gray-900">
+              {buyerType}
+            </span>
+          )}
         </div>
+
+        {!isLoading && (
+          <div className="flex items-center gap-6 pt-2 text-sm text-gray-700">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-900">
+                {totalGenerations}
+              </span>
+              <span className="text-gray-600">Generations</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-gray-900">
+                {totalDocuments}
+              </span>
+              <span className="text-gray-600">Documents</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

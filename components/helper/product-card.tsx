@@ -3,7 +3,7 @@ import { Pencil } from "lucide-react"
 
 interface ProductCardProps {
   name: string
-  price: number
+  price?: number
   originalPrice?: number
   image: string
   // badge?: "NEW" | "SALE" | null
@@ -20,6 +20,7 @@ export default function ProductCard({ name, image, variants }: ProductCardProps)
             alt={name}
             width={300}
             height={300}
+            unoptimized
             className="object-cover"
           />
         </div>

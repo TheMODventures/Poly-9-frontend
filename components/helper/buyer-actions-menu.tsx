@@ -19,7 +19,12 @@ export default function BuyerActionsMenu({ }: BuyerActionsMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-1 h-8 w-8"
+          onClick={(event) => event.stopPropagation()}
+        >
           <BsThreeDotsVertical className="w-4 h-4 text-gray-400 translate-y-1" />
         </Button>
       </DropdownMenuTrigger>

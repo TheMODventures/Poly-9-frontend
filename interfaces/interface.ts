@@ -131,6 +131,52 @@ export interface DeleteBuyerResponse {
   deletion_report: DeletionReport;
 }
 
+export interface BuyerItemImage {
+  image_url: string;
+  prompt: string | null;
+  generation_date: string | null;
+  session_id: string | null;
+  image_id: string | null;
+  s3_key: string | null;
+  style: string[];
+  variation?: number;
+}
+
+export interface BuyerItem {
+  item_id: string;
+  buyer_id: string;
+  type: string;
+  name: string;
+  season: string | null;
+  style: string[];
+  target_image_count: number;
+  description: string | null;
+  tags: string[];
+  generated_images: BuyerItemImage[];
+  total_images_generated: number;
+  created_at: string;
+  updated_at: string;
+  metadata: Record<string, unknown>;
+}
+
+export interface BuyerItemsFilters {
+  buyer_id: string;
+  type?: string;
+  limit?: number;
+}
+
+export interface BuyerItemsResponse {
+  items: BuyerItem[];
+  total_count: number;
+  filters_applied: BuyerItemsFilters;
+}
+
+export interface BuyerItemsParams {
+  buyer_id: string;
+  type?: string;
+  limit?: number;
+}
+
 // File Upload interfaces
 export interface FileUploadResponse {
   file_id: string;
