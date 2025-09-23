@@ -10,6 +10,8 @@ import {
   DeleteBuyerResponse,
   BuyerItemsParams,
   BuyerItemsResponse,
+  CreateBuyerItemPayload,
+  CreateBuyerItemResponse,
 } from "@/interfaces/interface";
 import axiosService from "../middleware/axios.middleware";
 
@@ -21,6 +23,7 @@ const BUYER_ENDPOINTS = {
   delete: "/v1/buyers",
   getById: "/v1/buyers",
   items: "/v1/items/buyer",
+  createItem: "/v1/items/create",
 } as const;
 
 class BuyerApiService {
@@ -98,13 +101,22 @@ class BuyerApiService {
     if (limit) {
       query.append("limit", limit.toString());
     }
-    console.log("buyer_id", buyer_id);
     const queryString = query.toString();
     const url = queryString
       ? `${BUYER_ENDPOINTS.items}/${buyer_id}?${queryString}`
       : `${BUYER_ENDPOINTS.items}/${buyer_id}`;
 
     const response = await axiosService.get<BuyerItemsResponse>(url);
+    return response;
+  }
+
+  async createBuyerItem(
+    payload: CreateBuyerItemPayload
+  ): Promise<ApiResponse<CreateBuyerItemResponse>> {
+    const response = await axiosService.post<CreateBuyerItemResponse>(
+      BUYER_ENDPOINTS.createItem,
+      payload
+    );
     return response;
   }
 }

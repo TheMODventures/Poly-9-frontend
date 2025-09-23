@@ -177,6 +177,21 @@ export interface BuyerItemsParams {
   limit?: number;
 }
 
+export interface CreateBuyerItemPayload {
+  buyer_id: string;
+  type: "product" | "collection";
+  name: string;
+  season: string;
+  style: string[];
+  target_image_count?: number;
+}
+
+export interface CreateBuyerItemResponse {
+  item_id: string;
+  message: string;
+  item: BuyerItem;
+}
+
 // File Upload interfaces
 export interface FileUploadResponse {
   file_id: string;

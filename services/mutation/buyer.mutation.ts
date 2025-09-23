@@ -8,6 +8,8 @@ import {
   DeleteBuyerParams,
   DeleteBuyerResponse,
   FileUploadResponse,
+  CreateBuyerItemPayload,
+  CreateBuyerItemResponse,
 } from "@/interfaces/interface";
 import { toast } from "sonner";
 
@@ -72,5 +74,20 @@ export function useUploadFile() {
       toast.success(`File "${data.filename}" uploaded successfully`);
     },
     // Error handling is now done globally in axios middleware
+  });
+}
+
+export function useCreateBuyerItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<CreateBuyerItemResponse, Error, CreateBuyerItemPayload>({
+    mutationFn: async (payload: CreateBuyerItemPayload) => {
+      const response = await buyerService.createBuyerItem(payload);
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      toast.success(data.message || "Item created successfully");
+      queryClient.invalidateQueries({ queryKey: ["buyer-items", variables.buyer_id] });
+    },
   });
 }

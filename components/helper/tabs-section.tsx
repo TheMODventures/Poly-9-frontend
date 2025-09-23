@@ -85,6 +85,8 @@ export default function TabsSection({ buyerId }: TabsSectionProps) {
             {heading}
           </h2>
           <CreateProduct
+            buyerId={buyerId}
+            variant={tab === "collections" ? "collection" : "product"}
             trigger={
               <button className="bg-blue-500 text-white px-4 py-2 cursor-pointer rounded-lg text-sm font-medium hover:bg-blue-600">
                 {actionLabel}

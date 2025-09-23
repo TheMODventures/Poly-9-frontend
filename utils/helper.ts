@@ -1,7 +1,6 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
 import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
-import React from "react";
 import { FormContentConfig } from "@/interfaces/interface";
 
 export const getAccessToken = () => {
@@ -42,8 +41,10 @@ export const getInitials = (name: string): string => {
     .toUpperCase();
 };
 
-export const getFormContent = (isCollection: boolean): FormContentConfig => {
-  if (isCollection) {
+export const getFormContent = (
+  variant: "collection" | "product"
+): FormContentConfig => {
+  if (variant === "collection") {
     return {
       title: "Create New Collection",
       subtitle:
@@ -66,29 +67,6 @@ export const getFormContent = (isCollection: boolean): FormContentConfig => {
   }
 };
 
-export const isCollectionTrigger = (trigger: React.ReactNode): boolean => {
-  if (React.isValidElement(trigger)) {
-    const element = trigger as React.ReactElement<any>;
-
-    if (element.props?.children) {
-      const children = element.props.children;
-
-      if (typeof children === "string") {
-        return children.toLowerCase().includes("collection");
-      }
-
-      if (Array.isArray(children)) {
-        return children.some(
-          (child) =>
-            typeof child === "string" &&
-            child.toLowerCase().includes("collection")
-        );
-      }
-    }
-  }
-  return false;
-};
-
 import { UseFormSetValue } from "react-hook-form";
 import { CreateProductFormValues } from "@/components/forms/create-product/create.validation";
 
@@ -98,8 +76,9 @@ export function createStyleHandlers(
   setNewStyle: React.Dispatch<React.SetStateAction<string>>
 ) {
   const addStyle = (style: string) => {
-    if (style && !watchedStyles.includes(style)) {
-      setValue("styles", [...watchedStyles, style]);
+    const normalized = style.trim();
+    if (normalized && !watchedStyles.includes(normalized)) {
+      setValue("styles", [...watchedStyles, normalized]);
       setNewStyle("");
     }
   };
