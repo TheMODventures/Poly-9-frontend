@@ -225,7 +225,7 @@ export default function SettingsPage() {
                   <span className="text-sm font-semibold text-gray-800">User email</span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-900 text-right min-w-[180px]">{userProfile?.email || ""}</span>
-                  </div>
+                </div>
               </div>
             </div>
 
@@ -249,7 +249,7 @@ export default function SettingsPage() {
                         <ChangePasswordForm 
                           onSuccess={() => setIsPasswordExpanded(false)}
                         />
-                      </div>
+                  </div>
                     )}
                   </div>
                 </div>

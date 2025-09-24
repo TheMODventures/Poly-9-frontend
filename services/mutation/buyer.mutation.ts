@@ -8,6 +8,8 @@ import {
   DeleteBuyerParams,
   DeleteBuyerResponse,
   FileUploadResponse,
+  DocumentUploadResponse,
+  GenerateUuidResponse,
 } from "@/interfaces/interface";
 import { toast } from "sonner";
 
@@ -72,5 +74,32 @@ export function useUploadFile() {
       toast.success(`File "${data.filename}" uploaded successfully`);
     },
     // Error handling is now done globally in axios middleware
+  });
+}
+
+export function useUploadDocument() {
+  const queryClient = useQueryClient();
+  
+  return useMutation<DocumentUploadResponse, Error, { buyerId: string; file: File }>({
+    mutationFn: async ({ buyerId, file }) => {
+      const response = await buyerService.uploadDocument(buyerId, file);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Document uploaded successfully");
+    },
+  
+  });
+}
+
+export function useGenerateUuid() {
+  return useMutation<GenerateUuidResponse, Error, void>({
+    mutationFn: async () => {
+      const response = await buyerService.generateUuid();
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(`UUID generated: ${data.uuid}`);
+    },
   });
 }
