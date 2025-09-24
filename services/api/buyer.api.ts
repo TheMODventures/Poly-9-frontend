@@ -12,6 +12,8 @@ import {
   BuyerItemsResponse,
   CreateBuyerItemPayload,
   CreateBuyerItemResponse,
+  DeleteBuyerItemParams,
+  DeleteBuyerItemResponse,
 } from "@/interfaces/interface";
 import axiosService from "../middleware/axios.middleware";
 
@@ -24,6 +26,7 @@ const BUYER_ENDPOINTS = {
   getById: "/v1/buyers",
   items: "/v1/items/buyer",
   createItem: "/v1/items/create",
+  deleteItem: "/v1/items",
 } as const;
 
 class BuyerApiService {
@@ -116,6 +119,15 @@ class BuyerApiService {
     const response = await axiosService.post<CreateBuyerItemResponse>(
       BUYER_ENDPOINTS.createItem,
       payload
+    );
+    return response;
+  }
+
+  async deleteBuyerItem(
+    params: DeleteBuyerItemParams
+  ): Promise<ApiResponse<DeleteBuyerItemResponse>> {
+    const response = await axiosService.delete<DeleteBuyerItemResponse>(
+      `${BUYER_ENDPOINTS.deleteItem}/${params.item_id}`
     );
     return response;
   }

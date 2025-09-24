@@ -192,6 +192,14 @@ export interface CreateBuyerItemResponse {
   item: BuyerItem;
 }
 
+export interface DeleteBuyerItemParams {
+  item_id: string;
+}
+
+export interface DeleteBuyerItemResponse {
+  message: string;
+}
+
 // File Upload interfaces
 export interface FileUploadResponse {
   file_id: string;
