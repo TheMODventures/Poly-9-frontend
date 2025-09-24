@@ -1,29 +1,39 @@
-"use client"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-import CustomerCard from "./customer-card"
-import { BuyerItem } from "@/interfaces/interface"
-import { resolveImageUrl } from "@/utils/image"
+"use client";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import CustomerCard from "./customer-card";
+import { BuyerItem } from "@/interfaces/interface";
+import { resolveImageUrl } from "@/utils/image";
 
 interface TopCustomersProps {
-  items: BuyerItem[]
+  items: BuyerItem[];
 }
 
 export default function TopCustomers({ items }: TopCustomersProps) {
   if (!items.length) {
-    return null
+    return null;
   }
 
   return (
     <div className="bg-gradient-to-tr from-purple-50 to-white p-6">
-      <h4 className="text-xl font-poppins text-center mb-6" style={{ fontWeight: "700" }}>
+      <h4
+        className="text-xl font-poppins text-center mb-6"
+        style={{ fontWeight: "700" }}
+      >
         Recently Generated Concepts
       </h4>
 
       <Carousel className="w-full scale-95">
         <CarouselContent className="-ml-2">
           {items.map((item) => {
-            const primaryImage = item.generated_images?.[0]?.image_url
-            const resolvedImage = resolveImageUrl(primaryImage || "") || "/placeholder.svg"
+            const primaryImage = item.generated_images?.[0]?.image_url;
+            const resolvedImage =
+              resolveImageUrl(primaryImage || "") || "/placeholder.svg";
 
             return (
               <CarouselItem
@@ -36,7 +46,7 @@ export default function TopCustomers({ items }: TopCustomersProps) {
                   image={resolvedImage}
                 />
               </CarouselItem>
-            )
+            );
           })}
         </CarouselContent>
 
@@ -44,5 +54,5 @@ export default function TopCustomers({ items }: TopCustomersProps) {
         <CarouselNext className="-right-8" />
       </Carousel>
     </div>
-  )
+  );
 }

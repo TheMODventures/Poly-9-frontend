@@ -1,20 +1,27 @@
-"use client"
+"use client";
 
-import { User, Globe, Layers } from "lucide-react"
-import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
-import { Button } from "../ui/button"
-import { BsThreeDots } from "react-icons/bs"
-import Link from "next/link"
-import { Buyer } from "@/interfaces/interface"
-import { Skeleton } from "../ui/skeleton"
+import { User, Globe, Layers } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { BsThreeDots } from "react-icons/bs";
+import Link from "next/link";
+import { Buyer } from "@/interfaces/interface";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProfileHeaderProps {
   buyer?: Buyer;
   isLoading?: boolean;
 }
 
-export default function ProfileHeader({ buyer, isLoading }: ProfileHeaderProps) {
-  const contactName = buyer?.name || "Not provided";
+export default function ProfileHeader({
+  buyer,
+  isLoading,
+}: ProfileHeaderProps) {
   const website = buyer?.website || "Not provided";
   const buyerType = buyer?.type || "Not provided";
   const totalGenerations = buyer?.total_generations ?? 0;
@@ -50,18 +57,6 @@ export default function ProfileHeader({ buyer, isLoading }: ProfileHeaderProps) 
       </div>
 
       <div className="mt-6 space-y-4 ml-5">
-        <div className="flex items-center gap-3">
-          <User className="w-5 h-5 text-blue-500" />
-          <span className="text-sm text-gray-600">Contact</span>
-          {isLoading ? (
-            <Skeleton className="h-4 w-40" />
-          ) : (
-            <span className="text-sm font-medium text-gray-900">
-              {contactName}
-            </span>
-          )}
-        </div>
-
         <div className="flex items-center gap-3">
           <Globe className="w-5 h-5 text-blue-500" />
           <span className="text-sm text-gray-600">Website</span>
@@ -104,5 +99,5 @@ export default function ProfileHeader({ buyer, isLoading }: ProfileHeaderProps) 
         )}
       </div>
     </div>
-  )
+  );
 }

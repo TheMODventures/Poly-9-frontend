@@ -131,17 +131,17 @@ export function buildItemGenerationPrompt({
   const trimmedSeason = season.trim();
   const normalizedStyles = styles.map((style) => style.trim()).filter(Boolean);
   const styleSentence = normalizedStyles.length
-    ? `The ${normalizedStyles.length > 1 ? "styles are" : "style is"} ${normalizedStyles.join(", ")}.`
+    ? `The ${
+        normalizedStyles.length > 1 ? "styles are" : "style is"
+      } ${normalizedStyles.join(", ")}.`
     : "";
 
   const baseSentence =
     type === "collection"
-      ? `Generate images for the collection "${trimmedName}".`
-      : `Generate images for the product "${trimmedName}".`;
+      ? `Take context from the buyer's context files and Generate images for the collection "${trimmedName}".`
+      : `Take context from the buyer's context files and Generate images for the product "${trimmedName}".`;
 
-  const seasonSentence = trimmedSeason
-    ? `The season is ${trimmedSeason}.`
-    : "";
+  const seasonSentence = trimmedSeason ? `The season is ${trimmedSeason}.` : "";
 
   const targetSentence =
     type === "collection" && targetImageCount
