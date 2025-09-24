@@ -8,9 +8,15 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AddBuyerModal from "@/components/forms/buyers/add-modal/add.form"
 import SearchFilterBar from "@/components/helper/search-filter-bar"
+import { BuyersResponse } from "@/interfaces/interface"
 
-export default function BuyersInfo() {
+interface BuyersInfoProps {
+  buyersData?: BuyersResponse;
+}
+
+export default function BuyersInfo({ buyersData }: BuyersInfoProps) {
   const pathname = usePathname()
+  const buyersCount = buyersData?.pagination?.totalItems || 0;
 
   return (
     <div className="w-full space-y-4 p-8 bg-white rounded-xs mb-4 relative">
@@ -40,7 +46,7 @@ export default function BuyersInfo() {
             Buyer Directory
           </h1>
           <span className="flex items-center justify-center mt-1 bg-blue-500 border border-black text-white text-xs font-inter w-6 h-6 rounded-full">
-            53
+            {buyersCount}
           </span>
         </div>
         <AddBuyerModal

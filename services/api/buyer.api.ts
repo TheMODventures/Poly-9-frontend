@@ -8,6 +8,8 @@ import {
   UpdateBuyerPayload,
   DeleteBuyerParams,
   DeleteBuyerResponse,
+  DocumentUploadResponse,
+  GenerateUuidResponse,
 } from "@/interfaces/interface";
 import axiosService from "../middleware/axios.middleware";
 
@@ -18,6 +20,8 @@ const BUYER_ENDPOINTS = {
   update: "/v1/buyers",
   delete: "/v1/buyers",
   getById: "/v1/buyers/",
+  uploadDocument: "/v1/documents/upload",
+  generateUuid: "/v1/buyers/generate-uuid",
 } as const;
 
 class BuyerApiService {
@@ -30,6 +34,10 @@ class BuyerApiService {
     
     if (params?.limit) {
       queryParams.append("limit", params.limit.toString());
+    }
+
+    if (params?.search) {
+      queryParams.append("search", params.search);
     }
 
     const url = queryParams.toString() 
@@ -71,6 +79,30 @@ class BuyerApiService {
   async getBuyerById(buyerId: string): Promise<ApiResponse<Buyer>> {
     const response = await axiosService.get<Buyer>(
       `${BUYER_ENDPOINTS.getById}/${buyerId}`
+    );
+    return response;
+  }
+
+  async uploadDocument(buyerId: string, file: File): Promise<ApiResponse<DocumentUploadResponse>> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("buyer_id", buyerId);
+
+    const response = await axiosService.post<DocumentUploadResponse>(
+      `${BUYER_ENDPOINTS.uploadDocument}?buyer_id=${buyerId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  }
+
+  async generateUuid(): Promise<ApiResponse<GenerateUuidResponse>> {
+    const response = await axiosService.post<GenerateUuidResponse>(
+      BUYER_ENDPOINTS.generateUuid
     );
     return response;
   }

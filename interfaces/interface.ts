@@ -94,9 +94,11 @@ export interface BuyersApiResponse {
 export interface ListBuyersParams {
   page?: number;
   limit?: number;
+  search?: string;
 }
 
 export interface CreateBuyerPayload {
+  buyer_id: string;
   company: string;
   website?: string;
   socials?: BuyerSocial[];
@@ -139,6 +141,16 @@ export interface FileUploadResponse {
   s3_key: string;
   url: string;
   uploaded_at: string;
+}
+
+export interface DocumentUploadResponse {
+  document_id: string;
+  upload_url: string | null;
+  message: string;
+}
+
+export interface GenerateUuidResponse {
+  uuid: string;
 }
 
 export interface ProfileData {
