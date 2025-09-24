@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { chatService } from "@/services/api/chat.api";
 import type {
   ChatImageVariation,
+  ChatRequestBody,
   ChatRole,
 } from "@/services/interface/chat/chat.interface";
 
@@ -23,7 +24,9 @@ interface ChatStoreState {
   selectedStyle: string;
   lastUserMessage: string | null;
   lastAssistantMessage: string | null;
+  lastRequestBody: ChatRequestBody | null;
   isLoading: boolean;
+  isGeneratingVariation: boolean;
   error: string | null;
   setBuyerId: (buyerId: string | null) => void;
   setItemId: (itemId: string | null) => void;
@@ -32,6 +35,7 @@ interface ChatStoreState {
   clearError: () => void;
   sendMessage: (query: string, authorName?: string) => Promise<void>;
   selectVariation: (variationKey: string) => void;
+  generateAdditionalVariation: () => Promise<void>;
 }
 
 const DEFAULT_BUYER_ID = "6ec4a004-5b4c-42e6-b50c-a1592c9725ba";
@@ -45,7 +49,9 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   selectedStyle: "",
   lastUserMessage: null,
   lastAssistantMessage: null,
+  lastRequestBody: null,
   isLoading: false,
+  isGeneratingVariation: false,
   error: null,
   setBuyerId: (buyerId) => set({ buyerId }),
   setItemId: (itemId) => set({ itemId }),
@@ -76,6 +82,78 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         selectedStyle: variation.style,
       };
     }),
+  generateAdditionalVariation: async () => {
+    const state = get();
+
+    if (state.isLoading || state.isGeneratingVariation) {
+      return;
+    }
+
+    const baseRequest: ChatRequestBody | null = state.lastRequestBody
+      ? { ...state.lastRequestBody }
+      : state.lastUserMessage
+        ? {
+            query: state.lastUserMessage,
+            buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
+            chat_history:
+              state.lastUserMessage && state.lastAssistantMessage
+                ? [
+                    { role: "user" as const, content: state.lastUserMessage },
+                    {
+                      role: "assistant" as const,
+                      content: state.lastAssistantMessage,
+                    },
+                  ]
+                : [],
+            item_id: state.itemId ?? undefined,
+          }
+        : null;
+
+    if (!baseRequest || !baseRequest.query.trim()) {
+      return;
+    }
+
+    set({ isGeneratingVariation: true, error: null });
+
+    try {
+      const requestWithCount: ChatRequestBody = {
+        ...baseRequest,
+        count: 1,
+      };
+
+      const response = await chatService.createChatCompletion(requestWithCount);
+      const payload = response.data;
+
+      set((current) => {
+        const nextVariations = payload.image_variations ?? [];
+        const existingKeys = new Set(
+          current.imageVariations.map((item) => item.s3_key)
+        );
+        const mergedVariations = [
+          ...current.imageVariations,
+          ...nextVariations.filter((item) => !existingKeys.has(item.s3_key)),
+        ];
+        const firstNew = nextVariations[0] ?? null;
+
+        return {
+          imageVariations: mergedVariations,
+          selectedVariationKey: firstNew
+            ? firstNew.s3_key
+            : current.selectedVariationKey,
+          selectedStyle: firstNew ? firstNew.style : current.selectedStyle,
+          lastAssistantMessage: payload.text_response ?? current.lastAssistantMessage,
+          lastRequestBody: { ...baseRequest },
+          isGeneratingVariation: false,
+        };
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to generate additional variation";
+      set({ error: message, isGeneratingVariation: false });
+    }
+  },
   sendMessage: async (query: string, authorName?: string) => {
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
@@ -118,12 +196,16 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             ]
           : [];
 
-      const response = await chatService.createChatCompletion({
+      const requestBody: ChatRequestBody = {
         query: trimmedQuery,
         buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
         chat_history: chatHistory,
         item_id: state.itemId ?? undefined,
-      });
+      };
+
+      set({ lastRequestBody: requestBody });
+
+      const response = await chatService.createChatCompletion(requestBody);
 
       const payload = response.data;
 

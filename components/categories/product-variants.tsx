@@ -14,9 +14,10 @@ interface ProductVariantsProps {
   variants: ProductVariant[]
   onSelect: (variantKey: string) => void
   onAdd?: () => void
+  isAddDisabled?: boolean
 }
 
-export default function ProductVariants({ variants, onSelect, onAdd }: ProductVariantsProps) {
+export default function ProductVariants({ variants, onSelect, onAdd, isAddDisabled }: ProductVariantsProps) {
   return (
     <div className="flex gap-4 mb-6">
       {variants.map((variant) => (
@@ -44,7 +45,12 @@ export default function ProductVariants({ variants, onSelect, onAdd }: ProductVa
         <button
           type="button"
           onClick={onAdd}
-          className="w-20 h-16 bg-blue-500 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
+          disabled={isAddDisabled}
+          className={`w-20 h-16 bg-blue-500 rounded-lg flex items-center justify-center transition-colors ${
+            isAddDisabled
+              ? "opacity-60 cursor-not-allowed"
+              : "hover:bg-blue-600"
+          }`}
         >
           <Plus className="w-6 h-6 text-white" />
         </button>
