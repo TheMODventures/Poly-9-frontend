@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { X, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { PiCloudCheck } from "react-icons/pi";
 import { UploadFile } from "@/interfaces/interface";
 import { useUploadDocument } from "@/services/mutation/document.mutation";
@@ -96,11 +96,6 @@ export default function AttachmentDialog() {
     resetInput();
   };
 
-  const removeFile = (id: number) => {
-    setFiles((previous) => previous.filter((file) => file.id !== id));
-    resetInput();
-  };
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -148,10 +143,7 @@ export default function AttachmentDialog() {
 
         <div className="space-y-2 px-4 pb-4">
           {files.map((file) => (
-            <div
-              key={file.id}
-              className="bg-gray-50 rounded-lg p-3 flex items-center justify-between"
-            >
+            <div key={file.id} className="bg-gray-50 rounded-lg p-3 w-full">
               <div>
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
                   📄 {file.name}
@@ -176,22 +168,12 @@ export default function AttachmentDialog() {
                     style={{
                       width: `${Math.min(
                         100,
-                        file.size
-                          ? (file.uploaded / file.size) * 100
-                          : 0
+                        file.size ? (file.uploaded / file.size) * 100 : 0
                       )}%`,
                     }}
                   />
                 </div>
               </div>
-              <button
-                onClick={() => removeFile(file.id)}
-                className="text-gray-400 hover:text-gray-600 ml-3"
-                type="button"
-                disabled={isPending}
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
           ))}
         </div>
