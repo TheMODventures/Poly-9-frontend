@@ -1,48 +1,104 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
-import {Dialog,DialogTrigger,DialogContent, DialogTitle,} from "@/components/ui/dialog";
+import { useState, useRef, type ChangeEvent } from "react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { X, Paperclip } from "lucide-react";
 import { PiCloudCheck } from "react-icons/pi";
 import { UploadFile } from "@/interfaces/interface";
+import { useUploadDocument } from "@/services/mutation/document.mutation";
+import { useChatStore } from "@/store/chat.store";
+import { toast } from "sonner";
 
 export default function AttachmentDialog() {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const buyerId = useChatStore((state) => state.buyerId);
+  const { mutateAsync: uploadDocument, isPending } = useUploadDocument();
 
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const selected: UploadFile[] = Array.from(e.target.files).map((f) => ({
-      id: Date.now() + Math.random(),
-      name: f.name,
-      size: f.size,
-      uploaded: 0,
-      status: "uploading",
-    }));
-    setFiles((p) => [...p, ...selected]);
-    selected.forEach((f) => simulateUpload(f.id, f.size));
+  const resetInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  const simulateUpload = (id: number, size: number) => {
-    const interval = setInterval(() => {
+  const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (isPending) {
+      return;
+    }
+
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!buyerId) {
+      toast.error("Select a buyer before uploading a document.");
+      resetInput();
+      return;
+    }
+
+    const tempId = Date.now();
+    const fileEntry: UploadFile = {
+      id: tempId,
+      name: file.name,
+      size: file.size,
+      uploaded: 0,
+      status: "uploading",
+    };
+
+    setFiles([fileEntry]);
+
+    try {
+      await uploadDocument({
+        buyerId,
+        file,
+        onUploadProgress: (progressEvent) => {
+          const total = progressEvent.total ?? file.size;
+          const loaded = progressEvent.loaded ?? 0;
+          const ratio = total > 0 ? loaded / total : 0;
+          const uploadedBytes = Math.min(
+            file.size,
+            Math.round(ratio * file.size)
+          );
+
+          setFiles((prev) =>
+            prev.map((item) =>
+              item.id === tempId
+                ? {
+                    ...item,
+                    uploaded: uploadedBytes,
+                    status: ratio >= 1 ? "completed" : "uploading",
+                  }
+                : item
+            )
+          );
+        },
+      });
+
       setFiles((prev) =>
-        prev.map((f) =>
-          f.id === id
-            ? {
-                ...f,
-                uploaded: Math.min(f.uploaded + size / 20, size),
-                status:
-                  f.uploaded + size / 20 >= size ? "completed" : "uploading",
-              }
-            : f
+        prev.map((item) =>
+          item.id === tempId
+            ? { ...item, uploaded: file.size, status: "completed" }
+            : item
         )
       );
-    }, 500);
-    setTimeout(() => clearInterval(interval), 10000);
+    } catch {
+      setFiles([]);
+      resetInput();
+      return;
+    }
+
+    resetInput();
   };
 
   const removeFile = (id: number) => {
-    setFiles((p) => p.filter((f) => f.id !== id));
+    setFiles((previous) => previous.filter((file) => file.id !== id));
+    resetInput();
   };
 
   return (
@@ -74,15 +130,18 @@ export default function AttachmentDialog() {
             <p className="text-xs text-gray-400">JPEG, PNG, up to 50 MB</p>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="mt-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm"
+              className="mt-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              type="button"
+              disabled={isPending}
             >
-              Browse File
+              {isPending ? "Uploading…" : "Browse File"}
             </button>
             <input
               type="file"
               ref={fileInputRef}
               className="hidden"
               onChange={handleFileSelect}
+              disabled={isPending}
             />
           </div>
         </div>
@@ -98,7 +157,7 @@ export default function AttachmentDialog() {
                   📄 {file.name}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {Math.round(file.uploaded / 1024)} KB of{" "}
+                  {Math.round(file.uploaded / 1024)} KB of {""}
                   {Math.round(file.size / 1024)} KB
                   {file.status === "uploading" && (
                     <span className="text-blue-500 ml-2">Uploading…</span>
@@ -115,7 +174,12 @@ export default function AttachmentDialog() {
                         : "bg-blue-500"
                     }`}
                     style={{
-                      width: `${(file.uploaded / file.size) * 100}%`,
+                      width: `${Math.min(
+                        100,
+                        file.size
+                          ? (file.uploaded / file.size) * 100
+                          : 0
+                      )}%`,
                     }}
                   />
                 </div>
@@ -123,6 +187,8 @@ export default function AttachmentDialog() {
               <button
                 onClick={() => removeFile(file.id)}
                 className="text-gray-400 hover:text-gray-600 ml-3"
+                type="button"
+                disabled={isPending}
               >
                 <X className="w-4 h-4" />
               </button>

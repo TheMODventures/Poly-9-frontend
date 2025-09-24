@@ -210,6 +210,12 @@ export interface FileUploadResponse {
   uploaded_at: string;
 }
 
+export interface DocumentUploadResponse {
+  message?: string;
+  document_id?: string;
+  [key: string]: unknown;
+}
+
 export interface ProfileData {
   name: string
   phone: string
