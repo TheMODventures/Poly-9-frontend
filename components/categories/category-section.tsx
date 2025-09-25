@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import CollectionsHeader from "./category-header";
 import ProductPreview from "./product-preview";
@@ -7,7 +6,6 @@ import TransformProduct from "./transform-product";
 import { useProduct } from "@/context/product-context";
 import { useChatStore } from "@/store/chat.store";
 import { resolveImageUrl } from "@/utils/image";
-
 const PREVIEW_PRODUCT_ID = "chat-preview";
 
 export default function CategorySection() {
@@ -22,24 +20,17 @@ export default function CategorySection() {
     (state) => state.selectedVariationKey
   );
   const variations = useChatStore((state) => state.imageVariations);
+  const previewProduct = useChatStore((state) => state.previewProduct);
   const selectVariation = useChatStore((state) => state.selectVariation);
 
   const hasVariations = variations.length > 0;
   const firstVariation = hasVariations ? variations[0] : null;
 
   useEffect(() => {
-    if (!hasVariations) {
-      if (selectedProduct?.id === PREVIEW_PRODUCT_ID) {
-        closePreview();
-      }
+    if (!hasVariations || !firstVariation) {
       return;
     }
 
-    if (!firstVariation) {
-      return;
-    }
-
-    const resolvedImage = resolveImageUrl(firstVariation.image_url);
     const shouldSelectFirst =
       !selectedVariationKey ||
       !variations.some((item) => item.s3_key === selectedVariationKey);
@@ -47,48 +38,73 @@ export default function CategorySection() {
     if (shouldSelectFirst) {
       selectVariation(firstVariation.s3_key);
     }
+  }, [
+    firstVariation,
+    hasVariations,
+    selectVariation,
+    selectedVariationKey,
+    variations,
+  ]);
 
-    const previewProduct = {
-      id: PREVIEW_PRODUCT_ID,
-      name: "Generated Concept",
-      brand: "LanguageGUI",
-      price: "-",
-      image: resolvedImage,
-      description: firstVariation.style,
-    };
+  useEffect(() => {
+    const fallbackPreview = firstVariation
+      ? {
+          id: PREVIEW_PRODUCT_ID,
+          name: "Generated Concept",
+          brand: "LanguageGUI",
+          price: "-",
+          image: resolveImageUrl(firstVariation.image_url),
+          description: firstVariation.style,
+        }
+      : null;
+
+    const previewToShow = previewProduct
+      ? {
+          ...previewProduct,
+          description:
+            previewProduct.description || fallbackPreview?.description || "",
+          image: previewProduct.image || fallbackPreview?.image || "",
+        }
+      : fallbackPreview;
+
+    if (!previewToShow) {
+      if (selectedProduct) {
+        closePreview();
+      }
+      return;
+    }
 
     const needsUpdate =
       !selectedProduct ||
-      selectedProduct.id !== PREVIEW_PRODUCT_ID ||
-      selectedProduct.image !== previewProduct.image ||
-      selectedProduct.description !== previewProduct.description;
+      selectedProduct.id !== previewToShow.id ||
+      selectedProduct.name !== previewToShow.name ||
+      selectedProduct.image !== previewToShow.image ||
+      selectedProduct.description !== previewToShow.description ||
+      selectedProduct.brand !== previewToShow.brand;
 
     if (needsUpdate || !isPreviewMode) {
-      openPreview(previewProduct);
+      openPreview(previewToShow);
     }
   }, [
     closePreview,
     firstVariation,
-    hasVariations,
     isPreviewMode,
     openPreview,
-    selectVariation,
+    previewProduct,
     selectedProduct,
-    selectedVariationKey,
-    variations,
   ]);
 
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
-    if (hasVariations) {
+    if (hasVariations || previewProduct) {
       setAnimateIn(true);
     } else {
       setAnimateIn(false);
     }
-  }, [hasVariations]);
+  }, [hasVariations, previewProduct]);
 
-  if (!hasVariations) {
+  if (!hasVariations && !previewProduct) {
     return null;
   }
 

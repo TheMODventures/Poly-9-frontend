@@ -1,56 +1,137 @@
-"use client"
+"use client";
 
-import React, { useState, useMemo } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { createProductSchema, CreateProductFormValues } from "./create.validation"
-import { createStyleHandlers, getFormContent, isCollectionTrigger } from "@/utils/helper"
+import React, { useMemo, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  createProductSchema,
+  CreateProductFormValues,
+} from "./create.validation";
+import { buildItemGenerationPrompt, getFormContent } from "@/utils/helper";
+import { useCreateBuyerItem } from "@/services/mutation/buyer.mutation";
+import { toast } from "sonner";
+import { TagInput } from "@/components/shared/tag-input";
+import { useRouter } from "next/navigation";
+import { useChatStore } from "@/store/chat.store";
 
 interface CreateProductProps {
-  trigger: React.ReactNode
+  trigger: React.ReactNode;
+  variant: "collection" | "product";
+  buyerId?: string;
 }
 
-export default function CreateProduct({ trigger }: CreateProductProps) {
-  const [newStyle, setNewStyle] = useState("")
-  const isCollection = useMemo(() => isCollectionTrigger(trigger), [trigger])
-  const content = useMemo(() => getFormContent(isCollection), [isCollection])
+export default function CreateProduct({
+  trigger,
+  variant,
+  buyerId,
+}: CreateProductProps) {
+  const [open, setOpen] = useState(false);
+  const isCollection = variant === "collection";
+  const content = useMemo(() => getFormContent(variant), [variant]);
+  const createItemMutation = useCreateBuyerItem();
+  const router = useRouter();
+  const setContext = useChatStore((state) => state.setContext);
+  const resetSession = useChatStore((state) => state.resetSession);
 
   const form = useForm<CreateProductFormValues>({
-    resolver: yupResolver(createProductSchema),
+    resolver: yupResolver(createProductSchema, {
+      context: { isCollection },
+    }),
     defaultValues: {
       collectionName: "",
       season: "",
-      styles: ["Modern", "Minimalistic"],
-      productCount: "",
+      styles: [],
+      targetImageCount: "",
     },
-  })
+  });
 
-  const { control, handleSubmit, watch, setValue, reset } = form
-  const watchedStyles = watch("styles")
+  const { control, handleSubmit, reset } = form;
 
-  const { addStyle, removeStyle } = createStyleHandlers(watchedStyles, setValue, setNewStyle)
+  const handleDialogChange = (value: boolean) => {
+    setOpen(value);
+    if (!value) {
+      reset();
+    }
+  };
 
   const onSubmit = async (values: CreateProductFormValues) => {
-    try {
-      console.log(`Creating ${isCollection ? 'collection' : 'product'}:`, values)
-      reset()
-    } catch (error) {
-      console.error(`Error creating ${isCollection ? 'collection' : 'product'}:`, error)
+    if (!buyerId) {
+      toast.error("No buyer selected");
+      return;
     }
-  }
+
+    try {
+      const rawTargetCount = isCollection
+        ? Number.parseInt(values.targetImageCount, 10)
+        : undefined;
+      const parsedTargetCount = Number.isNaN(rawTargetCount)
+        ? undefined
+        : rawTargetCount;
+
+      const payload = {
+        buyer_id: buyerId,
+        type: isCollection ? "collection" : "product",
+        name: values.collectionName.trim(),
+        season: values.season.trim(),
+        style: values.styles.map((style) => style.trim()).filter(Boolean),
+        target_image_count: parsedTargetCount,
+      };
+
+      const result = await createItemMutation.mutateAsync(payload);
+      reset();
+      setOpen(false);
+
+      const autoPrompt = buildItemGenerationPrompt({
+        type: variant,
+        name: payload.name,
+        season: payload.season,
+        styles: payload.style,
+        targetImageCount: parsedTargetCount,
+      });
+
+      const newItemId = result.item_id;
+
+      setContext({ buyerId, itemId: newItemId });
+      resetSession();
+
+      const params = new URLSearchParams();
+      params.set("buyerId", buyerId);
+      params.set("itemId", newItemId);
+      if (autoPrompt) {
+        params.set("autoQuery", autoPrompt);
+      }
+
+      router.push(`/chat?${params.toString()}`);
+    } catch (error) {
+      console.error(
+        `Error creating ${isCollection ? "collection" : "product"}:`,
+        error
+      );
+      // axios middleware will surface the user-facing error
+    }
+  };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={handleDialogChange}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-lg p-0 gap-0 scale-78">
         <DialogHeader className="p-6 pb-4">
           <DialogTitle className="text-xl font-semibold text-gray-900">
@@ -59,9 +140,7 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
         </DialogHeader>
 
         <div className="mx-6 mb-6 p-4 bg-blue-500 text-white rounded-lg">
-          <p className="text-sm">
-            {content.subtitle}
-          </p>
+          <p className="text-sm">{content.subtitle}</p>
         </div>
 
         <div className="px-6 pb-6">
@@ -97,7 +176,7 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Lorem ipsum dolor sit amet consectetur"
+                        placeholder="Describe the season context"
                         className="bg-gray-50 border-gray-200 focus:bg-white min-h-[80px] resize-none"
                         {...field}
                       />
@@ -110,64 +189,17 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
               <FormField
                 control={control}
                 name="styles"
-                render={({ }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
                       {content.styleLabel}
                     </FormLabel>
-
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {watchedStyles.map((style) => (
-                        <Badge
-                          key={style}
-                          variant="secondary"
-                          className={`px-3 py-1 text-sm ${style === "Modern" ? "bg-blue-100 text-blue-700" :
-                              style === "Minimalistic" ? "bg-cyan-100 text-cyan-700" :
-                                "bg-gray-100 text-gray-700"
-                            }`}
-                        >
-                          {style}
-                          <X
-                            className="w-3 h-3 ml-1 cursor-pointer"
-                            onClick={() => removeStyle(style)}
-                          />
-                        </Badge>
-                      ))}
-
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Add tag"
-                          className="text-sm px-2 py-1 border border-gray-300 rounded-md text-gray-600"
-                          value={newStyle}
-                          onChange={(e) => setNewStyle(e.target.value)}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              addStyle(newStyle)
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="productCount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-medium text-gray-900">
-                      {content.countLabel}
-                    </FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Lorem ipsum dolor sit amet consectetur"
-                        className="bg-gray-50 border-gray-200 focus:bg-white min-h-[80px] resize-none"
-                        {...field}
+                      <TagInput
+                        value={field.value || []}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        placeholder="Add style and press Space"
                       />
                     </FormControl>
                     <FormMessage />
@@ -175,12 +207,37 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
                 )}
               />
 
+              {isCollection && (
+                <FormField
+                  control={control}
+                  name="targetImageCount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-medium text-gray-900">
+                        Target image count
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={1}
+                          placeholder="5"
+                          className="bg-gray-50 border-gray-200 focus:bg-white"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <div className="flex justify-end pt-4">
                 <Button
                   type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer px-8 py-2 rounded-lg"
+                  disabled={createItemMutation.isPending}
+                  className="bg-blue-500 hover:bg-blue-600 text-white cursor-pointer px-8 py-2 rounded-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Submit
+                  {createItemMutation.isPending ? "Submitting..." : "Submit"}
                 </Button>
               </div>
             </form>
@@ -188,5 +245,5 @@ export default function CreateProduct({ trigger }: CreateProductProps) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

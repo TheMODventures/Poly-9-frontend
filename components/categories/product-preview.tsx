@@ -15,6 +15,12 @@ export default function ProductPreview() {
   );
   const selectedStyle = useChatStore((state) => state.selectedStyle);
   const selectVariation = useChatStore((state) => state.selectVariation);
+  const generateAdditionalVariation = useChatStore(
+    (state) => state.generateAdditionalVariation
+  );
+  const isGeneratingVariation = useChatStore(
+    (state) => state.isGeneratingVariation
+  );
 
   if (!selectedProduct) return null;
 
@@ -69,7 +75,8 @@ export default function ProductPreview() {
               variant.isSelected || (!variations.length && index === 0),
           }))}
           onSelect={(variantKey) => selectVariation(variantKey)}
-          onAdd={() => console.log("Add new variant clicked")}
+          onAdd={() => void generateAdditionalVariation()}
+          isAddDisabled={isGeneratingVariation}
         />
 
         <div className="mb-6">

@@ -9,6 +9,8 @@ export interface ChatRequestBody {
   query: string
   buyer_id: string
   chat_history: ChatHistoryItem[]
+  item_id?: string
+  count?: number
 }
 
 export interface ChatImageVariation {

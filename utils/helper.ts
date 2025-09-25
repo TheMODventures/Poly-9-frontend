@@ -1,8 +1,8 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
 import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
+import type { BuyerItem, FormContentConfig } from "@/interfaces/interface";
 import React from "react";
-import { FormContentConfig } from "@/interfaces/interface";
 import { SOCIAL_OPTIONS } from "@/utils/social.constants";
 
 export const getAccessToken = () => {
@@ -43,8 +43,10 @@ export const getInitials = (name: string): string => {
     .toUpperCase();
 };
 
-export const getFormContent = (isCollection: boolean): FormContentConfig => {
-  if (isCollection) {
+export const getFormContent = (
+  variant: "collection" | "product"
+): FormContentConfig => {
+  if (variant === "collection") {
     return {
       title: "Create New Collection",
       subtitle:
@@ -67,29 +69,6 @@ export const getFormContent = (isCollection: boolean): FormContentConfig => {
   }
 };
 
-export const isCollectionTrigger = (trigger: React.ReactNode): boolean => {
-  if (React.isValidElement(trigger)) {
-    const element = trigger as React.ReactElement<any>;
-
-    if (element.props?.children) {
-      const children = element.props.children;
-
-      if (typeof children === "string") {
-        return children.toLowerCase().includes("collection");
-      }
-
-      if (Array.isArray(children)) {
-        return children.some(
-          (child) =>
-            typeof child === "string" &&
-            child.toLowerCase().includes("collection")
-        );
-      }
-    }
-  }
-  return false;
-};
-
 import { UseFormSetValue } from "react-hook-form";
 import { CreateProductFormValues } from "@/components/forms/create-product/create.validation";
 
@@ -99,8 +78,9 @@ export function createStyleHandlers(
   setNewStyle: React.Dispatch<React.SetStateAction<string>>
 ) {
   const addStyle = (style: string) => {
-    if (style && !watchedStyles.includes(style)) {
-      setValue("styles", [...watchedStyles, style]);
+    const normalized = style.trim();
+    if (normalized && !watchedStyles.includes(normalized)) {
+      setValue("styles", [...watchedStyles, normalized]);
       setNewStyle("");
     }
   };
@@ -136,6 +116,88 @@ export function getChatWidthClasses(isOpen: boolean, hasVariations: boolean) {
   return "w-full grow";
 }
 
+export function buildItemGenerationPrompt({
+  type,
+  name,
+  season,
+  styles,
+  targetImageCount,
+}: {
+  type: "collection" | "product";
+  name: string;
+  season: string;
+  styles: string[];
+  targetImageCount?: number;
+}) {
+  const trimmedName = name.trim();
+  const trimmedSeason = season.trim();
+  const normalizedStyles = styles.map((style) => style.trim()).filter(Boolean);
+  const styleSentence = normalizedStyles.length
+    ? `The ${
+        normalizedStyles.length > 1 ? "styles are" : "style is"
+      } ${normalizedStyles.join(", ")}.`
+    : "";
+
+  const baseSentence =
+    type === "collection"
+      ? `Take context from the buyer's context files and Generate images for the collection "${trimmedName}".`
+      : `Take context from the buyer's context files and Generate images for the product "${trimmedName}".`;
+
+  const seasonSentence = trimmedSeason ? `The season is ${trimmedSeason}.` : "";
+
+  const targetSentence =
+    type === "collection" && targetImageCount
+      ? `Create ${targetImageCount} concept images.`
+      : "";
+
+  return [baseSentence, seasonSentence, styleSentence, targetSentence]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+}
+
+export const CHAT_PREVIEW_STORAGE_KEY = "chat-preview-item";
+
+export function saveChatPreviewItem(item: BuyerItem) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    sessionStorage.setItem(CHAT_PREVIEW_STORAGE_KEY, JSON.stringify(item));
+  } catch {
+    // Ignore storage errors; preview just will not hydrate.
+  }
+}
+
+export function loadChatPreviewItem(): BuyerItem | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const raw = sessionStorage.getItem(CHAT_PREVIEW_STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as BuyerItem;
+  } catch {
+    return null;
+  }
+}
+
+export function clearChatPreviewItem() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    sessionStorage.removeItem(CHAT_PREVIEW_STORAGE_KEY);
+  } catch {
+    // Ignore storage errors to avoid breaking UX.
+  }
+}
 export const getSocialIcon = (socialName: string) => {
   const socialOption = SOCIAL_OPTIONS.find((option) => 
     option.value.toLowerCase() === socialName.toLowerCase()

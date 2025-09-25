@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import ChatMessages from "./chat-messages";
 import ChatInput from "./chat-input";
 import { useProduct } from "@/context/product-context";
@@ -7,17 +7,56 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { FaAngleRight } from "react-icons/fa";
 import { useChatMessages, useChatStore } from "@/store/chat.store";
-import { formatTime, getChatWidthClasses, getInitials } from "@/utils/helper";
+import {
+  clearChatPreviewItem,
+  formatTime,
+  getChatWidthClasses,
+  getInitials,
+  loadChatPreviewItem,
+} from "@/utils/helper";
 import { useAuthUser } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
-export default function ChatSection() {
+interface ChatSectionProps {
+  initialBuyerId?: string;
+  initialItemId?: string;
+  autoQuery?: string;
+}
+
+export default function ChatSection({
+  initialBuyerId,
+  initialItemId,
+  autoQuery,
+}: ChatSectionProps) {
   const { isChatOpen, toggleChat } = useProduct();
   const authUser = useAuthUser();
   const chatMessages = useChatMessages();
   const variations = useChatStore((state) => state.imageVariations);
+  const sendMessage = useChatStore((state) => state.sendMessage);
+  const setContext = useChatStore((state) => state.setContext);
+  const resetSession = useChatStore((state) => state.resetSession);
+  const buyerId = useChatStore((state) => state.buyerId);
+  const itemId = useChatStore((state) => state.itemId);
+  const hydratePreviewFromItem = useChatStore(
+    (state) => state.hydratePreviewFromItem
+  );
+  const clearPreview = useChatStore((state) => state.clearPreview);
+  const previewProduct = useChatStore((state) => state.previewProduct);
+  const router = useRouter();
 
   const hasMessages = chatMessages.length > 0;
   const hasVariations = variations.length > 0;
+  const hasCategoryPanel = hasVariations || Boolean(previewProduct);
+
+  const normalizeParam = (value?: string) =>
+    value && value.trim().length > 0 ? value.trim() : null;
+
+  const normalizedBuyerParam = normalizeParam(initialBuyerId);
+  const normalizedItemParam = normalizeParam(initialItemId);
+
+  const previousItemIdRef = useRef<string | null>(itemId);
+  const autoQuerySentRef = useRef(false);
+  const hydratedKeyRef = useRef<string | null>(null);
 
   const defaultUsers = useMemo(
     () => [
@@ -60,13 +99,124 @@ export default function ChatSection() {
     : "Today 2:45 PM";
 
   // 🔑 Width logic centralized here
-  const chatWidthClass = getChatWidthClasses(isChatOpen, hasVariations);
+  const chatWidthClass = getChatWidthClasses(isChatOpen, hasCategoryPanel);
 
   useEffect(() => {
     if (!hasMessages && !isChatOpen) {
       toggleChat();
     }
   }, [hasMessages, isChatOpen, toggleChat]);
+
+  useEffect(() => {
+    const buyerChanged = normalizedBuyerParam !== buyerId;
+    const itemChanged = normalizedItemParam !== previousItemIdRef.current;
+
+    if (!buyerChanged && !itemChanged) {
+      return;
+    }
+
+    resetSession();
+
+    setContext({
+      buyerId: normalizedBuyerParam,
+      itemId: normalizedItemParam,
+    });
+
+    previousItemIdRef.current = normalizedItemParam;
+  }, [
+    normalizedBuyerParam,
+    normalizedItemParam,
+    setContext,
+    resetSession,
+    buyerId,
+  ]);
+
+  useEffect(() => {
+    const currentKey =
+      normalizedBuyerParam && normalizedItemParam
+        ? `${normalizedBuyerParam}:${normalizedItemParam}`
+        : null;
+
+    if (!currentKey) {
+      hydratedKeyRef.current = null;
+      clearPreview();
+      clearChatPreviewItem();
+      return;
+    }
+
+    if (hydratedKeyRef.current === currentKey) {
+      return;
+    }
+
+    const cachedItem = loadChatPreviewItem();
+    if (
+      cachedItem &&
+      cachedItem.buyer_id === normalizedBuyerParam &&
+      cachedItem.item_id === normalizedItemParam
+    ) {
+      hydratePreviewFromItem(cachedItem);
+      clearChatPreviewItem();
+      hydratedKeyRef.current = currentKey;
+      return;
+    }
+
+    hydratedKeyRef.current = currentKey;
+  }, [
+    normalizedBuyerParam,
+    normalizedItemParam,
+    hydratePreviewFromItem,
+    clearPreview,
+  ]);
+
+  useEffect(() => {
+    if (!autoQuery || autoQuerySentRef.current) {
+      return;
+    }
+
+    const trimmedAutoQuery = autoQuery.trim();
+    if (!trimmedAutoQuery) {
+      autoQuerySentRef.current = true;
+      return;
+    }
+
+    if (normalizedBuyerParam && buyerId !== normalizedBuyerParam) {
+      return;
+    }
+
+    if (normalizedItemParam && itemId !== normalizedItemParam) {
+      return;
+    }
+
+    autoQuerySentRef.current = true;
+
+    const sendAutoMessage = async () => {
+      try {
+        await sendMessage(trimmedAutoQuery);
+      } finally {
+        const params = new URLSearchParams();
+        if (normalizedBuyerParam) {
+          params.set("buyerId", normalizedBuyerParam);
+        }
+        if (normalizedItemParam) {
+          params.set("itemId", normalizedItemParam);
+        }
+        const queryString = params.toString();
+        router.replace(queryString ? `/chat?${queryString}` : "/chat", {
+          scroll: false,
+        });
+      }
+    };
+
+    void sendAutoMessage();
+  }, [
+    autoQuery,
+    sendMessage,
+    router,
+    normalizedBuyerParam,
+    normalizedItemParam,
+    buyerId,
+    itemId,
+  ]);
 
   return (
     <div

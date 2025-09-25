@@ -8,6 +8,10 @@ import {
   DeleteBuyerParams,
   DeleteBuyerResponse,
   FileUploadResponse,
+  CreateBuyerItemPayload,
+  CreateBuyerItemResponse,
+  DeleteBuyerItemParams,
+  DeleteBuyerItemResponse,
   DocumentUploadResponse,
   GenerateUuidResponse,
 } from "@/interfaces/interface";
@@ -15,7 +19,7 @@ import { toast } from "sonner";
 
 export function useCreateBuyer() {
   const queryClient = useQueryClient();
-  
+
   return useMutation<Buyer, Error, CreateBuyerPayload>({
     mutationFn: async (payload: CreateBuyerPayload) => {
       const response = await buyerService.createBuyer(payload);
@@ -32,8 +36,12 @@ export function useCreateBuyer() {
 
 export function useUpdateBuyer() {
   const queryClient = useQueryClient();
-  
-  return useMutation<Buyer, Error, { buyer_id: string; payload: UpdateBuyerPayload }>({
+
+  return useMutation<
+    Buyer,
+    Error,
+    { buyer_id: string; payload: UpdateBuyerPayload }
+  >({
     mutationFn: async ({ buyer_id, payload }) => {
       const response = await buyerService.updateBuyer(buyer_id, payload);
       return response.data;
@@ -49,7 +57,7 @@ export function useUpdateBuyer() {
 
 export function useDeleteBuyer() {
   const queryClient = useQueryClient();
-  
+
   return useMutation<DeleteBuyerResponse, Error, DeleteBuyerParams>({
     mutationFn: async (params: DeleteBuyerParams) => {
       const response = await buyerService.deleteBuyer(params);
@@ -77,10 +85,54 @@ export function useUploadFile() {
   });
 }
 
-export function useUploadDocument() {
+export function useCreateBuyerItem() {
   const queryClient = useQueryClient();
-  
-  return useMutation<DocumentUploadResponse, Error, { buyerId: string; file: File }>({
+
+  return useMutation<CreateBuyerItemResponse, Error, CreateBuyerItemPayload>({
+    mutationFn: async (payload: CreateBuyerItemPayload) => {
+      const response = await buyerService.createBuyerItem(payload);
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      toast.success(data.message || "Item created successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["buyer-items", variables.buyer_id],
+      });
+    },
+  });
+}
+
+export function useDeleteBuyerItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    DeleteBuyerItemResponse,
+    Error,
+    DeleteBuyerItemParams & { buyer_id?: string }
+  >({
+    mutationFn: async ({ item_id }) => {
+      const response = await buyerService.deleteBuyerItem({ item_id });
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      toast.success("Item deleted successfully");
+
+      if (variables.buyer_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["buyer-items", variables.buyer_id],
+        });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["buyer-items"] });
+      }
+    },
+  });
+}
+export function useUploadDocument() {
+  return useMutation<
+    DocumentUploadResponse,
+    Error,
+    { buyerId: string; file: File }
+  >({
     mutationFn: async ({ buyerId, file }) => {
       const response = await buyerService.uploadDocument(buyerId, file);
       return response.data;
@@ -88,7 +140,6 @@ export function useUploadDocument() {
     onSuccess: (data) => {
       toast.success(data.message || "Document uploaded successfully");
     },
-  
   });
 }
 

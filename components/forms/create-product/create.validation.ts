@@ -14,10 +14,17 @@ export const createProductSchema = yup.object({
     .of(yup.string().required())
     .min(1, "At least one style must be selected")
     .required("Styles are required"),
-  productCount: yup
+  targetImageCount: yup
     .string()
-    .required("Product count is required")
-    .min(1, "Product count description is required"),
+    .trim()
+    .when("$isCollection", {
+      is: true,
+      then: (schema) =>
+        schema
+          .required("Target image count is required")
+          .matches(/^[1-9]\d*$/, "Enter a whole number greater than zero"),
+      otherwise: (schema) => schema.optional(),
+    }),
 })
 
 export type CreateProductFormValues = yup.InferType<typeof createProductSchema>

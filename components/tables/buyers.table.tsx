@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Table,
   TableBody,
@@ -21,29 +21,29 @@ import { useListBuyers } from "@/services/query";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TableSkeleton } from "@/components/ui/skeleton";
-import { getSocialIcon, getSocialColor, getSocialHoverColor, getSocialIconColor } from "@/utils/helper";
-import { BuyersResponse } from "@/interfaces/interface";
+import { useRouter } from "next/navigation";
+import {
+  getSocialIcon,
+} from "@/utils/helper";
 
-interface BuyersTableProps {
-  buyersData?: BuyersResponse;
-  isLoading: boolean;
-  isError: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
 
-export default function BuyersTable({ 
-  buyersData, 
-  isLoading, 
-  isError, 
-  error, 
-  refetch 
-}: BuyersTableProps) {
+export default function BuyersTable() {
   const [selected, setSelected] = useState<(string | number)[]>([]);
+  const router = useRouter();
+  const handleRowClick = useCallback(
+    (buyerId: string) => {
+      router.push(`/profile?buyerId=${buyerId}`);
+    },
+    [router]
+  );
+
+  const { data, isLoading, isError, error, refetch } = useListBuyers({
+    page: 1,
+    limit: 10,
+  });
+  const buyers = data?.data || [];
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedBuyer, setSelectedBuyer] = useState<Buyer | null>(null);
-  
-  const buyers = buyersData?.data || [];
 
   const handleViewBuyer = (buyer: Buyer) => {
     setSelectedBuyer(buyer);
@@ -117,7 +117,16 @@ export default function BuyersTable({
             {buyers.map((buyer: Buyer) => (
               <TableRow
                 key={buyer.buyer_id}
-                className="border-b hover:bg-gray-50"
+                className="border-b hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleRowClick(buyer.buyer_id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleRowClick(buyer.buyer_id);
+                  }
+                }}
               >
                 <TableCell>
                   <div className="flex items-center gap-3  translate-x-4">
@@ -167,9 +176,18 @@ export default function BuyersTable({
 
                 <TableCell>
                   <div className="flex items-center gap-0">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="p-1 h-8 w-8"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleRowClick(buyer.buyer_id);
+                      }}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className="p-1 h-8 w-8"
                       onClick={() => handleViewBuyer(buyer)}
                     >
@@ -181,6 +199,7 @@ export default function BuyersTable({
                           variant="ghost"
                           size="sm"
                           className="p-1 h-8 w-8"
+                          onClick={(event) => event.stopPropagation()}
                         >
                           <Edit className="w-4 h-4 text-gray-400" />
                         </Button>
@@ -193,6 +212,7 @@ export default function BuyersTable({
                           variant="ghost"
                           size="sm"
                           className="p-1 h-8 w-8"
+                          onClick={(event) => event.stopPropagation()}
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </Button>
@@ -208,6 +228,7 @@ export default function BuyersTable({
                     <Checkbox
                       checked={selected.includes(buyer.buyer_id)}
                       onCheckedChange={() => toggleSelect(buyer.buyer_id)}
+                      onClick={(event) => event.stopPropagation()}
                     />
                   </div>
                 </TableCell>
