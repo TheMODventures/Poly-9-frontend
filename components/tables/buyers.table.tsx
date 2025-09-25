@@ -22,16 +22,20 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TableSkeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-import {
-  getSocialIcon,
-} from "@/utils/helper";
+import { getSocialIcon } from "@/utils/helper";
 
+const INTERACTIVE_SELECTOR =
+  'button,a,input,textarea,select,[role="menuitem"],[data-rowclick="ignore"]';
 
 export default function BuyersTable() {
   const [selected, setSelected] = useState<(string | number)[]>([]);
   const router = useRouter();
+
+  // Guard: only navigate if the click wasn't on an interactive child
   const handleRowClick = useCallback(
-    (buyerId: string) => {
+    (e: React.MouseEvent<HTMLTableRowElement>, buyerId: string) => {
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest(INTERACTIVE_SELECTOR)) return;
       router.push(`/profile?buyerId=${buyerId}`);
     },
     [router]
@@ -42,6 +46,7 @@ export default function BuyersTable() {
     limit: 10,
   });
   const buyers = data?.data || [];
+
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedBuyer, setSelectedBuyer] = useState<Buyer | null>(null);
 
@@ -55,9 +60,7 @@ export default function BuyersTable() {
     setSelectedBuyer(null);
   };
 
-  if (isLoading) {
-    return <TableSkeleton />;
-  }
+  if (isLoading) return <TableSkeleton />;
 
   if (isError) {
     return (
@@ -113,23 +116,17 @@ export default function BuyersTable() {
               <TableHead className="text-white font-medium"></TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {buyers.map((buyer: Buyer) => (
               <TableRow
                 key={buyer.buyer_id}
                 className="border-b hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleRowClick(buyer.buyer_id)}
-                role="button"
+                onClick={(e) => handleRowClick(e, buyer.buyer_id)}
                 tabIndex={0}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    handleRowClick(buyer.buyer_id);
-                  }
-                }}
               >
                 <TableCell>
-                  <div className="flex items-center gap-3  translate-x-4">
+                  <div className="flex items-center gap-3 translate-x-4">
                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-lg">
                       {buyer.company.charAt(0).toUpperCase()}
                     </div>
@@ -138,12 +135,15 @@ export default function BuyersTable() {
                     </span>
                   </div>
                 </TableCell>
+
                 <TableCell className="text-gray-900 font-medium">
                   {buyer.files.length} files
                 </TableCell>
+
                 <TableCell className="text-gray-900 font-medium">
                   {buyer.website || "N/A"}
                 </TableCell>
+
                 <TableCell>
                   <span className="text-gray-600">{buyer.type || "N/A"}</span>
                 </TableCell>
@@ -157,6 +157,7 @@ export default function BuyersTable() {
                           key={index}
                           className="w-8 h-8 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity duration-200"
                           title={social.name}
+                          data-rowclick="ignore" // safety: always ignore row click from here
                         >
                           {IconComponent ? (
                             <IconComponent className="w-6 h-6 text-gray-600" />
@@ -176,43 +177,42 @@ export default function BuyersTable() {
 
                 <TableCell>
                   <div className="flex items-center gap-0">
+                    {/* View */}
                     <Button
                       variant="ghost"
                       size="sm"
                       className="p-1 h-8 w-8"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleRowClick(buyer.buyer_id);
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent row navigation
+                        handleViewBuyer(buyer);
                       }}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="p-1 h-8 w-8"
-                      onClick={() => handleViewBuyer(buyer)}
                     >
                       <Eye className="w-4 h-4 text-gray-400" />
                     </Button>
+
+                    {/* Edit */}
                     <EditBuyerModal
                       trigger={
                         <Button
                           variant="ghost"
                           size="sm"
                           className="p-1 h-8 w-8"
-                          onClick={(event) => event.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()} // already present; keep it
                         >
                           <Edit className="w-4 h-4 text-gray-400" />
                         </Button>
                       }
                       buyerData={buyer}
                     />
+
+                    {/* Delete */}
                     <DeleteModal
                       trigger={
                         <Button
                           variant="ghost"
                           size="sm"
                           className="p-1 h-8 w-8"
-                          onClick={(event) => event.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()} // already present; keep it
                         >
                           <Trash2 className="w-4 h-4 text-red-400" />
                         </Button>
@@ -223,12 +223,12 @@ export default function BuyersTable() {
                 </TableCell>
 
                 <TableCell>
-                  <div className="-translate-y-1">
+                  <div className="-translate-y-1" data-rowclick="ignore">
                     <BuyerActionsMenu buyer={buyer} />
                     <Checkbox
                       checked={selected.includes(buyer.buyer_id)}
                       onCheckedChange={() => toggleSelect(buyer.buyer_id)}
-                      onClick={(event) => event.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
                 </TableCell>
@@ -238,7 +238,6 @@ export default function BuyersTable() {
         </Table>
       </div>
 
-      {/* View Buyer Modal */}
       {selectedBuyer && (
         <ViewBuyerModal
           isOpen={viewModalOpen}
