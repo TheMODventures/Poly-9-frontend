@@ -17,7 +17,6 @@ import DeleteModal from "@/components/helper/buyers-delete-button";
 import ViewBuyerModal from "@/components/dialogs/view-buyer-modal";
 import { Buyer } from "@/interfaces/interface";
 import BuyerActionsMenu from "../helper/buyer-actions-menu";
-import { useListBuyers } from "@/services/query";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TableSkeleton } from "@/components/ui/skeleton";
@@ -27,7 +26,28 @@ import { getSocialIcon } from "@/utils/helper";
 const INTERACTIVE_SELECTOR =
   'button,a,input,textarea,select,[role="menuitem"],[data-rowclick="ignore"]';
 
-export default function BuyersTable() {
+interface BuyersTableProps {
+  buyersData:
+    | {
+        data: Buyer[];
+        total: number;
+        page: number;
+        limit: number;
+      }
+    | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: any;
+  refetch: () => void;
+}
+
+export default function BuyersTable({
+  buyersData,
+  isLoading,
+  isError,
+  error,
+  refetch,
+}: BuyersTableProps) {
   const [selected, setSelected] = useState<(string | number)[]>([]);
   const router = useRouter();
 
@@ -40,12 +60,7 @@ export default function BuyersTable() {
     },
     [router]
   );
-
-  const { data, isLoading, isError, error, refetch } = useListBuyers({
-    page: 1,
-    limit: 10,
-  });
-  const buyers = data?.data || [];
+  const buyers = buyersData?.data || [];
 
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedBuyer, setSelectedBuyer] = useState<Buyer | null>(null);
@@ -99,7 +114,7 @@ export default function BuyersTable() {
 
   return (
     <div className="w-full bg-white rounded-lg overflow-hidden">
-      <div className="max-h-[380px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth">
+      <div className="max-h-[420px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth">
         <Table className="relative w-full border-collapse">
           <TableHeader className="sticky top-0 z-10 bg-blue-500">
             <TableRow>
