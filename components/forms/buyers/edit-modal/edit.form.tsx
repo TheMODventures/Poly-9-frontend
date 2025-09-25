@@ -13,9 +13,9 @@ import { editBuyerSchema, EditBuyerFormValues } from "@/components/forms/buyers/
 import { typeOptions } from "@/data/mock-data"
 import { UploadFile } from "@/components/shared/upload"
 import { X } from "lucide-react"
-import { useUpdateBuyer } from "@/services/mutation/buyer.mutation"
+import { useUpdateBuyer, useUploadDocument } from "@/services/mutation/buyer.mutation"
 import { useQueryClient } from "@tanstack/react-query"
-import { FileUploadResponse, Buyer } from "@/interfaces/interface"
+import { DocumentUploadResponse, Buyer } from "@/interfaces/interface"
 import { SOCIAL_OPTIONS } from "@/utils/social.constants"
 import SocialLinkModal from "@/components/dialogs/social-link-modal"
 
@@ -27,6 +27,7 @@ interface EditBuyerModalProps {
 
 export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalProps) {
   const updateBuyerMutation = useUpdateBuyer()
+  const uploadDocumentMutation = useUploadDocument()
   const queryClient = useQueryClient()
   
   const form = useForm<EditBuyerFormValues>({
@@ -36,7 +37,8 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
       website: buyerData.website || "",
       socials: buyerData.socials || [],
       type: buyerData.type || "",
-      note: buyerData.note || ""
+      note: buyerData.note || "",
+      files: []
     }
   })
 
@@ -51,33 +53,19 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false)
   const [editingSocial, setEditingSocial] = useState<{name: string, url: string} | null>(null)
   
-  // File upload state - initialize with existing files
-  const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>(() => {
-    // Convert existing file URLs to FileUploadResponse format
-    return buyerData.files.map((fileUrl, index) => ({
-      file_id: `existing-${index}`,
-      filename: fileUrl.split('/').pop() || `file-${index}`,
-      content_type: 'application/octet-stream',
-      s3_key: fileUrl,
-      url: fileUrl,
-      uploaded_at: buyerData.updated_at
-    }))
-  })
+  const files = watch("files") || []
 
-  // Update uploadedFiles when modal opens to ensure files are displayed
+  // Update files when modal opens to ensure files are displayed
   React.useEffect(() => {
     if (isModalOpen) {
       const existingFiles = buyerData.files.map((fileUrl, index) => ({
-        file_id: `existing-${index}`,
-        filename: fileUrl.split('/').pop() || `file-${index}`,
-        content_type: 'application/octet-stream',
-        s3_key: fileUrl,
-        url: fileUrl,
-        uploaded_at: buyerData.updated_at
+        document_id: `existing-${index}`,
+        upload_url: fileUrl,
+        message: `Existing file ${index + 1}`
       }))
-      setUploadedFiles(existingFiles)
+      setValue("files", existingFiles)
     }
-  }, [isModalOpen, buyerData.files, buyerData.updated_at])
+  }, [isModalOpen, buyerData.files, setValue])
 
   const handleAddSocial = (url: string) => {
     if (selectedSocial) {
@@ -123,12 +111,19 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
   }
 
   // File upload handlers
-  const handleFileUploaded = (fileData: FileUploadResponse) => {
-    setUploadedFiles(prev => [...prev, fileData])
+  const handleFileUploaded = (file: File) => {
+    uploadDocumentMutation.mutate({
+      buyerId: buyerData.buyer_id,
+      file: file
+    }, {
+      onSuccess: (uploadResponse) => {
+        setValue("files", [...files, uploadResponse]);
+      }
+    });
   }
 
-  const handleFileRemoved = (fileToRemove: FileUploadResponse) => {
-    setUploadedFiles(prev => prev.filter(file => file.file_id !== fileToRemove.file_id))
+  const handleFileRemoved = (fileToRemove: DocumentUploadResponse) => {
+    setValue("files", files.filter(file => file.document_id !== fileToRemove.document_id))
   }
 
   const onSubmit = async (values: EditBuyerFormValues) => {
@@ -150,7 +145,7 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
       })) || [],
       type: values.type || undefined,
       note: values.note || undefined,
-      files: uploadedFiles.map(file => file.url)
+      files: (values.files || []).map(file => file.upload_url || "")
     }
 
     updateBuyerMutation.mutate({ 
@@ -164,9 +159,9 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
           website: values.website,
           socials: values.socials,
           type: values.type,
-          note: values.note
+          note: values.note,
+          files: values.files
         })
-        setUploadedFiles([])
         setSelectedSocial("")
         setEditingSocial(null)
         
@@ -219,7 +214,7 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
                   render={({ field }) => (
                     <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700">
-                      Website
+                      Website <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -238,7 +233,7 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
                 render={() => (
                     <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-700 mb-3 block">
-                      Socials
+                      Socials <span className="text-red-500">*</span>
                       </FormLabel>
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
@@ -341,16 +336,26 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
                   )}
                 />
 
-              <div>
-                <FormLabel className="text-sm font-medium text-gray-700 mb-2 block">
-                  File <span className="text-xs text-gray-500">(Must be equal or less )</span>
-                </FormLabel>
-                <UploadFile 
-                  uploadedFiles={uploadedFiles}
-                  onFileUploaded={handleFileUploaded}
-                  onFileRemoved={handleFileRemoved}
-                />
-              </div>
+              <FormField
+                control={control}
+                name="files"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-gray-700 mb-2 block">
+                      File <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(Must be equal or less )</span>
+                    </FormLabel>
+                    <FormControl>
+                      <UploadFile 
+                        uploadedFiles={files}
+                        onFileUploaded={handleFileUploaded}
+                        onFileRemoved={handleFileRemoved}
+                        isUploading={uploadDocumentMutation.isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={control}
@@ -374,9 +379,10 @@ export default function EditBuyerModal({ trigger, buyerData }: EditBuyerModalPro
                   <Button
                     type="submit"
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  disabled={updateBuyerMutation.isPending}
+                  disabled={updateBuyerMutation.isPending || uploadDocumentMutation.isPending}
                   >
-                  {updateBuyerMutation.isPending ? "Updating..." : "Update Buyer"}
+                  {updateBuyerMutation.isPending ? "Updating..." : 
+                   uploadDocumentMutation.isPending ? "Uploading..." : "Update Buyer"}
                   </Button>
             </form>
           </Form>

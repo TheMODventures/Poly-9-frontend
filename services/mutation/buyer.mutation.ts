@@ -12,6 +12,8 @@ import {
   CreateBuyerItemResponse,
   DeleteBuyerItemParams,
   DeleteBuyerItemResponse,
+  DocumentUploadResponse,
+  GenerateUuidResponse,
 } from "@/interfaces/interface";
 import { toast } from "sonner";
 
@@ -122,6 +124,33 @@ export function useDeleteBuyerItem() {
       } else {
         queryClient.invalidateQueries({ queryKey: ["buyer-items"] });
       }
+    },
+  });
+}
+export function useUploadDocument() {
+  return useMutation<
+    DocumentUploadResponse,
+    Error,
+    { buyerId: string; file: File }
+  >({
+    mutationFn: async ({ buyerId, file }) => {
+      const response = await buyerService.uploadDocument(buyerId, file);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Document uploaded successfully");
+    },
+  });
+}
+
+export function useGenerateUuid() {
+  return useMutation<GenerateUuidResponse, Error, void>({
+    mutationFn: async () => {
+      const response = await buyerService.generateUuid();
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(`UUID generated: ${data.uuid}`);
     },
   });
 }

@@ -14,6 +14,7 @@ import { Eye, Edit, Trash2 } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import EditBuyerModal from "@/components/forms/buyers/edit-modal/edit.form";
 import DeleteModal from "@/components/helper/buyers-delete-button";
+import ViewBuyerModal from "@/components/dialogs/view-buyer-modal";
 import { Buyer } from "@/interfaces/interface";
 import BuyerActionsMenu from "../helper/buyer-actions-menu";
 import { useListBuyers } from "@/services/query";
@@ -21,6 +22,10 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TableSkeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import {
+  getSocialIcon,
+} from "@/utils/helper";
+
 
 export default function BuyersTable() {
   const [selected, setSelected] = useState<(string | number)[]>([]);
@@ -37,6 +42,18 @@ export default function BuyersTable() {
     limit: 10,
   });
   const buyers = data?.data || [];
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedBuyer, setSelectedBuyer] = useState<Buyer | null>(null);
+
+  const handleViewBuyer = (buyer: Buyer) => {
+    setSelectedBuyer(buyer);
+    setViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setViewModalOpen(false);
+    setSelectedBuyer(null);
+  };
 
   if (isLoading) {
     return <TableSkeleton />;
@@ -133,16 +150,24 @@ export default function BuyersTable() {
 
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {buyer.socials.map((social, index) => (
-                      <div
-                        key={index}
-                        className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center"
-                      >
-                        <span className="text-xs">
-                          {social.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    ))}
+                    {buyer.socials.map((social, index) => {
+                      const IconComponent = getSocialIcon(social.name);
+                      return (
+                        <div
+                          key={index}
+                          className="w-8 h-8 flex items-center justify-center cursor-pointer hover:opacity-70 transition-opacity duration-200"
+                          title={social.name}
+                        >
+                          {IconComponent ? (
+                            <IconComponent className="w-6 h-6 text-gray-600" />
+                          ) : (
+                            <span className="text-sm text-gray-600 font-semibold">
+                              {social.name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
                     {buyer.socials.length === 0 && (
                       <span className="text-gray-400 text-sm">No socials</span>
                     )}
@@ -159,6 +184,12 @@ export default function BuyersTable() {
                         event.stopPropagation();
                         handleRowClick(buyer.buyer_id);
                       }}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="p-1 h-8 w-8"
+                      onClick={() => handleViewBuyer(buyer)}
                     >
                       <Eye className="w-4 h-4 text-gray-400" />
                     </Button>
@@ -206,6 +237,15 @@ export default function BuyersTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* View Buyer Modal */}
+      {selectedBuyer && (
+        <ViewBuyerModal
+          isOpen={viewModalOpen}
+          onClose={handleCloseViewModal}
+          buyerData={selectedBuyer}
+        />
+      )}
     </div>
   );
 }

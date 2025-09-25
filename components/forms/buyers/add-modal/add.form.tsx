@@ -13,9 +13,9 @@ import { addBuyerSchema, AddBuyerFormValues } from "@/components/forms/buyers/ad
 import { typeOptions } from "@/data/mock-data"
 import { UploadFile } from "@/components/shared/upload"
 import { X } from "lucide-react"
-import { useCreateBuyer } from "@/services/mutation/buyer.mutation"
+import { useCreateBuyer, useUploadDocument, useGenerateUuid } from "@/services/mutation/buyer.mutation"
 import { useQueryClient } from "@tanstack/react-query"
-import { FileUploadResponse } from "@/interfaces/interface"
+import { DocumentUploadResponse } from "@/interfaces/interface"
 import { SOCIAL_OPTIONS } from "@/utils/social.constants"
 import SocialLinkModal from "@/components/dialogs/social-link-modal"
 
@@ -26,6 +26,8 @@ interface AddBuyerModalProps {
 
 export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
   const createBuyerMutation = useCreateBuyer()
+  const uploadDocumentMutation = useUploadDocument()
+  const generateUuidMutation = useGenerateUuid()
   const queryClient = useQueryClient()
   
   const form = useForm<AddBuyerFormValues>({
@@ -35,7 +37,8 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
       website: "",
       socials: [],
       type: "",
-      note: ""
+      note: "",
+      files: []
     }
   })
 
@@ -51,7 +54,8 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
   const [editingSocial, setEditingSocial] = useState<{name: string, url: string} | null>(null)
   
   // File upload state
-  const [uploadedFiles, setUploadedFiles] = useState<FileUploadResponse[]>([])
+  const [buyerId, setBuyerId] = useState<string>("")
+  const files = watch("files") || []
 
   const handleAddSocial = (url: string) => {
     if (selectedSocial) {
@@ -97,12 +101,38 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
   }
 
   // File upload handlers
-  const handleFileUploaded = (fileData: FileUploadResponse) => {
-    setUploadedFiles(prev => [...prev, fileData])
+  const handleFileUploaded = (file: File) => {
+    if (!buyerId) {
+      // Generate UUID first if not already generated
+      generateUuidMutation.mutate(undefined, {
+        onSuccess: (uuidResponse) => {
+          setBuyerId(uuidResponse.uuid);
+          // Upload document with the generated UUID
+          uploadDocumentMutation.mutate({
+            buyerId: uuidResponse.uuid,
+            file: file
+          }, {
+            onSuccess: (uploadResponse) => {
+              setValue("files", [...files, uploadResponse]);
+            }
+          });
+        }
+      });
+    } else {
+      // Upload document with existing buyer ID
+      uploadDocumentMutation.mutate({
+        buyerId: buyerId,
+        file: file
+      }, {
+        onSuccess: (uploadResponse) => {
+          setValue("files", [...files, uploadResponse]);
+        }
+      });
+    }
   }
 
-  const handleFileRemoved = (fileToRemove: FileUploadResponse) => {
-    setUploadedFiles(prev => prev.filter(file => file.file_id !== fileToRemove.file_id))
+  const handleFileRemoved = (fileToRemove: DocumentUploadResponse) => {
+    setValue("files", files.filter(file => file.document_id !== fileToRemove.document_id))
   }
 
   const onSubmit = async (values: AddBuyerFormValues) => {
@@ -114,40 +144,88 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
         : `https://${url}`;
     };
 
-    // Prepare the request body according to CreateBuyerPayload interface
-    const createBuyerPayload = {
-      company: values.companyName,
-      website: values.website ? addProtocolToUrl(values.website) : undefined,
-      socials: values.socials?.map(social => ({
-        ...social,
-        url: addProtocolToUrl(social.url)
-      })) || [],
-      type: values.type || undefined,
-      note: values.note || undefined,
-      files: uploadedFiles.map(file => file.url)
-    }
+    // Generate UUID if not already generated
+    if (!buyerId) {
+      generateUuidMutation.mutate(undefined, {
+        onSuccess: (uuidResponse) => {
+          setBuyerId(uuidResponse.uuid);
+          
+          // Prepare the request body according to CreateBuyerPayload interface
+          const createBuyerPayload = {
+            buyer_id: uuidResponse.uuid,
+            company: values.companyName,
+            website: values.website ? addProtocolToUrl(values.website) : undefined,
+            socials: values.socials?.map(social => ({
+              ...social,
+              url: addProtocolToUrl(social.url)
+            })) || [],
+            type: values.type || undefined,
+            note: values.note || undefined,
+            files: (values.files || []).map(file => file.upload_url || "")
+          }
 
-    createBuyerMutation.mutate(createBuyerPayload, {
-      onSuccess: () => {
-        // Reset form
-        reset({
-          companyName: "",
-          website: "",
-          socials: [],
-          type: "",
-          note: ""
-        })
-        setUploadedFiles([])
-        setSelectedSocial("")
-        setEditingSocial(null)
-        
-        // Close modal
-        setIsModalOpen(false)
-        
-        // Refresh buyers list by invalidating the query
-        queryClient.invalidateQueries({ queryKey: ["buyers"] })
+          createBuyerMutation.mutate(createBuyerPayload, {
+            onSuccess: () => {
+              // Reset form
+              reset({
+                companyName: "",
+                website: "",
+                socials: [],
+                type: "",
+                note: "",
+                files: []
+              })
+              setBuyerId("")
+              setSelectedSocial("")
+              setEditingSocial(null)
+              
+              // Close modal
+              setIsModalOpen(false)
+              
+              // Refresh buyers list by invalidating the query
+              queryClient.invalidateQueries({ queryKey: ["buyers"] })
+            }
+          });
+        }
+      });
+    } else {
+      // Prepare the request body according to CreateBuyerPayload interface
+      const createBuyerPayload = {
+        buyer_id: buyerId,
+        company: values.companyName,
+        website: values.website ? addProtocolToUrl(values.website) : undefined,
+        socials: values.socials?.map(social => ({
+          ...social,
+          url: addProtocolToUrl(social.url)
+        })) || [],
+        type: values.type || undefined,
+        note: values.note || undefined,
+        files: (values.files || []).map(file => file.upload_url || "")
       }
-    })
+
+      createBuyerMutation.mutate(createBuyerPayload, {
+        onSuccess: () => {
+          // Reset form
+          reset({
+            companyName: "",
+            website: "",
+            socials: [],
+            type: "",
+            note: "",
+            files: []
+          })
+          setBuyerId("")
+          setSelectedSocial("")
+          setEditingSocial(null)
+          
+          // Close modal
+          setIsModalOpen(false)
+          
+          // Refresh buyers list by invalidating the query
+          queryClient.invalidateQueries({ queryKey: ["buyers"] })
+        }
+      });
+    }
   }
 
   return (
@@ -312,16 +390,26 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
                 )}
               />
 
-              <div>
+              <FormField
+                control={control}
+                name="files"
+                render={({ field, fieldState }) => (
+                  <FormItem>
                 <FormLabel className="text-sm font-medium text-gray-700 mb-2 block">
-                  File <span className="text-xs text-gray-500">(Must be equal or less )</span>
+                      File <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(Must be equal or less )</span>
                 </FormLabel>
-                <UploadFile 
-                  uploadedFiles={uploadedFiles}
-                  onFileUploaded={handleFileUploaded}
-                  onFileRemoved={handleFileRemoved}
-                />
-              </div>
+                    <FormControl>
+                      <UploadFile 
+                        uploadedFiles={files}
+                        onFileUploaded={handleFileUploaded}
+                        onFileRemoved={handleFileRemoved}
+                        isUploading={uploadDocumentMutation.isPending || generateUuidMutation.isPending}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={control}
@@ -345,9 +433,10 @@ export default function AddBuyerModal({ trigger }: AddBuyerModalProps) {
                 <Button 
                   type="submit" 
                   className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  disabled={createBuyerMutation.isPending}
+                  disabled={createBuyerMutation.isPending || uploadDocumentMutation.isPending || generateUuidMutation.isPending}
                 >
-                  {createBuyerMutation.isPending ? "Creating..." : "Submit"}
+                  {createBuyerMutation.isPending ? "Creating..." : 
+                   uploadDocumentMutation.isPending || generateUuidMutation.isPending ? "Uploading..." : "Submit"}
                 </Button>
             </form>
           </Form>

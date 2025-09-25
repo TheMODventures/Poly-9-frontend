@@ -1,35 +1,36 @@
 "use client";
 import { useRef } from "react";
 import { X } from "lucide-react";
-import { useUploadFile } from "@/services/mutation/buyer.mutation";
-import { FileUploadResponse } from "@/interfaces/interface";
+import { DocumentUploadResponse } from "@/interfaces/interface";
 
 interface UploadFileProps {
-  onFileUploaded?: (fileData: FileUploadResponse) => void;
-  onFileRemoved?: (fileData: FileUploadResponse) => void;
-  uploadedFiles?: FileUploadResponse[];
+  onFileUploaded?: (file: File) => void;
+  onFileRemoved?: (fileData: DocumentUploadResponse) => void;
+  uploadedFiles?: DocumentUploadResponse[];
+  isUploading?: boolean;
 }
 
 export function UploadFile({
   onFileUploaded,
   onFileRemoved,
   uploadedFiles = [],
+  isUploading = false,
 }: UploadFileProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const uploadFileMutation = useUploadFile();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    uploadFileMutation.mutate(file, {
-      onSuccess: (data) => {
-        onFileUploaded?.(data);
-      },
-    });
+    onFileUploaded?.(file);
+    
+    // Reset the input value to allow the same file to be selected again
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   };
 
-  const handleRemoveFile = (fileToRemove: FileUploadResponse) => {
+  const handleRemoveFile = (fileToRemove: DocumentUploadResponse) => {
     onFileRemoved?.(fileToRemove);
   };
 
@@ -40,7 +41,7 @@ export function UploadFile({
         <div className="mb-4 space-y-2">
           {uploadedFiles.map((file) => (
             <div
-              key={file.file_id}
+              key={file.document_id}
               className="p-3 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
@@ -51,7 +52,7 @@ export function UploadFile({
                 </div>
                 <div>
                   <p className="text-gray-800 font-medium text-sm">
-                    {file.filename}
+                    Document {file.document_id.slice(0, 8)}...
                   </p>
                   <p className="text-gray-500 text-xs">File</p>
                 </div>
@@ -69,13 +70,17 @@ export function UploadFile({
 
       {/* Upload box */}
       <div
-        className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 flex flex-col items-center justify-center gap-2"
-        onClick={() => inputRef.current?.click()}
+        className={`w-full h-32 border-2 border-dashed rounded-lg transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
+          isUploading 
+            ? 'border-blue-300 bg-blue-50 cursor-not-allowed' 
+            : 'border-gray-300 bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100'
+        }`}
+        onClick={() => !isUploading && inputRef.current?.click()}
       >
-        {uploadFileMutation.isPending ? (
+        {isUploading ? (
           <div className="flex flex-col items-center gap-2">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-            <p className="text-gray-600 text-sm">Uploading...</p>
+            <p className="text-blue-600 text-sm font-medium">Uploading...</p>
           </div>
         ) : (
           <>

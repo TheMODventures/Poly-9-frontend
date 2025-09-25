@@ -1,52 +1,52 @@
 import { UserRole } from "./enum";
 
 export interface User {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
-    role: UserRole;
-    accessToken: string;
-    refreshToken?: string;
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  accessToken: string;
+  refreshToken?: string;
 }
 
 export interface UserProfile {
-    email: string;
-    name: string;
-    password_hash: string;
-    role: string;
-    social_auth_id: string | null;
-    auth_provider: string;
-    profilePhoto: string | null;
-    phone: string | null;
-    designation: string | null;
-    is_active: boolean;
-    created_at: string;
-    updated_at: string;
-    last_login: string;
+  email: string;
+  name: string;
+  password_hash: string;
+  role: string;
+  social_auth_id: string | null;
+  auth_provider: string;
+  profilePhoto: string | null;
+  phone: string | null;
+  designation: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  last_login: string;
 }
 
 export interface UpdateUserPayload {
-    name?: string;
-    phone?: string;
-    designation?: string;
-    profilePhoto?: string;
+  name?: string;
+  phone?: string;
+  designation?: string;
+  profilePhoto?: string;
 }
 
 export interface ChangePasswordPayload {
-    current_password: string;
-    new_password: string;
+  current_password: string;
+  new_password: string;
 }
 
 export interface ChangePasswordResponse {
-    message: string;
-    user: UserProfile;
+  message: string;
+  user: UserProfile;
 }
 
 export interface PasswordData {
-    oldPassword: string;
-    newPassword: string;
-    confirmPassword: string;
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface BuyerSocial {
@@ -94,9 +94,11 @@ export interface BuyersApiResponse {
 export interface ListBuyersParams {
   page?: number;
   limit?: number;
+  search?: string;
 }
 
 export interface CreateBuyerPayload {
+  buyer_id: string;
   company: string;
   website?: string;
   socials?: BuyerSocial[];
@@ -211,49 +213,53 @@ export interface FileUploadResponse {
 }
 
 export interface DocumentUploadResponse {
-  message?: string;
-  document_id?: string;
+  message: string;
   [key: string]: unknown;
+  document_id: string;
+  upload_url: string | null;
+}
+
+export interface GenerateUuidResponse {
+  uuid: string;
 }
 
 export interface ProfileData {
-  name: string
-  phone: string
-  designation: string
-  email: string
-  password: string
+  name: string;
+  phone: string;
+  designation: string;
+  email: string;
+  password: string;
 }
 
 export interface Product {
-  id: string
-  name: string
-  brand: string
-  price: string
-  image: string
-  description?: string
-  rating?: number
-  views?: number
-  likes?: number
-  colors?: string[]
+  id: string;
+  name: string;
+  brand: string;
+  price: string;
+  image: string;
+  description?: string;
+  rating?: number;
+  views?: number;
+  likes?: number;
+  colors?: string[];
 }
 
 export interface FormContentConfig {
-  title: string
-  subtitle: string
-  nameLabel: string
-  seasonLabel: string
-  styleLabel: string
-  countLabel: string
+  title: string;
+  subtitle: string;
+  nameLabel: string;
+  seasonLabel: string;
+  styleLabel: string;
+  countLabel: string;
 }
 
 export interface NotificationItem {
-  id: string
-  type: string
-  name: string
-  timeAgo: string
-  avatarColor: string
+  id: string;
+  type: string;
+  name: string;
+  timeAgo: string;
+  avatarColor: string;
 }
-
 
 export interface UploadFile {
   id: number;

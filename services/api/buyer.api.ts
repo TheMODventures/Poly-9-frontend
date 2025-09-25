@@ -14,6 +14,8 @@ import {
   CreateBuyerItemResponse,
   DeleteBuyerItemParams,
   DeleteBuyerItemResponse,
+  DocumentUploadResponse,
+  GenerateUuidResponse,
 } from "@/interfaces/interface";
 import axiosService from "../middleware/axios.middleware";
 
@@ -23,10 +25,12 @@ const BUYER_ENDPOINTS = {
   create: "/v1/buyers/",
   update: "/v1/buyers",
   delete: "/v1/buyers",
-  getById: "/v1/buyers",
   items: "/v1/items/buyer",
   createItem: "/v1/items/create",
   deleteItem: "/v1/items",
+  getById: "/v1/buyers/", // keep trailing slash; we'll avoid adding an extra one in the method
+  uploadDocument: "/v1/documents/upload",
+  generateUuid: "/v1/buyers/generate-uuid",
 } as const;
 
 class BuyerApiService {
@@ -38,9 +42,11 @@ class BuyerApiService {
     if (params?.page) {
       queryParams.append("page", params.page.toString());
     }
-
     if (params?.limit) {
       queryParams.append("limit", params.limit.toString());
+    }
+    if (params?.search) {
+      queryParams.append("search", params.search);
     }
 
     const url = queryParams.toString()
@@ -48,11 +54,9 @@ class BuyerApiService {
       : BUYER_ENDPOINTS.list;
 
     const response = await axiosService.get<BuyersApiResponse>(url);
-
-    // Transform the nested response to match our expected structure
     return {
       ...response,
-      data: response.data.data, // Extract the nested data
+      data: response.data.data,
     };
   }
 
@@ -85,8 +89,9 @@ class BuyerApiService {
   }
 
   async getBuyerById(buyerId: string): Promise<ApiResponse<Buyer>> {
+    // Avoid double slash by not adding an extra "/"
     const response = await axiosService.get<Buyer>(
-      `${BUYER_ENDPOINTS.getById}/${buyerId}`
+      `${BUYER_ENDPOINTS.getById}${buyerId}`
     );
     return response;
   }
@@ -97,13 +102,9 @@ class BuyerApiService {
     const { buyer_id, type, limit } = params;
     const query = new URLSearchParams();
 
-    if (type) {
-      query.append("type", type);
-    }
+    if (type) query.append("type", type);
+    if (limit) query.append("limit", limit.toString());
 
-    if (limit) {
-      query.append("limit", limit.toString());
-    }
     const queryString = query.toString();
     const url = queryString
       ? `${BUYER_ENDPOINTS.items}/${buyer_id}?${queryString}`
@@ -123,11 +124,36 @@ class BuyerApiService {
     return response;
   }
 
+  async uploadDocument(
+    buyerId: string,
+    file: File
+  ): Promise<ApiResponse<DocumentUploadResponse>> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("buyer_id", buyerId);
+
+    const response = await axiosService.post<DocumentUploadResponse>(
+      `${BUYER_ENDPOINTS.uploadDocument}?buyer_id=${buyerId}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+    return response;
+  }
+
   async deleteBuyerItem(
     params: DeleteBuyerItemParams
   ): Promise<ApiResponse<DeleteBuyerItemResponse>> {
     const response = await axiosService.delete<DeleteBuyerItemResponse>(
       `${BUYER_ENDPOINTS.deleteItem}/${params.item_id}`
+    );
+    return response;
+  }
+
+  async generateUuid(): Promise<ApiResponse<GenerateUuidResponse>> {
+    const response = await axiosService.post<GenerateUuidResponse>(
+      BUYER_ENDPOINTS.generateUuid
     );
     return response;
   }

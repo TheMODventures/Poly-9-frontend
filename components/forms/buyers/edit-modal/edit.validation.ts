@@ -24,13 +24,14 @@ const urlValidation = yup.string().test(
 
 export const editBuyerSchema = yup.object({
   companyName: yup.string().required("Buyer Company Name is required"),
-  website: urlValidation.optional(),
+  website: urlValidation.required("Website is required"),
   socials: yup.array().of(yup.object({
     name: yup.string().required(),
     url: urlValidation.required()
-  })).optional(),
+  })).min(1, "At least one social media link is required"),
   type: yup.string().required("Type is required"),
   note: yup.string().optional(),
+  files: yup.array().min(1, "At least one file is required"),
 });
 
 export type EditBuyerFormValues = yup.InferType<typeof editBuyerSchema>;

@@ -2,6 +2,8 @@ import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.vali
 import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
 import type { BuyerItem, FormContentConfig } from "@/interfaces/interface";
+import React from "react";
+import { SOCIAL_OPTIONS } from "@/utils/social.constants";
 
 export const getAccessToken = () => {
   const accessToken = localStorage.getItem("access-token");
@@ -27,9 +29,9 @@ export const toggleSocial = (
   social: string
 ) => {
   field.onChange(
-    field.value?.includes(social)
-      ? field.value.filter((s) => s !== social)
-      : [...(field.value || []), social]
+    field.value?.some((s) => s.name === social)
+      ? field.value.filter((s) => s.name !== social)
+      : [...(field.value || []), { name: social, url: "" }]
   );
 };
 
@@ -196,3 +198,30 @@ export function clearChatPreviewItem() {
     // Ignore storage errors to avoid breaking UX.
   }
 }
+export const getSocialIcon = (socialName: string) => {
+  const socialOption = SOCIAL_OPTIONS.find((option) => 
+    option.value.toLowerCase() === socialName.toLowerCase()
+  );
+  return socialOption?.icon || null;
+};
+
+export const getSocialColor = (socialName: string) => {
+  const socialOption = SOCIAL_OPTIONS.find(
+    (option) => option.value.toLowerCase() === socialName.toLowerCase()
+  );
+  return socialOption?.color || "bg-gray-500";
+};
+
+export const getSocialHoverColor = (socialName: string) => {
+  const socialOption = SOCIAL_OPTIONS.find(
+    (option) => option.value.toLowerCase() === socialName.toLowerCase()
+  );
+  return socialOption?.hoverColor || "hover:bg-gray-600";
+};
+
+export const getSocialIconColor = (socialName: string) => {
+  const socialOption = SOCIAL_OPTIONS.find(
+    (option) => option.value.toLowerCase() === socialName.toLowerCase()
+  );
+  return socialOption?.iconColor || "text-white";
+};
