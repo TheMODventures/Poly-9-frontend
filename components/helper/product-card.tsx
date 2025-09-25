@@ -1,5 +1,8 @@
-import Image from "next/image"
-import { Pencil } from "lucide-react"
+"use client";
+
+import { useCallback, type KeyboardEvent, type MouseEvent } from "react";
+import Image from "next/image";
+import { Pencil } from "lucide-react";
 
 interface ProductCardProps {
   name: string
@@ -8,11 +11,37 @@ interface ProductCardProps {
   image: string
   // badge?: "NEW" | "SALE" | null
   variants?: string[]
+  onClick?: () => void
 }
 
-export default function ProductCard({ name, image, variants }: ProductCardProps) {
+export default function ProductCard({ name, image, variants, onClick }: ProductCardProps) {
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (!onClick) {
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onClick();
+      }
+    },
+    [onClick]
+  );
+
+  const handleActionButtonClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+  }, []);
+
   return (
-    <div className="flex flex-col items-center cursor-pointer rounded-2xl ">
+    <div
+      className={`flex flex-col items-center rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        onClick ? "cursor-pointer" : ""
+      }`}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : -1}
+      onKeyDown={handleKeyDown}
+    >
       <div className="relative w-full bg-white rounded-2xl hover:shadow-xl transition-shadow duration-300 shadow-sm border overflow-hidden">
         <div className="relative w-full h-54 spect-square flex items-center justify-center">
           <Image
@@ -25,7 +54,11 @@ export default function ProductCard({ name, image, variants }: ProductCardProps)
           />
         </div>
 
-        <button className="absolute top-2 right-2 bg-black text-white w-7 h-7 rounded-full flex items-center justify-center">
+        <button
+          type="button"
+          className="absolute top-2 right-2 bg-black text-white w-7 h-7 rounded-full flex items-center justify-center"
+          onClick={handleActionButtonClick}
+        >
           <Pencil size={14} />
         </button>
       </div>

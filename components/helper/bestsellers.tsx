@@ -1,12 +1,28 @@
-import ProductCard from "./product-card"
-import { BuyerItem } from "@/interfaces/interface"
-import { resolveImageUrl } from "@/utils/image"
+"use client";
+
+import { useRouter } from "next/navigation";
+import ProductCard from "./product-card";
+import { BuyerItem } from "@/interfaces/interface";
+import { resolveImageUrl } from "@/utils/image";
+import { saveChatPreviewItem } from "@/utils/helper";
+import { useChatStore } from "@/store/chat.store";
 
 interface BestsellersProps {
   items: BuyerItem[]
 }
 
 export default function Bestsellers({ items }: BestsellersProps) {
+  const router = useRouter();
+  const prepareSessionFromItem = useChatStore(
+    (state) => state.prepareSessionFromItem
+  );
+
+  const handleCardClick = (item: BuyerItem) => {
+    prepareSessionFromItem(item);
+    saveChatPreviewItem(item);
+    router.push(`/chat?buyerId=${item.buyer_id}&itemId=${item.item_id}`);
+  };
+
   if (!items.length) {
     return null
   }
@@ -32,6 +48,7 @@ export default function Bestsellers({ items }: BestsellersProps) {
               key={item.item_id}
               name={item.name}
               image={image}
+              onClick={() => handleCardClick(item)}
             />
           )
         })}

@@ -1,7 +1,7 @@
 import { AddBuyerFormValues } from "@/components/forms/buyers/add-modal/add.validation";
 import { setCookie, deleteCookie } from "cookies-next/client";
 import { ControllerRenderProps } from "react-hook-form";
-import { FormContentConfig } from "@/interfaces/interface";
+import type { BuyerItem, FormContentConfig } from "@/interfaces/interface";
 
 export const getAccessToken = () => {
   const accessToken = localStorage.getItem("access-token");
@@ -152,4 +152,47 @@ export function buildItemGenerationPrompt({
     .filter(Boolean)
     .join(" ")
     .trim();
+}
+
+export const CHAT_PREVIEW_STORAGE_KEY = "chat-preview-item";
+
+export function saveChatPreviewItem(item: BuyerItem) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    sessionStorage.setItem(CHAT_PREVIEW_STORAGE_KEY, JSON.stringify(item));
+  } catch {
+    // Ignore storage errors; preview just will not hydrate.
+  }
+}
+
+export function loadChatPreviewItem(): BuyerItem | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const raw = sessionStorage.getItem(CHAT_PREVIEW_STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as BuyerItem;
+  } catch {
+    return null;
+  }
+}
+
+export function clearChatPreviewItem() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    sessionStorage.removeItem(CHAT_PREVIEW_STORAGE_KEY);
+  } catch {
+    // Ignore storage errors to avoid breaking UX.
+  }
 }

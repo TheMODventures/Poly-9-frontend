@@ -9,12 +9,26 @@ import {
 import CustomerCard from "./customer-card";
 import { BuyerItem } from "@/interfaces/interface";
 import { resolveImageUrl } from "@/utils/image";
+import { useRouter } from "next/navigation";
+import { saveChatPreviewItem } from "@/utils/helper";
+import { useChatStore } from "@/store/chat.store";
 
 interface TopCustomersProps {
   items: BuyerItem[];
 }
 
 export default function TopCustomers({ items }: TopCustomersProps) {
+  const router = useRouter();
+  const prepareSessionFromItem = useChatStore(
+    (state) => state.prepareSessionFromItem
+  );
+
+  const handleCardClick = (item: BuyerItem) => {
+    prepareSessionFromItem(item);
+    saveChatPreviewItem(item);
+    router.push(`/chat?buyerId=${item.buyer_id}&itemId=${item.item_id}`);
+  };
+
   if (!items.length) {
     return null;
   }
@@ -44,6 +58,7 @@ export default function TopCustomers({ items }: TopCustomersProps) {
                   title={item.name}
                   subtitle={item.season || item.type}
                   image={resolvedImage}
+                  onClick={() => handleCardClick(item)}
                 />
               </CarouselItem>
             );

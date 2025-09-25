@@ -1,25 +1,62 @@
-import { Pencil } from "lucide-react"
-import Image from "next/image"
+"use client";
+
+import { useCallback, type KeyboardEvent, type MouseEvent } from "react";
+import { Pencil } from "lucide-react";
+import Image from "next/image";
 import { CgSoftwareUpload } from "react-icons/cg";
 
 interface CustomerCardProps {
   title: string
   image: string
   subtitle?: string
+  onClick?: () => void
 }
 
-export default function CustomerCard({ title, image }: CustomerCardProps) {
+export default function CustomerCard({ title, image, onClick }: CustomerCardProps) {
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (!onClick) {
+        return;
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onClick();
+      }
+    },
+    [onClick]
+  );
+
+  const handleActionButtonClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+    }, []);
+
   return (
-    <div className="relative bg-white rounded-2xl shadow-md overflow-hidden">
+    <div
+      className={`relative bg-white rounded-2xl shadow-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        onClick ? "cursor-pointer" : ""
+      }`}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : -1}
+      onKeyDown={handleKeyDown}
+    >
       <h3 className="absolute top-3 left-3 text-lg font-semibold text-gray-800 z-10">
         {title}
       </h3>
 
       <div className="absolute top-3 right-3 flex space-x-2 z-10">
-        <button className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
+        <button
+          type="button"
+          className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center"
+          onClick={handleActionButtonClick}
+        >
           <CgSoftwareUpload  size={20} />
         </button>
-        <button className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center">
+        <button
+          type="button"
+          className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center"
+          onClick={handleActionButtonClick}
+        >
           <Pencil size={16} />
         </button>
       </div>
