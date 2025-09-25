@@ -78,10 +78,6 @@ export function useUploadFile() {
       const response = await uploadService.uploadFile(file);
       return response.data;
     },
-    onSuccess: (data) => {
-      toast.success(`File "${data.filename}" uploaded successfully`);
-    },
-    // Error handling is now done globally in axios middleware
   });
 }
 

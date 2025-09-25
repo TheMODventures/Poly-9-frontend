@@ -16,7 +16,10 @@ import type { ProfileData, PasswordData } from "@/interfaces/interface";
 import { getInitials } from "@/utils/helper";
 import { useGetUser } from "@/services/query";
 import { useUploadFile } from "@/services/mutation/buyer.mutation";
-import { useUpdateUser, useChangePassword } from "@/services/mutation/user.mutation";
+import {
+  useUpdateUser,
+  useChangePassword,
+} from "@/services/mutation/user.mutation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resolveImageUrl } from "@/utils/image";
 import ChangePasswordForm from "@/components/forms/settings/change-password.form";
@@ -24,7 +27,7 @@ import ChangePasswordForm from "@/components/forms/settings/change-password.form
 export default function SettingsPage() {
   const { data: userResponse, isLoading, isError, error } = useGetUser();
   const userProfile = userResponse?.data;
-  
+
   const uploadFileMutation = useUploadFile();
   const updateUserMutation = useUpdateUser();
 
@@ -34,25 +37,25 @@ export default function SettingsPage() {
   const handleValueChange = (field: keyof ProfileData, newValue: string) => {
     // Map ProfileData fields to UpdateUserPayload fields
     const updatePayload: any = {};
-    
+
     switch (field) {
-      case 'name':
+      case "name":
         updatePayload.name = newValue;
         break;
-      case 'phone':
+      case "phone":
         updatePayload.phone = newValue;
         break;
-      case 'designation':
+      case "designation":
         updatePayload.designation = newValue;
         break;
-      case 'email':
+      case "email":
         // Email is read-only, shouldn't be updated
         return;
-      case 'password':
+      case "password":
         // Password handled separately
         return;
     }
-    
+
     updateUserMutation.mutate(updatePayload);
   };
 
@@ -62,14 +65,17 @@ export default function SettingsPage() {
       uploadFileMutation.mutate(file, {
         onSuccess: (uploadResponse) => {
           const imageUrl = uploadResponse.url;
-          updateUserMutation.mutate({
-            profilePhoto: imageUrl
-          }, {
-            onSuccess: () => {
-              setIsImageDialogOpen(false);
+          updateUserMutation.mutate(
+            {
+              profilePhoto: imageUrl,
+            },
+            {
+              onSuccess: () => {
+                setIsImageDialogOpen(false);
+              },
             }
-          });
-        }
+          );
+        },
       });
     }
   };
@@ -92,7 +98,10 @@ export default function SettingsPage() {
               <Skeleton className="h-6 w-40 mb-4" />
               <div className="space-y-2">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="border border-gray-300 p-4 rounded-md">
+                  <div
+                    key={i}
+                    className="border border-gray-300 p-4 rounded-md"
+                  >
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-24" />
                       <Skeleton className="h-4 w-32" />
@@ -114,11 +123,13 @@ export default function SettingsPage() {
         <div className="mx-auto">
           <div className="bg-white rounded-lg shadow-sm border mb-3 border-gray-200 p-8">
             <div className="text-center">
-              <h1 className="text-2xl font-semibold text-red-600 mb-2">Error Loading Settings</h1>
-              <p className="text-gray-600 mb-4">{error?.message || "Failed to load user data"}</p>
-              <Button onClick={() => window.location.reload()}>
-                Retry
-              </Button>
+              <h1 className="text-2xl font-semibold text-red-600 mb-2">
+                Error Loading Settings
+              </h1>
+              <p className="text-gray-600 mb-4">
+                {error?.message || "Failed to load user data"}
+              </p>
+              <Button onClick={() => window.location.reload()}>Retry</Button>
             </div>
           </div>
         </div>
@@ -132,28 +143,45 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm border mb-3 border-gray-200 p-8">
           <div className="mb-1">
-            <h1 className="text-4xl font-inter text-gray-900" style={{ fontWeight: "700" }}>Settings</h1>
+            <h1
+              className="text-4xl font-inter text-gray-900"
+              style={{ fontWeight: "700" }}
+            >
+              Settings
+            </h1>
           </div>
         </div>
 
         {/* Main Content */}
         <div className="p-15 bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="mb-0 bg-white rounded-lg shadow-sm border border-gray-200 p-3">
-          {/* User Information Section */}
-            <h2 className="text-lg font-poppins text-blue-600 ml-2 mb-2" style={{fontWeight:"500"}}>User Information</h2>
+            {/* User Information Section */}
+            <h2
+              className="text-lg font-poppins text-blue-600 ml-2 mb-2"
+              style={{ fontWeight: "500" }}
+            >
+              User Information
+            </h2>
             <div className="space-y-2">
-            {/* Profile Photo */}
+              {/* Profile Photo */}
               <div className="border border-gray-300 p-0 rounded-md items-center relative">
-                <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
+                <Dialog
+                  open={isImageDialogOpen}
+                  onOpenChange={setIsImageDialogOpen}
+                >
                   <ProfilePhoto
                     initials={getInitials(userProfile?.name || "")}
-                    profilePhoto={userProfile?.profilePhoto ? resolveImageUrl(userProfile.profilePhoto) : null}
+                    profilePhoto={
+                      userProfile?.profilePhoto
+                        ? resolveImageUrl(userProfile.profilePhoto)
+                        : null
+                    }
                     onPhotoChange={() => setIsImageDialogOpen(true)}
                   />
                   {uploadFileMutation.isPending && (
                     <div className="absolute top-2 right-2">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  </div>
+                    </div>
                   )}
                   <DialogContent>
                     <DialogHeader>
@@ -173,17 +201,20 @@ export default function SettingsPage() {
                           id="image-upload"
                         />
                         <Button asChild>
-                          <label htmlFor="image-upload" className="cursor-pointer">
+                          <label
+                            htmlFor="image-upload"
+                            className="cursor-pointer"
+                          >
                             Select Image
                           </label>
                         </Button>
-                  </div>
-                </div>
+                      </div>
+                    </div>
                   </DialogContent>
                 </Dialog>
-            </div>
+              </div>
 
-            {/* Name */}
+              {/* Name */}
               <div className="border border-gray-300 p-0 rounded-md items-center">
                 <ProfileField
                   label="Name"
@@ -191,7 +222,7 @@ export default function SettingsPage() {
                   field="name"
                   onValueChange={handleValueChange}
                 />
-            </div>
+              </div>
 
               {/* Phone Number */}
               <div className="border border-gray-300 p-0 rounded-md items-center">
@@ -202,9 +233,9 @@ export default function SettingsPage() {
                   type="tel"
                   onValueChange={handleValueChange}
                 />
-            </div>
+              </div>
 
-            {/* Designation */}
+              {/* Designation */}
               <div className="border border-gray-300 p-0 rounded-md items-center">
                 <ProfileField
                   label="Designation"
@@ -212,44 +243,61 @@ export default function SettingsPage() {
                   field="designation"
                   onValueChange={handleValueChange}
                 />
-            </div>
-          </div>
-
-          {/* Login Details Section */}
-            <div className="">
-              <h2 className="text-lg font-poppins text-blue-600 mb-3 ml-2 mt-3" style={{fontWeight:"500"}}>Login Details</h2>
-              <div className="space-y-2">
-              {/* User Email */}
-              <div className="border border-gray-300 p-0 rounded-md items-center">
-                <div className="flex items-center justify-between py-3 scale-98 border-b border-gray-100">
-                  <span className="text-sm font-semibold text-gray-800">User email</span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-900 text-right min-w-[180px]">{userProfile?.email || ""}</span>
-                </div>
               </div>
             </div>
+
+            {/* Login Details Section */}
+            <div className="">
+              <h2
+                className="text-lg font-poppins text-blue-600 mb-3 ml-2 mt-3"
+                style={{ fontWeight: "500" }}
+              >
+                Login Details
+              </h2>
+              <div className="space-y-2">
+                {/* User Email */}
+                <div className="border border-gray-300 p-0 rounded-md items-center">
+                  <div className="flex items-center justify-between py-3 scale-98 border-b border-gray-100">
+                    <span className="text-sm font-semibold text-gray-800">
+                      User email
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-900 text-right min-w-[180px]">
+                        {userProfile?.email || ""}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Change Password */}
                 <div className="border border-gray-300 p-0 rounded-md items-center">
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-4">
-                      <Label className="text-sm font-semibold text-gray-700">Change Password</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                        onClick={() => setIsPasswordExpanded(!isPasswordExpanded)}
+                      <Label className="text-sm font-semibold text-gray-700">
+                        Change Password
+                      </Label>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setIsPasswordExpanded(!isPasswordExpanded)
+                        }
                         className="p-1"
                       >
-                        <ChevronDown className={`w-4 h-4 transition-transform ${isPasswordExpanded ? 'rotate-180' : ''}`} />
-                </Button>
-              </div>
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform ${
+                            isPasswordExpanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </Button>
+                    </div>
 
                     {isPasswordExpanded && (
                       <div className="mt-4">
-                        <ChangePasswordForm 
+                        <ChangePasswordForm
                           onSuccess={() => setIsPasswordExpanded(false)}
                         />
-                  </div>
+                      </div>
                     )}
                   </div>
                 </div>

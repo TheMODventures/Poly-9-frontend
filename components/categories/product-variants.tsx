@@ -1,23 +1,28 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Plus } from "lucide-react"
+import Image from "next/image";
+import { Plus } from "lucide-react";
 
 interface ProductVariant {
-  key: string
-  imageUrl: string
-  label?: string
-  isSelected: boolean
+  key: string;
+  imageUrl: string;
+  label?: string;
+  isSelected: boolean;
 }
 
 interface ProductVariantsProps {
-  variants: ProductVariant[]
-  onSelect: (variantKey: string) => void
-  onAdd?: () => void
-  isAddDisabled?: boolean
+  variants: ProductVariant[];
+  onSelect: (variantKey: string) => void;
+  onAdd?: () => void;
+  isAddDisabled?: boolean;
 }
 
-export default function ProductVariants({ variants, onSelect, onAdd, isAddDisabled }: ProductVariantsProps) {
+export default function ProductVariants({
+  variants,
+  onSelect,
+  onAdd,
+  isAddDisabled,
+}: ProductVariantsProps) {
   return (
     <div className="flex gap-4 mb-6">
       {variants.map((variant) => (
@@ -26,7 +31,9 @@ export default function ProductVariants({ variants, onSelect, onAdd, isAddDisabl
           type="button"
           onClick={() => onSelect(variant.key)}
           className={`relative w-20 h-16 rounded-lg overflow-hidden border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            variant.isSelected ? "border-blue-500 ring-2 ring-blue-200" : "border-transparent"
+            variant.isSelected
+              ? "border-blue-500 ring-2 ring-blue-200"
+              : "border-transparent"
           }`}
           title={variant.label}
         >
@@ -52,9 +59,13 @@ export default function ProductVariants({ variants, onSelect, onAdd, isAddDisabl
               : "hover:bg-blue-600"
           }`}
         >
-          <Plus className="w-6 h-6 text-white" />
+          {isAddDisabled ? (
+            <div className="w-6 h-6 border-2 border-gray-300 border-t-black rounded-full animate-spin" />
+          ) : (
+            <Plus className="w-6 h-6 text-white" />
+          )}
         </button>
       )}
     </div>
-  )
+  );
 }
