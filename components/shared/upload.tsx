@@ -23,10 +23,8 @@ export function UploadFile({
     if (!file) return;
 
     onFileUploaded?.(file);
-    
-    // Reset the input value to allow the same file to be selected again
     if (inputRef.current) {
-      inputRef.current.value = '';
+      inputRef.current.value = "";
     }
   };
 
@@ -52,7 +50,7 @@ export function UploadFile({
                 </div>
                 <div>
                   <p className="text-gray-800 font-medium text-sm">
-                    Document {file.document_id.slice(0, 8)}...
+                    {file?.upload_url?.split("/")[2]}
                   </p>
                   <p className="text-gray-500 text-xs">File</p>
                 </div>
@@ -71,9 +69,9 @@ export function UploadFile({
       {/* Upload box */}
       <div
         className={`w-full h-32 border-2 border-dashed rounded-lg transition-all duration-200 flex flex-col items-center justify-center gap-2 ${
-          isUploading 
-            ? 'border-blue-300 bg-blue-50 cursor-not-allowed' 
-            : 'border-gray-300 bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100'
+          isUploading
+            ? "border-blue-300 bg-blue-50 cursor-not-allowed"
+            : "border-gray-300 bg-gray-50 cursor-pointer hover:border-gray-400 hover:bg-gray-100"
         }`}
         onClick={() => !isUploading && inputRef.current?.click()}
       >

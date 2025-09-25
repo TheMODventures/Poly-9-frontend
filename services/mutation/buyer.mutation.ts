@@ -149,8 +149,5 @@ export function useGenerateUuid() {
       const response = await buyerService.generateUuid();
       return response.data;
     },
-    onSuccess: (data) => {
-      toast.success(`UUID generated: ${data.uuid}`);
-    },
   });
 }
