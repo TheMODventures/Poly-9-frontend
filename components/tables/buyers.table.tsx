@@ -49,17 +49,6 @@ export default function BuyersTable({
   refetch,
 }: BuyersTableProps) {
   const [selected, setSelected] = useState<(string | number)[]>([]);
-  const router = useRouter();
-
-  // Guard: only navigate if the click wasn't on an interactive child
-  const handleRowClick = useCallback(
-    (e: React.MouseEvent<HTMLTableRowElement>, buyerId: string) => {
-      const target = e.target as HTMLElement | null;
-      if (target && target.closest(INTERACTIVE_SELECTOR)) return;
-      router.push(`/profile?buyerId=${buyerId}`);
-    },
-    [router]
-  );
   const buyers = buyersData?.data || [];
 
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -137,7 +126,6 @@ export default function BuyersTable({
               <TableRow
                 key={buyer.buyer_id}
                 className="border-b hover:bg-gray-50 cursor-pointer"
-                onClick={(e) => handleRowClick(e, buyer.buyer_id)}
                 tabIndex={0}
               >
                 <TableCell>

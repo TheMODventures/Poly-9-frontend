@@ -1,21 +1,26 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Button } from "@/components/ui/button"
+import React, { useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { BsThreeDotsVertical } from "react-icons/bs"
-import { Buyer } from "@/interfaces/interface"
+} from "@/components/ui/dropdown-menu";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { Buyer } from "@/interfaces/interface";
+import { useRouter } from "next/navigation";
 
 interface BuyerActionsMenuProps {
-  buyer: Buyer
+  buyer: Buyer;
 }
 
-export default function BuyerActionsMenu({ }: BuyerActionsMenuProps) {
+export default function BuyerActionsMenu({ buyer }: BuyerActionsMenuProps) {
+  const router = useRouter();
+  const handleRowClick = useCallback(() => {
+    router.push(`/profile?buyerId=${buyer.buyer_id}`);
+  }, [router]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,8 +34,10 @@ export default function BuyerActionsMenu({ }: BuyerActionsMenuProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>View Details</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRowClick}>
+          View Buyer Profile
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
