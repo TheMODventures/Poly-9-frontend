@@ -16,7 +16,7 @@ import { loginSchema, LoginFormValues } from "./login.validation";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import Link from "next/link";
-import { useLogin } from "@/services/mutation/auth.mutation";
+import { useLogin, useGoogleLogin } from "@/services/mutation/auth.mutation";
 
 export default function LoginForm(): React.ReactNode {
   const form = useForm<LoginFormValues>({
@@ -28,9 +28,14 @@ export default function LoginForm(): React.ReactNode {
     },
   });
   const loginMutation = useLogin();
+  const googleLoginMutation = useGoogleLogin();
 
   const onSubmit = (values: LoginFormValues) => {
     loginMutation.mutate({ email: values.email, password: values.password });
+  };
+
+  const handleGoogleLogin = () => {
+    googleLoginMutation.mutate();
   };
 
   const {
@@ -129,6 +134,8 @@ export default function LoginForm(): React.ReactNode {
             <Button
               type="button"
               variant="outline"
+              onClick={handleGoogleLogin}
+              disabled={googleLoginMutation.isPending}
               className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-md"
             >
               <Image
@@ -138,7 +145,7 @@ export default function LoginForm(): React.ReactNode {
                 height={23}
                 className="mr-1"
               />
-              Sign Up With Google
+              {googleLoginMutation.isPending ? "Signing in..." : "Sign In With Google"}
             </Button>
             <p className="mt-4 text-center text-sm text-gray-500">
               Don&apos;t Have An Account?{" "}
