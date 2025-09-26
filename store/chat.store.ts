@@ -37,7 +37,10 @@ interface ChatStoreState {
   error: string | null;
   setBuyerId: (buyerId: string | null) => void;
   setItemId: (itemId: string | null) => void;
-  setContext: (context: { buyerId: string | null; itemId: string | null }) => void;
+  setContext: (context: {
+    buyerId: string | null;
+    itemId: string | null;
+  }) => void;
   hydratePreviewFromItem: (item: BuyerItem) => void;
   prepareSessionFromItem: (item: BuyerItem) => void;
   clearPreview: () => void;
@@ -85,7 +88,9 @@ function buildPreviewProduct(
 ): Product {
   const primaryVariation = variations[0];
   const fallbackImage = item.generated_images?.[0]?.image_url ?? "";
-  const resolvedImage = resolveImageUrl(primaryVariation?.image_url ?? fallbackImage);
+  const resolvedImage = resolveImageUrl(
+    primaryVariation?.image_url ?? fallbackImage
+  );
   const descriptionSource =
     item.description?.trim() ||
     normalizeVariationStyle(item.style) ||
@@ -123,7 +128,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     set(() => {
       const variations = mapImagesToVariations(item.generated_images || []);
       const previewProduct = buildPreviewProduct(item, variations);
-      const primaryStyle = variations[0]?.style || previewProduct.description || "";
+      const primaryStyle =
+        variations[0]?.style || previewProduct.description || "";
 
       return {
         buyerId: item.buyer_id || null,
@@ -146,12 +152,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       const variations = mapImagesToVariations(item.generated_images || []);
       const previewProduct = buildPreviewProduct(item, variations);
       const primaryStyle =
-        variations[0]?.style || previewProduct.description || state.selectedStyle;
+        variations[0]?.style ||
+        previewProduct.description ||
+        state.selectedStyle;
 
       return {
         previewProduct,
         imageVariations: variations,
-        selectedVariationKey: variations[0]?.s3_key ?? state.selectedVariationKey,
+        selectedVariationKey:
+          variations[0]?.s3_key ?? state.selectedVariationKey,
         selectedStyle: primaryStyle,
         buyerId: item.buyer_id || state.buyerId,
         itemId: item.item_id || state.itemId,
@@ -198,29 +207,22 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
       return;
     }
 
-    const baseRequest: ChatRequestBody | null = state.lastRequestBody
-      ? { ...state.lastRequestBody }
-      : state.lastUserMessage
-        ? {
-            query: state.lastUserMessage,
-            buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
-            chat_history:
-              state.lastUserMessage && state.lastAssistantMessage
-                ? [
-                    { role: "user" as const, content: state.lastUserMessage },
-                    {
-                      role: "assistant" as const,
-                      content: state.lastAssistantMessage,
-                    },
-                  ]
-                : [],
-            item_id: state.itemId ?? undefined,
-          }
-        : null;
-
-    if (!baseRequest || !baseRequest.query.trim()) {
-      return;
-    }
+    const baseRequest: ChatRequestBody | null = {
+      query:
+        "Create a new image according to the previous context and style provided",
+      buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
+      chat_history:
+        state.lastUserMessage && state.lastAssistantMessage
+          ? [
+              { role: "user" as const, content: state.lastUserMessage },
+              {
+                role: "assistant" as const,
+                content: state.lastAssistantMessage,
+              },
+            ]
+          : [],
+      item_id: state.itemId ?? undefined,
+    };
 
     set({ isGeneratingVariation: true, error: null });
 
@@ -250,7 +252,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             ? firstNew.s3_key
             : current.selectedVariationKey,
           selectedStyle: firstNew ? firstNew.style : current.selectedStyle,
-          lastAssistantMessage: payload.text_response ?? current.lastAssistantMessage,
+          lastAssistantMessage:
+            payload.text_response ?? current.lastAssistantMessage,
           lastRequestBody: { ...baseRequest },
           isGeneratingVariation: false,
         };
