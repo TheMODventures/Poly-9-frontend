@@ -24,13 +24,13 @@ export default function ProductVariants({
   isAddDisabled,
 }: ProductVariantsProps) {
   return (
-    <div className="flex gap-4 mb-6">
+    <div className="grid grid-cols-4 gap-4 mb-6">
       {variants.map((variant) => (
         <button
           key={variant.key}
           type="button"
           onClick={() => onSelect(variant.key)}
-          className={`relative w-20 h-16 rounded-lg overflow-hidden border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+          className={`relative w-full aspect-[5/4] rounded-lg overflow-hidden border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
             variant.isSelected
               ? "border-blue-500 ring-2 ring-blue-200"
               : "border-transparent"
@@ -41,7 +41,7 @@ export default function ProductVariants({
             src={variant.imageUrl}
             alt={variant.label ?? "Product variation"}
             fill
-            sizes="80px"
+            sizes="(max-width: 768px) 50vw, 25vw"
             className="object-cover"
             unoptimized={variant.imageUrl.startsWith("http")}
           />
@@ -53,7 +53,7 @@ export default function ProductVariants({
           type="button"
           onClick={onAdd}
           disabled={isAddDisabled}
-          className={`w-20 h-16 bg-blue-500 rounded-lg flex items-center justify-center transition-colors ${
+          className={`relative w-full aspect-[5/4] bg-blue-500 rounded-lg flex items-center justify-center transition-colors ${
             isAddDisabled
               ? "opacity-60 cursor-not-allowed"
               : "hover:bg-blue-600"

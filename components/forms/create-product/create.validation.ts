@@ -1,4 +1,4 @@
-import * as yup from "yup"
+import * as yup from "yup";
 
 export const createProductSchema = yup.object({
   collectionName: yup
@@ -9,7 +9,7 @@ export const createProductSchema = yup.object({
     .string()
     .required("Season is required")
     .min(3, "Season description must be at least 3 characters"),
-  styles: yup
+  style: yup
     .array()
     .of(yup.string().required())
     .min(1, "At least one style must be selected")
@@ -25,6 +25,6 @@ export const createProductSchema = yup.object({
           .matches(/^[1-9]\d*$/, "Enter a whole number greater than zero"),
       otherwise: (schema) => schema.optional(),
     }),
-})
+});
 
-export type CreateProductFormValues = yup.InferType<typeof createProductSchema>
+export type CreateProductFormValues = yup.InferType<typeof createProductSchema>;

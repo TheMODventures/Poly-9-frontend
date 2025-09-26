@@ -8,11 +8,9 @@ import {
 } from "react";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, Send } from "lucide-react";
-import CreateProduct from "@/components/forms/create-product/create.form";
 import AttachmentDialog from "@/components/dialogs/attachment-dialog";
 import { usePathname } from "next/navigation";
 import CreatePricingModal from "../dialogs/create-price";
-import Image from "next/image";
 import { useChatStore } from "@/store/chat.store";
 import { useAuthUser } from "@/store/auth.store";
 
@@ -25,7 +23,6 @@ export default function ChatInput() {
   const error = useChatStore((state) => state.error);
   const sendMessage = useChatStore((state) => state.sendMessage);
   const clearError = useChatStore((state) => state.clearError);
-  const buyerId = useChatStore((state) => state.buyerId);
 
   const resetMessage = () => {
     setMessage("");
@@ -66,36 +63,6 @@ export default function ChatInput() {
       {!isContextFile && (
         <>
           <div className="mb-3 flex gap-1 items-center justify-center scale-94">
-            <CreateProduct
-              variant="product"
-              buyerId={buyerId ?? undefined}
-              trigger={
-                <Button className="bg-[#8cd1ff] border border-blue-800 hover:bg-blue-400 text-black text-xs px-1 py-2 h-8">
-                  <Image
-                    src="/assets/editbox.svg"
-                    alt="Edit Box"
-                    width={20}
-                    height={20}
-                  />
-                  Create product
-                </Button>
-              }
-            />
-            <CreateProduct
-              variant="collection"
-              buyerId={buyerId ?? undefined}
-              trigger={
-                <Button className="bg-[#8cd1ff] border border-blue-800 hover:bg-blue-400 text-black text-xs px-1 py-2 h-8">
-                  <Image
-                    src="/assets/fileadd.svg"
-                    alt="File Add"
-                    width={20}
-                    height={20}
-                  />
-                  Create Collection
-                </Button>
-              }
-            />
             <CreatePricingModal />
           </div>
         </>

@@ -80,14 +80,14 @@ export function createStyleHandlers(
   const addStyle = (style: string) => {
     const normalized = style.trim();
     if (normalized && !watchedStyles.includes(normalized)) {
-      setValue("styles", [...watchedStyles, normalized]);
+      setValue("style", [...watchedStyles, normalized]);
       setNewStyle("");
     }
   };
 
   const removeStyle = (style: string) => {
     setValue(
-      "styles",
+      "style",
       watchedStyles.filter((s) => s !== style)
     );
   };
@@ -120,18 +120,18 @@ export function buildItemGenerationPrompt({
   type,
   name,
   season,
-  styles,
+  style,
   targetImageCount,
 }: {
   type: "collection" | "product";
   name: string;
   season: string;
-  styles: string[];
+  style: string[];
   targetImageCount?: number;
 }) {
   const trimmedName = name.trim();
   const trimmedSeason = season.trim();
-  const normalizedStyles = styles.map((style) => style.trim()).filter(Boolean);
+  const normalizedStyles = style.map((style) => style.trim()).filter(Boolean);
   const styleSentence = normalizedStyles.length
     ? `The ${
         normalizedStyles.length > 1 ? "styles are" : "style is"

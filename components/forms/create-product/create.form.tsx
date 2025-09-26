@@ -58,7 +58,7 @@ export default function CreateProduct({
     defaultValues: {
       collectionName: "",
       season: "",
-      styles: [],
+      style: [],
       targetImageCount: "",
     },
   });
@@ -91,7 +91,7 @@ export default function CreateProduct({
         type: isCollection ? "collection" : "product",
         name: values.collectionName.trim(),
         season: values.season.trim(),
-        style: values.styles.map((style) => style.trim()).filter(Boolean),
+        style: values.style.map((style) => style.trim()).filter(Boolean),
         target_image_count: parsedTargetCount,
       };
 
@@ -103,7 +103,7 @@ export default function CreateProduct({
         type: variant,
         name: payload.name,
         season: payload.season,
-        styles: payload.style,
+        style: payload.style,
         targetImageCount: parsedTargetCount,
       });
 
@@ -188,7 +188,7 @@ export default function CreateProduct({
 
               <FormField
                 control={control}
-                name="styles"
+                name="style"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-medium text-gray-900">
