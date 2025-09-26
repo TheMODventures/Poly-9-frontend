@@ -106,7 +106,7 @@ export default function BuyersTable({
       <div className="max-h-[420px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 scroll-smooth">
         <Table className="relative w-full border-collapse">
           <TableHeader className="sticky top-0 z-10 bg-blue-500">
-            <TableRow>
+            <TableRow hoverable={false}>
               <TableHead className="text-white font-medium translate-x-4">
                 Company Name
               </TableHead>

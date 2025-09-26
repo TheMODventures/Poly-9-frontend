@@ -6,13 +6,17 @@ import Image from "next/image";
 import { CgSoftwareUpload } from "react-icons/cg";
 
 interface CustomerCardProps {
-  title: string
-  image: string
-  subtitle?: string
-  onClick?: () => void
+  title: string;
+  image: string;
+  subtitle?: string;
+  onClick?: () => void;
 }
 
-export default function CustomerCard({ title, image, onClick }: CustomerCardProps) {
+export default function CustomerCard({
+  title,
+  image,
+  onClick,
+}: CustomerCardProps) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
       if (!onClick) {
@@ -26,9 +30,12 @@ export default function CustomerCard({ title, image, onClick }: CustomerCardProp
     [onClick]
   );
 
-  const handleActionButtonClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+  const handleActionButtonClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
-    }, []);
+    },
+    []
+  );
 
   return (
     <div
@@ -50,12 +57,12 @@ export default function CustomerCard({ title, image, onClick }: CustomerCardProp
           className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center"
           onClick={handleActionButtonClick}
         >
-          <CgSoftwareUpload  size={20} />
+          <CgSoftwareUpload size={20} />
         </button>
         <button
           type="button"
-          className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center"
-          onClick={handleActionButtonClick}
+          className="w-8 h-8 rounded-full bg-black cursor-pointer text-white flex items-center justify-center"
+          onClick={onClick}
         >
           <Pencil size={16} />
         </button>
@@ -78,5 +85,5 @@ export default function CustomerCard({ title, image, onClick }: CustomerCardProp
         <span className="w-3 h-3 rounded-full bg-gray-400"></span>
       </div>
     </div>
-  )
+  );
 }

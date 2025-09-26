@@ -39,7 +39,7 @@ export default function Sidebar() {
         <button
           aria-label="Logout"
           onClick={() => logoutMutation.mutate()}
-          className={`w-10 h-10 flex items-center justify-center rounded-lg transition-colors hover:bg-gray-100 text-black`}
+          className={`w-10 h-10 flex items-center justify-center rounded-lg cursor-pointer transition-colors hover:bg-gray-100 text-black`}
         >
           <MdLogout className="w-6 h-6" />
         </button>
