@@ -50,6 +50,7 @@ export default function CreateProduct({
   const router = useRouter();
   const setContext = useChatStore((state) => state.setContext);
   const resetSession = useChatStore((state) => state.resetSession);
+  const setItem = useChatStore((state) => state.setItem);
 
   const form = useForm<CreateProductFormValues>({
     resolver: yupResolver(createProductSchema, {
@@ -106,7 +107,7 @@ export default function CreateProduct({
         style: payload.style,
         targetImageCount: parsedTargetCount,
       });
-
+      setItem(payload);
       const newItemId = result.item_id;
 
       setContext({ buyerId, itemId: newItemId });
