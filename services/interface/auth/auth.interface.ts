@@ -11,6 +11,12 @@ export interface RegisterPayload {
     name: string;
 }
 
+export interface GoogleLoginPayload {
+    email: string;
+    social_auth_id: string;
+    name: string;
+}
+
 // Response shape for /auth/login
 export interface LoginUser {
   email: string;

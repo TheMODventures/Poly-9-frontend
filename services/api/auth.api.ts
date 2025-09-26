@@ -3,6 +3,7 @@ import {
   AuthUser,
   LoginPayload,
   RegisterPayload,
+  GoogleLoginPayload,
   LoginResponse,
 } from "../interface/auth/auth.interface";
 import axiosService from "../middleware/axios.middleware";
@@ -10,6 +11,7 @@ import axiosService from "../middleware/axios.middleware";
 const AUTH_ENDPOINTS = {
   login: "/v1/auth/login",
   register: "/v1/auth/register",
+  googleLogin: "/v1/auth/google-login",
   logout: "/v1/auth/logout/",
   refreshToken: "/auth/refresh",
   me: "/auth/me",
@@ -29,6 +31,14 @@ class AuthApiService {
     const response = await axiosService.post<LoginResponse>(
       AUTH_ENDPOINTS.register,
       body
+    );
+    return response;
+  }
+
+  async googleLogin(payload: GoogleLoginPayload): Promise<ApiResponse<LoginResponse>> {
+    const response = await axiosService.post<LoginResponse>(
+      AUTH_ENDPOINTS.googleLogin,
+      payload
     );
     return response;
   }

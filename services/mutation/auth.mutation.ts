@@ -5,11 +5,14 @@ import {
   AuthUser,
   LoginPayload,
   RegisterPayload,
+  GoogleLoginPayload,
   LoginResponse,
 } from "../interface/auth/auth.interface";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { firebaseAuthService } from "../auth/firebase-auth.service";
+import { AuthError } from "firebase/auth";
 
 export function useLogin() {
   const router = useRouter();
@@ -67,6 +70,40 @@ export function useRefreshToken() {
     mutationFn: async () => {
       const response = await authService.refreshToken();
       return response.data;
+    },
+  });
+}
+
+export function useGoogleLogin() {
+  const router = useRouter();
+  
+  return useMutation<LoginResponse, Error, void>({
+    mutationFn: async () => {
+      const firebaseResult = await firebaseAuthService.signInWithGoogle();
+      const firebaseUser = firebaseResult.user;
+      console.log(firebaseUser, 'firebaseUser');
+      const googleLoginPayload: GoogleLoginPayload = {
+        email: firebaseUser.email || '',
+        social_auth_id: firebaseUser.uid, 
+        name: firebaseUser.displayName || '',
+      };
+      
+      const response = await authService.googleLogin(googleLoginPayload);
+      return response.data;
+    },
+    onSuccess: ({ access_token, user }) => {
+      setAccessToken(access_token);
+      useAuthStore.getState().setAuth(user, access_token);
+      toast.success("Logged in with Google successfully");
+      router.push("/");
+    },
+    onError: (error: Error) => {
+      const authError = error as AuthError;
+      if (authError.code === 'auth/popup-closed-by-user' || 
+          authError.code === 'auth/cancelled-popup-request') {
+        return; // Silent failure for user cancellation
+      }
+      toast.error("Failed to login with Google");
     },
   });
 }
