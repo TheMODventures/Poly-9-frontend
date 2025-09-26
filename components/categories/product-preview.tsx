@@ -67,18 +67,18 @@ export default function ProductPreview() {
             unoptimized={previewImage?.startsWith("http")}
           />
         </div>
-
-        <ProductVariants
-          variants={normalizedVariations?.map((variant, index) => ({
-            ...variant,
-            isSelected:
-              variant.isSelected || (!variations.length && index === 0),
-          }))}
-          onSelect={(variantKey) => selectVariation(variantKey)}
-          onAdd={() => void generateAdditionalVariation()}
-          isAddDisabled={isGeneratingVariation}
-        />
-
+        {normalizedVariations.length > 0 && (
+          <ProductVariants
+            variants={normalizedVariations?.map((variant, index) => ({
+              ...variant,
+              isSelected:
+                variant.isSelected || (!variations.length && index === 0),
+            }))}
+            onSelect={(variantKey) => selectVariation(variantKey)}
+            onAdd={() => void generateAdditionalVariation()}
+            isAddDisabled={isGeneratingVariation}
+          />
+        )}
         <div className="mb-6">
           <h2
             className="text-lg font-inter text-[#0E004D] mb-2"

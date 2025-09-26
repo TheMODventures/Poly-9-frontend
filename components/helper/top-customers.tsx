@@ -22,8 +22,10 @@ export default function TopCustomers({ items }: TopCustomersProps) {
   const prepareSessionFromItem = useChatStore(
     (state) => state.prepareSessionFromItem
   );
+  const setItem = useChatStore((state) => state.setItem);
 
   const handleCardClick = (item: BuyerItem) => {
+    setItem(item);
     prepareSessionFromItem(item);
     saveChatPreviewItem(item);
     router.push(`/chat?buyerId=${item.buyer_id}&itemId=${item.item_id}`);

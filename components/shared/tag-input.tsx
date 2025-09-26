@@ -116,10 +116,14 @@ export function TagInput({
           className={`px-3 py-1 text-sm bg-gray-100 text-gray-700`}
         >
           {t}
-          <X
-            className="w-3 h-3 ml-1 cursor-pointer"
+          <button
+            type="button"
             onClick={() => removeTag(t)}
-          />
+            className="ml-1 inline-flex items-center justify-center rounded-sm p-0 text-gray-500 transition hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-gray-400"
+            aria-label={`Remove ${t}`}
+          >
+            <X className="w-3 h-3" aria-hidden="true" />
+          </button>
         </Badge>
       ))}
 

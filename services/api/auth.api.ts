@@ -12,7 +12,7 @@ const AUTH_ENDPOINTS = {
   login: "/v1/auth/login",
   register: "/v1/auth/register",
   googleLogin: "/v1/auth/google-login",
-  logout: "/v1/auth/logout/",
+  logout: "/v1/auth/logout",
   refreshToken: "/auth/refresh",
   me: "/auth/me",
 } as const;
@@ -26,7 +26,9 @@ class AuthApiService {
     return response;
   }
 
-  async register(payload: RegisterPayload): Promise<ApiResponse<LoginResponse>> {
+  async register(
+    payload: RegisterPayload
+  ): Promise<ApiResponse<LoginResponse>> {
     const body = { ...payload, role: "admin" } as const;
     const response = await axiosService.post<LoginResponse>(
       AUTH_ENDPOINTS.register,
@@ -35,7 +37,9 @@ class AuthApiService {
     return response;
   }
 
-  async googleLogin(payload: GoogleLoginPayload): Promise<ApiResponse<LoginResponse>> {
+  async googleLogin(
+    payload: GoogleLoginPayload
+  ): Promise<ApiResponse<LoginResponse>> {
     const response = await axiosService.post<LoginResponse>(
       AUTH_ENDPOINTS.googleLogin,
       payload

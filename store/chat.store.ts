@@ -11,6 +11,7 @@ import type {
   Product,
 } from "@/interfaces/interface";
 import { resolveImageUrl } from "@/utils/image";
+import { buildItemGenerationPrompt } from "@/utils/helper";
 
 interface ChatMessageState {
   id: string;
@@ -32,9 +33,11 @@ interface ChatStoreState {
   lastUserMessage: string | null;
   lastAssistantMessage: string | null;
   lastRequestBody: ChatRequestBody | null;
+  item: BuyerItem | null;
   isLoading: boolean;
   isGeneratingVariation: boolean;
   error: string | null;
+  setItem: (item: BuyerItem | null) => void;
   setBuyerId: (buyerId: string | null) => void;
   setItemId: (itemId: string | null) => void;
   setContext: (context: {
@@ -111,6 +114,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   buyerId: null,
   itemId: null,
   messages: [],
+  item: null,
   imageVariations: [],
   selectedVariationKey: null,
   selectedStyle: "",
@@ -123,6 +127,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
   error: null,
   setBuyerId: (buyerId) => set({ buyerId }),
   setItemId: (itemId) => set({ itemId }),
+  setItem: (item) => set({ item }),
   setContext: ({ buyerId, itemId }) => set({ buyerId, itemId }),
   prepareSessionFromItem: (item) =>
     set(() => {
@@ -208,8 +213,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     }
 
     const baseRequest: ChatRequestBody | null = {
-      query:
-        "Create a new image according to the previous context and style provided",
+      query: buildItemGenerationPrompt(state.item),
       buyer_id: state.buyerId ?? DEFAULT_BUYER_ID,
       chat_history:
         state.lastUserMessage && state.lastAssistantMessage
