@@ -100,7 +100,7 @@ export default function ProductPreview() {
           </div>
           <div className="text-gray-500 font-inter leading-relaxed space-y-3">
             {description
-              .split(/\n{2,}/)
+              ?.split(/\n{2,}/)
               .filter((paragraph) => paragraph.trim().length > 0)
               .map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>

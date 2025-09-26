@@ -12,13 +12,12 @@ import {
 } from "@/components/ui/dialog";
 import ProfilePhoto from "@/components/helper/profile-photo";
 import ProfileField from "@/components/helper/profile-field";
-import type { ProfileData, PasswordData } from "@/interfaces/interface";
+import type { ProfileData } from "@/interfaces/interface";
 import { getInitials } from "@/utils/helper";
 import { useGetUser } from "@/services/query";
 import { useUploadFile } from "@/services/mutation/buyer.mutation";
 import {
   useUpdateUser,
-  useChangePassword,
 } from "@/services/mutation/user.mutation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { resolveImageUrl } from "@/utils/image";

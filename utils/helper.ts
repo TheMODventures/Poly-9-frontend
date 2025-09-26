@@ -37,7 +37,7 @@ export const toggleSocial = (
 
 export const getInitials = (name: string): string => {
   return name
-    .split(" ")
+    ?.split(" ")
     .map((word) => word.charAt(0))
     .join("")
     .toUpperCase();
@@ -199,8 +199,8 @@ export function clearChatPreviewItem() {
   }
 }
 export const getSocialIcon = (socialName: string) => {
-  const socialOption = SOCIAL_OPTIONS.find((option) => 
-    option.value.toLowerCase() === socialName.toLowerCase()
+  const socialOption = SOCIAL_OPTIONS.find(
+    (option) => option.value.toLowerCase() === socialName.toLowerCase()
   );
   return socialOption?.icon || null;
 };

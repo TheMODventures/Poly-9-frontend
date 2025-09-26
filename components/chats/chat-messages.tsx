@@ -6,7 +6,7 @@ import { useChatMessages, useChatStore } from "@/store/chat.store";
 import { formatTime, getInitials } from "@/utils/helper";
 
 function renderContent(content: string) {
-  return content.split(/\n{2,}/).map((paragraph, index) => (
+  return content?.split(/\n{2,}/).map((paragraph, index) => (
     <p key={index} className="text-sm text-gray-700 leading-relaxed">
       {paragraph}
     </p>
